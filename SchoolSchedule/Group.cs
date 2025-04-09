@@ -19,6 +19,7 @@ namespace SchoolSchedule
         {
             this.Lessons = new HashSet<Lesson>();
             this.Students = new HashSet<Student>();
+            this.Teachers = new HashSet<Teacher>();
         }
     
         public int Id { get; set; }
@@ -29,5 +30,7 @@ namespace SchoolSchedule
         public virtual ICollection<Lesson> Lessons { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student> Students { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Teacher> Teachers { get; set; }
     }
 }

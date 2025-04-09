@@ -12,10 +12,13 @@ namespace SchoolSchedule
     using System;
     using System.Collections.Generic;
     
-    public partial class GroupView
+    public partial class TeacherSubject
     {
-        public string Имя { get; set; }
-        public string Фамилия { get; set; }
-        public string Отчество { get; set; }
+        public int Id { get; set; }
+        public int IdTeacher { get; set; }
+        public int IdSubject { get; set; }
+    
+        public virtual Subject Subject { get; set; }
+        public virtual Teacher Teacher { get; set; }
     }
 }

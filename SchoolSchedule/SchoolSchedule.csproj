@@ -67,53 +67,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ClassesSchedule.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Group.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GroupView.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Lesson.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="LessonsAtDayForTeacher.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Schedule.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ShowLessonsAtDayForTeacher_Result.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ShowStudentsByGroup_Result.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sp_helpdiagramdefinition_Result.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sp_helpdiagrams_Result.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Student.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Subject.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sysdiagram.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Teacher.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TeacherPhone.cs">
-      <DependentUpon>ClassesSchedule.tt</DependentUpon>
-    </Compile>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -122,15 +75,59 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ClassesSchedule.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ClassesSchedule.Context.tt</DependentUpon>
+    <Compile Include="Group.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="ClassesSchedule.Designer.cs">
+    <Compile Include="Lesson.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SchoolSchedule.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>ClassesSchedule.edmx</DependentUpon>
+      <DependentUpon>SchoolSchedule.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SchoolSchedule.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SchoolSchedule.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="ShowLessonsAtDayForTeacher_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ShowStudentsByGroup_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_helpdiagrams_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Student.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Subject.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagram.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Teacher.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TeacherPhone.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TeacherSubject.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
@@ -156,36 +153,36 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EntityDeploy Include="ClassesSchedule.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ClassesSchedule.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="ClassesSchedule.edmx.diagram">
-      <DependentUpon>ClassesSchedule.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <EntityDeploy Include="SchoolSchedule.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SchoolSchedule.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="SchoolSchedule.edmx.diagram">
+      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ClassesSchedule.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ClassesSchedule.Context.cs</LastGenOutput>
-      <DependentUpon>ClassesSchedule.edmx</DependentUpon>
-    </Content>
-    <Content Include="ClassesSchedule.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ClassesSchedule.edmx</DependentUpon>
-      <LastGenOutput>ClassesSchedule.cs</LastGenOutput>
-    </Content>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Content Include="SchoolSchedule.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SchoolSchedule.Context.cs</LastGenOutput>
+      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+    </Content>
+    <Content Include="SchoolSchedule.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+      <LastGenOutput>SchoolSchedule.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

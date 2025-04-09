@@ -5,6 +5,14 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="Хранилище ClassesScheduleModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ClassTeacher">
+          <Key>
+            <PropertyRef Name="IdTeacher" />
+            <PropertyRef Name="IdGroup" />
+          </Key>
+          <Property Name="IdTeacher" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdGroup" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Group">
           <Key>
             <PropertyRef Name="Id" />
@@ -28,10 +36,10 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdLesson" Type="int" Nullable="false" />
+          <Property Name="IdTeacher" Type="int" Nullable="false" />
           <Property Name="StartTime" Type="time" Precision="7" Nullable="false" />
           <Property Name="EndTime" Type="time" Precision="7" Nullable="false" />
           <Property Name="Date" Type="date" Nullable="false" />
-          <Property Name="IdTeacher" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -76,42 +84,40 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdTeacher" Type="int" Nullable="false" />
-          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="16" Nullable="false" />
         </EntityType>
         <EntityType Name="TeacherSubject">
           <Key>
-            <PropertyRef Name="IdTeacher" />
-            <PropertyRef Name="IdSubject" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdTeacher" Type="int" Nullable="false" />
           <Property Name="IdSubject" Type="int" Nullable="false" />
         </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6002: В таблице или представлении "ClassesSchedule.dbo.GroupView" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
-        <EntityType Name="GroupView">
-          <Key>
-            <PropertyRef Name="Имя" />
-            <PropertyRef Name="Фамилия" />
-            <PropertyRef Name="Отчество" />
-          </Key>
-          <Property Name="Имя" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="Фамилия" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="Отчество" Type="nvarchar" MaxLength="30" Nullable="false" />
-        </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6002: В таблице или представлении "ClassesSchedule.dbo.LessonsAtDayForTeacher" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
-        <EntityType Name="LessonsAtDayForTeacher">
-          <Key>
-            <PropertyRef Name="Предмет" />
-            <PropertyRef Name="Номер урока" />
-            <PropertyRef Name="Время начала урока" />
-            <PropertyRef Name="Время завершения урока" />
-          </Key>
-          <Property Name="Предмет" Type="nvarchar" MaxLength="70" Nullable="false" />
-          <Property Name="Номер урока" Type="smallint" Nullable="false" />
-          <Property Name="Время начала урока" Type="time" Precision="7" Nullable="false" />
-          <Property Name="Время завершения урока" Type="time" Precision="7" Nullable="false" />
-        </EntityType>
+        <Association Name="FK_ClassTeacher_Group">
+          <End Role="Group" Type="Self.Group" Multiplicity="1" />
+          <End Role="ClassTeacher" Type="Self.ClassTeacher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ClassTeacher">
+              <PropertyRef Name="IdGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ClassTeacher_Teacher">
+          <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
+          <End Role="ClassTeacher" Type="Self.ClassTeacher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Teacher">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ClassTeacher">
+              <PropertyRef Name="IdTeacher" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Lesson_Group">
           <End Role="Group" Type="Self.Group" Multiplicity="1" />
           <End Role="Lesson" Type="Self.Lesson" Multiplicity="*" />
@@ -250,6 +256,7 @@
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="Хранилище ClassesScheduleModelContainer">
+          <EntitySet Name="ClassTeacher" EntityType="Self.ClassTeacher" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lesson" EntityType="Self.Lesson" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedule" EntityType="Self.Schedule" Schema="dbo" store:Type="Tables" />
@@ -259,21 +266,14 @@
           <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TeacherPhone" EntityType="Self.TeacherPhone" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TeacherSubject" EntityType="Self.TeacherSubject" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="GroupView" EntityType="Self.GroupView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [GroupView].[Имя] AS [Имя], 
-    [GroupView].[Фамилия] AS [Фамилия], 
-    [GroupView].[Отчество] AS [Отчество]
-    FROM [dbo].[GroupView] AS [GroupView]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="LessonsAtDayForTeacher" EntityType="Self.LessonsAtDayForTeacher" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [LessonsAtDayForTeacher].[Предмет] AS [Предмет], 
-    [LessonsAtDayForTeacher].[Номер урока] AS [Номер урока], 
-    [LessonsAtDayForTeacher].[Время начала урока] AS [Время начала урока], 
-    [LessonsAtDayForTeacher].[Время завершения урока] AS [Время завершения урока]
-    FROM [dbo].[LessonsAtDayForTeacher] AS [LessonsAtDayForTeacher]</DefiningQuery>
-          </EntitySet>
+          <AssociationSet Name="FK_ClassTeacher_Group" Association="Self.FK_ClassTeacher_Group">
+            <End Role="Group" EntitySet="Group" />
+            <End Role="ClassTeacher" EntitySet="ClassTeacher" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ClassTeacher_Teacher" Association="Self.FK_ClassTeacher_Teacher">
+            <End Role="Teacher" EntitySet="Teacher" />
+            <End Role="ClassTeacher" EntitySet="ClassTeacher" />
+          </AssociationSet>
           <AssociationSet Name="FK_Lesson_Group" Association="Self.FK_Lesson_Group">
             <End Role="Group" EntitySet="Group" />
             <End Role="Lesson" EntitySet="Lesson" />
@@ -321,6 +321,7 @@
           <Property Name="Name" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Lessons" Relationship="Self.FK_Lesson_Group" FromRole="Group" ToRole="Lesson" />
           <NavigationProperty Name="Students" Relationship="Self.FK_Student_Group" FromRole="Group" ToRole="Student" />
+          <NavigationProperty Name="Teachers" Relationship="Self.ClassTeacher" FromRole="Group" ToRole="Teacher" />
         </EntityType>
         <EntityType Name="Lesson">
           <Key>
@@ -340,10 +341,10 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdLesson" Type="Int32" Nullable="false" />
+          <Property Name="IdTeacher" Type="Int32" Nullable="false" />
           <Property Name="StartTime" Type="Time" Nullable="false" Precision="7" />
           <Property Name="EndTime" Type="Time" Nullable="false" Precision="7" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="IdTeacher" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Lesson" Relationship="Self.FK_Schedule_Lesson" FromRole="Schedule" ToRole="Lesson" />
           <NavigationProperty Name="Teacher" Relationship="Self.FK_Schedule_Teacher" FromRole="Schedule" ToRole="Teacher" />
         </EntityType>
@@ -366,7 +367,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="70" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Lessons" Relationship="Self.FK_Lesson_Subject" FromRole="Subject" ToRole="Lesson" />
-          <NavigationProperty Name="Teachers" Relationship="Self.TeacherSubject" FromRole="Subject" ToRole="Teacher" />
+          <NavigationProperty Name="TeacherSubjects" Relationship="Self.FK_TeacherSubject_Subject1" FromRole="Subject" ToRole="TeacherSubject" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -388,7 +389,8 @@
           <Property Name="Patronymic" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Schedules" Relationship="Self.FK_Schedule_Teacher" FromRole="Teacher" ToRole="Schedule" />
           <NavigationProperty Name="TeacherPhones" Relationship="Self.FK_TeacherPhone_Teacher" FromRole="Teacher" ToRole="TeacherPhone" />
-          <NavigationProperty Name="Subjects" Relationship="Self.TeacherSubject" FromRole="Teacher" ToRole="Subject" />
+          <NavigationProperty Name="TeacherSubjects" Relationship="Self.FK_TeacherSubject_Teacher" FromRole="Teacher" ToRole="TeacherSubject" />
+          <NavigationProperty Name="Groups" Relationship="Self.ClassTeacher" FromRole="Teacher" ToRole="Group" />
         </EntityType>
         <EntityType Name="TeacherPhone">
           <Key>
@@ -396,30 +398,18 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdTeacher" Type="Int32" Nullable="false" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="16" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Teacher" Relationship="Self.FK_TeacherPhone_Teacher" FromRole="TeacherPhone" ToRole="Teacher" />
         </EntityType>
-        <EntityType Name="GroupView">
+        <EntityType Name="TeacherSubject">
           <Key>
-            <PropertyRef Name="Имя" />
-            <PropertyRef Name="Фамилия" />
-            <PropertyRef Name="Отчество" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Имя" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Фамилия" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Отчество" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="LessonsAtDayForTeacher">
-          <Key>
-            <PropertyRef Name="Предмет" />
-            <PropertyRef Name="Номер_урока" />
-            <PropertyRef Name="Время_начала_урока" />
-            <PropertyRef Name="Время_завершения_урока" />
-          </Key>
-          <Property Name="Предмет" Type="String" MaxLength="70" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Номер_урока" Type="Int16" Nullable="false" />
-          <Property Name="Время_начала_урока" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="Время_завершения_урока" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdTeacher" Type="Int32" Nullable="false" />
+          <Property Name="IdSubject" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Subject" Relationship="Self.FK_TeacherSubject_Subject1" FromRole="TeacherSubject" ToRole="Subject" />
+          <NavigationProperty Name="Teacher" Relationship="Self.FK_TeacherSubject_Teacher" FromRole="TeacherSubject" ToRole="Teacher" />
         </EntityType>
         <Association Name="FK_Lesson_Group">
           <End Role="Group" Type="Self.Group" Multiplicity="1" />
@@ -481,6 +471,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TeacherSubject_Subject1">
+          <End Role="Subject" Type="Self.Subject" Multiplicity="1" />
+          <End Role="TeacherSubject" Type="Self.TeacherSubject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TeacherSubject">
+              <PropertyRef Name="IdSubject" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TeacherPhone_Teacher">
           <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
           <End Role="TeacherPhone" Type="Self.TeacherPhone" Multiplicity="*" />
@@ -493,8 +495,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="TeacherSubject">
-          <End Role="Subject" Type="Self.Subject" Multiplicity="*" />
+        <Association Name="FK_TeacherSubject_Teacher">
+          <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
+          <End Role="TeacherSubject" Type="Self.TeacherSubject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Teacher">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TeacherSubject">
+              <PropertyRef Name="IdTeacher" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ClassTeacher">
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <End Role="Teacher" Type="Self.Teacher" Multiplicity="*" />
         </Association>
         <EntityContainer Name="ClassesScheduleEntities" annotation:LazyLoadingEnabled="true">
@@ -506,8 +520,7 @@
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="Teachers" EntityType="Self.Teacher" />
           <EntitySet Name="TeacherPhones" EntityType="Self.TeacherPhone" />
-          <EntitySet Name="GroupViews" EntityType="Self.GroupView" />
-          <EntitySet Name="LessonsAtDayForTeachers" EntityType="Self.LessonsAtDayForTeacher" />
+          <EntitySet Name="TeacherSubjects" EntityType="Self.TeacherSubject" />
           <AssociationSet Name="FK_Lesson_Group" Association="Self.FK_Lesson_Group">
             <End Role="Group" EntitySet="Groups" />
             <End Role="Lesson" EntitySet="Lessons" />
@@ -528,12 +541,20 @@
             <End Role="Teacher" EntitySet="Teachers" />
             <End Role="Schedule" EntitySet="Schedules" />
           </AssociationSet>
+          <AssociationSet Name="FK_TeacherSubject_Subject1" Association="Self.FK_TeacherSubject_Subject1">
+            <End Role="Subject" EntitySet="Subjects" />
+            <End Role="TeacherSubject" EntitySet="TeacherSubjects" />
+          </AssociationSet>
           <AssociationSet Name="FK_TeacherPhone_Teacher" Association="Self.FK_TeacherPhone_Teacher">
             <End Role="Teacher" EntitySet="Teachers" />
             <End Role="TeacherPhone" EntitySet="TeacherPhones" />
           </AssociationSet>
-          <AssociationSet Name="TeacherSubject" Association="Self.TeacherSubject">
-            <End Role="Subject" EntitySet="Subjects" />
+          <AssociationSet Name="FK_TeacherSubject_Teacher" Association="Self.FK_TeacherSubject_Teacher">
+            <End Role="Teacher" EntitySet="Teachers" />
+            <End Role="TeacherSubject" EntitySet="TeacherSubjects" />
+          </AssociationSet>
+          <AssociationSet Name="ClassTeacher" Association="Self.ClassTeacher">
+            <End Role="Group" EntitySet="Groups" />
             <End Role="Teacher" EntitySet="Teachers" />
           </AssociationSet>
           <FunctionImport Name="ShowLessonsAtDayForTeacher" ReturnType="Collection(ClassesScheduleModel.ShowLessonsAtDayForTeacher_Result)">
@@ -629,10 +650,10 @@
               <MappingFragment StoreEntitySet="Schedule">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="IdLesson" ColumnName="IdLesson" />
+                <ScalarProperty Name="IdTeacher" ColumnName="IdTeacher" />
                 <ScalarProperty Name="StartTime" ColumnName="StartTime" />
                 <ScalarProperty Name="EndTime" ColumnName="EndTime" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="IdTeacher" ColumnName="IdTeacher" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -686,28 +707,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="GroupViews">
-            <EntityTypeMapping TypeName="ClassesScheduleModel.GroupView">
-              <MappingFragment StoreEntitySet="GroupView">
-                <ScalarProperty Name="Имя" ColumnName="Имя" />
-                <ScalarProperty Name="Фамилия" ColumnName="Фамилия" />
-                <ScalarProperty Name="Отчество" ColumnName="Отчество" />
+          <EntitySetMapping Name="TeacherSubjects">
+            <EntityTypeMapping TypeName="ClassesScheduleModel.TeacherSubject">
+              <MappingFragment StoreEntitySet="TeacherSubject">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IdTeacher" ColumnName="IdTeacher" />
+                <ScalarProperty Name="IdSubject" ColumnName="IdSubject" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="LessonsAtDayForTeachers">
-            <EntityTypeMapping TypeName="ClassesScheduleModel.LessonsAtDayForTeacher">
-              <MappingFragment StoreEntitySet="LessonsAtDayForTeacher">
-                <ScalarProperty Name="Предмет" ColumnName="Предмет" />
-                <ScalarProperty Name="Номер_урока" ColumnName="Номер урока" />
-                <ScalarProperty Name="Время_начала_урока" ColumnName="Время начала урока" />
-                <ScalarProperty Name="Время_завершения_урока" ColumnName="Время завершения урока" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="TeacherSubject" TypeName="ClassesScheduleModel.TeacherSubject" StoreEntitySet="TeacherSubject">
-            <EndProperty Name="Subject">
-              <ScalarProperty Name="Id" ColumnName="IdSubject" />
+          <AssociationSetMapping Name="ClassTeacher" TypeName="ClassesScheduleModel.ClassTeacher" StoreEntitySet="ClassTeacher">
+            <EndProperty Name="Group">
+              <ScalarProperty Name="Id" ColumnName="IdGroup" />
             </EndProperty>
             <EndProperty Name="Teacher">
               <ScalarProperty Name="Id" ColumnName="IdTeacher" />

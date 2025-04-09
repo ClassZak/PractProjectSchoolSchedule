@@ -35,8 +35,7 @@ namespace SchoolSchedule
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<TeacherPhone> TeacherPhones { get; set; }
-        public virtual DbSet<GroupView> GroupViews { get; set; }
-        public virtual DbSet<LessonsAtDayForTeacher> LessonsAtDayForTeachers { get; set; }
+        public virtual DbSet<TeacherSubject> TeacherSubjects { get; set; }
     
         public virtual ObjectResult<ShowLessonsAtDayForTeacher_Result> ShowLessonsAtDayForTeacher(string surname, string name, string patronymic, Nullable<System.DateTime> date)
         {

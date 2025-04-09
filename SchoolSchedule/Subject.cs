@@ -18,7 +18,7 @@ namespace SchoolSchedule
         public Subject()
         {
             this.Lessons = new HashSet<Lesson>();
-            this.Teachers = new HashSet<Teacher>();
+            this.TeacherSubjects = new HashSet<TeacherSubject>();
         }
     
         public int Id { get; set; }
@@ -27,6 +27,6 @@ namespace SchoolSchedule
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Lesson> Lessons { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Teacher> Teachers { get; set; }
+        public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; }
     }
 }
