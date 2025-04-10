@@ -8,16 +8,23 @@
 		mc:Ignorable="d"
 		Title="MainWindow" Height="450" Width="800">
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Groups}" IsReadOnly="True">
-			<DataGrid.DataContext>
-				<ViewModel:MainViewModel/>
-			</DataGrid.DataContext>
-			<DataGrid.Columns>
-				<DataGridTextColumn Header="Год" Binding="{Binding Year}">
-				</DataGridTextColumn>
-				<DataGridTextColumn Header="Группа" Binding="{Binding Name}">
-				</DataGridTextColumn>
-			</DataGrid.Columns>
-		</DataGrid>
+		<Grid.DataContext>
+			<ViewModel:MainViewModel/>
+		</Grid.DataContext>
+		<TabControl>
+			<TabItem Header="Классы">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Groups}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Год" Binding="{Binding Year}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Группа" Binding="{Binding Name}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="TabItem">
+				<Grid Background="#FFE5E5E5"/>
+			</TabItem>
+		</TabControl>
 	</Grid>
 </Window>

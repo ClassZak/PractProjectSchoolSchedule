@@ -8,12 +8,45 @@ USE SchoolSchedule
 GO
 
 
+
 CREATE TABLE [Group](
 	Id		INT IDENTITY PRIMARY KEY,
 	[Year]	INT NOT NULL,
 	[Name] 	NCHAR(1) NOT NULL
 )
-
+ALTER TABLE [Group] ADD CONSTRAINT
+GroupNameConstraint CHECK ([Name]>='а' AND [Name]<='е')
+GO
+CREATE TRIGGER GroupUpperCaseNameInsertTrigger
+ON [Group]
+INSTEAD OF INSERT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO [Group]
+		([Year],[Name])
+		SELECT [Year],UPPER([Name])
+		FROM inserted;
+END;
+GO
+CREATE TRIGGER GroupUpperCaseNameUpdateTrigger
+ON [Group]
+INSTEAD OF UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	UPDATE [Group]
+	SET
+		[Name]=UPPER(inserted.[Name]),
+		[Year]=inserted.[Year]
+	FROM
+		[Group]
+	INNER JOIN
+		inserted ON [Group].Id=inserted.Id
+END;
+GO
 
 
 CREATE TABLE Student(
@@ -25,6 +58,18 @@ CREATE TABLE Student(
 	Email		NVARCHAR(60),
 	FOREIGN KEY (IdGroup)	REFERENCES [Group]
 )
+ALTER TABLE Student ADD CONSTRAINT
+RussianStudentName CHECK (NOT [Name] like '%[a-zA-Z0-9]%')
+
+ALTER TABLE Student ADD CONSTRAINT
+RussianStudentPatronymic CHECK (NOT [Patronymic] like '%[a-zA-Z0-9]%')
+
+ALTER TABLE Student ADD CONSTRAINT
+RussianStudentSurname CHECK (NOT [Surname] like '%[a-zA-Z0-9]%')
+
+ALTER TABLE Student ADD CONSTRAINT
+StudentEmailCheck CHECK ([Email] IS NULL OR [Email] like '%@%.%')
+
 
 
 CREATE TABLE Subject(
@@ -51,6 +96,14 @@ CREATE TABLE Teacher(
 	Surname		NVARCHAR(30) NOT NULL,
 	Patronymic	NVARCHAR(30) NOT NULL,
 )
+ALTER TABLE Teacher ADD CONSTRAINT RussianTeacherName
+CHECK (NOT [Name] like '%[a-zA-Z0-9]%')
+
+ALTER TABLE Teacher ADD CONSTRAINT
+RussianTeacherPatronymic CHECK (NOT [Patronymic] like '%[a-zA-Z0-9]%')
+
+ALTER TABLE Teacher ADD CONSTRAINT 
+RussianTeacherSurname CHECK (NOT [Surname] like '%[a-zA-Z0-9]%')
 
 
 
@@ -70,6 +123,8 @@ CREATE TABLE TeacherPhone(
 	PhoneNumber	NVARCHAR(16) NOT NULL,
 	FOREIGN KEY	(IdTeacher)	REFERENCES Teacher
 )
+ALTER TABLE TeacherPhone ADD CONSTRAINT TeacherPhoneConstraint
+CHECK ([PhoneNumber] like '+7 [0-9][0-9][0-9] [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 
 
 
@@ -83,6 +138,8 @@ CREATE TABLE Schedule(
 	FOREIGN KEY (IdLesson)	REFERENCES Lesson,
 	FOREIGN KEY (IdTeacher)	REFERENCES Teacher
 )
+ALTER TABLE Schedule ADD CONSTRAINT
+ScheduleCurrentTime CHECK ([StartTime]<[EndTime])
 
 
 
@@ -93,39 +150,6 @@ CREATE TABLE ClassTeacher(
 	FOREIGN KEY (IdGroup)	REFERENCES [Group],
 	PRIMARY KEY	(IdTeacher,IdGroup)
 )
-
-
-
-
-ALTER TABLE [Group] ADD CONSTRAINT
-GroupNameConstraint CHECK ([Name]>='а' AND [Name]<='е')
-
-ALTER TABLE Schedule ADD CONSTRAINT
-ScheduleCurrentTime CHECK ([StartTime]<[EndTime])
-
-ALTER TABLE Student ADD CONSTRAINT
-RussianStudentName CHECK (NOT [Name] like '%[a-zA-Z0-9]%')
-
-ALTER TABLE Student ADD CONSTRAINT
-RussianStudentPatronymic CHECK (NOT [Patronymic] like '%[a-zA-Z0-9]%')
-
-ALTER TABLE Student ADD CONSTRAINT
-RussianStudentSurname CHECK (NOT [Surname] like '%[a-zA-Z0-9]%')
-
-ALTER TABLE Student ADD CONSTRAINT
-StudentEmailCheck CHECK ([Email] IS NULL OR [Email] like '%@%.%')
-
-ALTER TABLE Teacher ADD CONSTRAINT RussianTeacherName
-CHECK (NOT [Name] like '%[a-zA-Z0-9]%')
-
-ALTER TABLE Teacher ADD CONSTRAINT
-RussianTeacherPatronymic CHECK (NOT [Patronymic] like '%[a-zA-Z0-9]%')
-
-ALTER TABLE Teacher ADD CONSTRAINT 
-RussianTeacherSurname CHECK (NOT [Surname] like '%[a-zA-Z0-9]%')
-
-ALTER TABLE TeacherPhone ADD CONSTRAINT TeacherPhoneConstraint
-CHECK ([PhoneNumber] like '+7 [0-9][0-9][0-9] [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
 GO
 
 
@@ -217,3 +241,5 @@ BEGIN
 	END;
 END;
 GO
+
+USE [master]

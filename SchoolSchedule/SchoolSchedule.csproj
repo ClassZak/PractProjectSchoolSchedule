@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,15 +37,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
@@ -75,60 +72,49 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Group.cs">
+    <Compile Include="Model\Group.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="Lesson.cs">
+    <Compile Include="Model\Lesson.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="Schedule.cs">
+    <Compile Include="Model\Schedule.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="SchoolSchedule.Context.cs">
+    <Compile Include="Model\SchoolSchedule.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SchoolSchedule.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="SchoolSchedule.cs">
+    <Compile Include="Model\SchoolSchedule.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="SchoolSchedule.Designer.cs">
+    <Compile Include="Model\SchoolSchedule.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
     </Compile>
-    <Compile Include="ShowLessonsAtDayForTeacher_Result.cs">
+    <Compile Include="Model\ShowLessonsAtDayForTeacher_Result.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="ShowStudentsByGroup_Result.cs">
+    <Compile Include="Model\ShowStudentsByGroup_Result.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="sp_helpdiagramdefinition_Result.cs">
+    <Compile Include="Model\Student.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="sp_helpdiagrams_Result.cs">
+    <Compile Include="Model\Subject.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="Student.cs">
+    <Compile Include="Model\Teacher.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="Subject.cs">
+    <Compile Include="Model\TeacherPhone.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="sysdiagram.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Teacher.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TeacherPhone.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TeacherSubject.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
+    <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -153,17 +139,17 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EntityDeploy Include="Model\SchoolSchedule.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SchoolSchedule.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Model\SchoolSchedule.edmx.diagram">
+      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <EntityDeploy Include="SchoolSchedule.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SchoolSchedule.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="SchoolSchedule.edmx.diagram">
-      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -173,24 +159,16 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SchoolSchedule.Context.tt">
+    <Content Include="Model\SchoolSchedule.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SchoolSchedule.Context.cs</LastGenOutput>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+      <LastGenOutput>SchoolSchedule.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="SchoolSchedule.tt">
+    <Content Include="Model\SchoolSchedule.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
       <LastGenOutput>SchoolSchedule.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
-  </Target>
-  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
 </Project>
