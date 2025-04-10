@@ -21,13 +21,13 @@ namespace SchoolSchedule.ViewModel
 				dataBase.Configuration.ProxyCreationEnabled = false;
 				dataBase.Configuration.LazyLoadingEnabled = false;
 
-				_groups = new ObservableCollection<Model.Group>(dataBase.Groups.ToList());
-				_lessons = new ObservableCollection<Model.Lesson>(dataBase.Lessons.ToList());
-				_schedules = new ObservableCollection<Model.Schedule>(dataBase.Schedules.ToList());
-				_students = new ObservableCollection<Model.Student>(dataBase.Students.ToList());
-				_subjects = new ObservableCollection<Model.Subject>(dataBase.Subjects.ToList());
-				_teachers= new ObservableCollection<Model.Teacher>(dataBase.Teachers.ToList());
-				_teacherPhones = new ObservableCollection<Model.TeacherPhone>(dataBase.TeacherPhones.ToList());
+				_groups			= new ObservableCollection<Model.Group>			(dataBase.Groups.		ToList());
+				_lessons		= new ObservableCollection<Model.Lesson>		(dataBase.Lessons.		ToList());
+				_schedules		= new ObservableCollection<Model.Schedule>		(dataBase.Schedules.	ToList());
+				_students		= new ObservableCollection<Model.Student>		(dataBase.Students.		ToList());
+				_subjects		= new ObservableCollection<Model.Subject>		(dataBase.Subjects.		ToList());
+				_teachers		= new ObservableCollection<Model.Teacher>		(dataBase.Teachers.		ToList());
+				_teacherPhones	= new ObservableCollection<Model.TeacherPhone>	(dataBase.TeacherPhones.ToList());
 			}
 		}
 
