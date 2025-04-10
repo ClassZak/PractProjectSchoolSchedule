@@ -3,10 +3,23 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:hc="https://handyorg.github.io/handycontrol"
 		xmlns:local="clr-namespace:SchoolSchedule"
 		xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
 		mc:Ignorable="d"
-		Title="MainWindow" Height="450" Width="800">
+		Icon="/Resources/scheduleicon.ico"
+		Title="MainWindow" Height="450" Width="800"
+		MinWidth="500"
+		MinHeight="350"
+		>
+	<Window.Resources>
+		<Style TargetType="DataGrid">
+			<Setter Property="Background" Value="#ccc"/>
+		</Style>
+		<Style TargetType="Grid">
+			<Setter Property="Background" Value="LightBlue"/>
+		</Style>
+	</Window.Resources>
 	<Grid>
 		<Grid.DataContext>
 			<ViewModel:MainViewModel/>
@@ -22,8 +35,79 @@
 					</DataGrid.Columns>
 				</DataGrid>
 			</TabItem>
-			<TabItem Header="TabItem">
-				<Grid Background="#FFE5E5E5"/>
+			<TabItem Header="Уроки">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Lessons}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Предмет" Binding="{Binding IdSubject}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Номер урока" Binding="{Binding Number}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="Расписание">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Schedules}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Урок" Binding="{Binding IdLesson}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Время начала" Binding="{Binding StartTime}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Время завершения" Binding="{Binding EndTime}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Дата проведения" Binding="{Binding Date}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="Предметы">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Название" Binding="{Binding Name}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="Ученики">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Имя" Binding="{Binding Name}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="Учителя">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Teachers}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Имя" Binding="{Binding Name}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="Номера учителей">
+				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TeacherPhones}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Телефон" Binding="{Binding PhoneNumber}">
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
 			</TabItem>
 		</TabControl>
 	</Grid>

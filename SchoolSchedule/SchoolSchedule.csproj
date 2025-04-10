@@ -114,6 +114,7 @@
     <Compile Include="Model\TeacherPhone.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
@@ -139,6 +140,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Resources.resx" />
     <EntityDeploy Include="Model\SchoolSchedule.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>SchoolSchedule.Designer.cs</LastGenOutput>
@@ -169,6 +171,9 @@
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
       <LastGenOutput>SchoolSchedule.cs</LastGenOutput>
     </Content>
+    <Resource Include="Resources\scheduleicon.ico" />
+    <Resource Include="Resources\scheduleicon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

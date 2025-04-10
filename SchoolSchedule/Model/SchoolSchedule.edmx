@@ -316,7 +316,7 @@
           <Property Name="Patronymic" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IdGroup" Type="Int32" Nullable="false" />
           <Property Name="Email" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Group" Relationship="Self.FK__Student__IdGroup__3C69FB99" FromRole="Student" ToRole="Group" />
+          <NavigationProperty Name="Groups" Relationship="Self.FK__Student__IdGroup__3C69FB99" FromRole="Student" ToRole="Group" />
         </EntityType>
         <EntityType Name="Subject">
           <Key>

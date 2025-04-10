@@ -21,6 +21,6 @@ namespace SchoolSchedule.Model
         public int IdGroup { get; set; }
         public string Email { get; set; }
     
-        public virtual Group Group { get; set; }
+        public virtual Group Groups { get; set; }
     }
 }
