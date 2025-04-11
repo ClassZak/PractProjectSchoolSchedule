@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Configuration;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolSchedule.ViewModel
@@ -16,20 +10,67 @@ namespace SchoolSchedule.ViewModel
 	{
 		public MainViewModel()
 		{
+			_groups			= new ObservableCollection<Model.Group>			(new List<Model.Group>			());
+			_lessons		= new ObservableCollection<Model.Lesson>		(new List<Model.Lesson>			());
+			_schedules		= new ObservableCollection<Model.Schedule>		(new List<Model.Schedule>		());
+			_students		= new ObservableCollection<Model.Student>		(new List<Model.Student>		());
+			_subjects		= new ObservableCollection<Model.Subject>		(new List<Model.Subject>		());
+			_teachers		= new ObservableCollection<Model.Teacher>		(new List<Model.Teacher>		());
+			_teacherPhones	= new ObservableCollection<Model.TeacherPhone>	(new List<Model.TeacherPhone>	());
+			LoadDataAsync();
+		}
+
+		private void LoadData()
+		{
 			using(Model.SchoolScheduleEntities dataBase=new Model.SchoolScheduleEntities())
 			{
 				dataBase.Configuration.ProxyCreationEnabled = false;
 				dataBase.Configuration.LazyLoadingEnabled = false;
 
-				_groups			= new ObservableCollection<Model.Group>			(dataBase.Groups.		ToList());
-				_lessons		= new ObservableCollection<Model.Lesson>		(dataBase.Lessons.		ToList());
-				_schedules		= new ObservableCollection<Model.Schedule>		(dataBase.Schedules.	ToList());
-				_students		= new ObservableCollection<Model.Student>		(dataBase.Students.		ToList());
-				_subjects		= new ObservableCollection<Model.Subject>		(dataBase.Subjects.		ToList());
-				_teachers		= new ObservableCollection<Model.Teacher>		(dataBase.Teachers.		ToList());
-				_teacherPhones	= new ObservableCollection<Model.TeacherPhone>	(dataBase.TeacherPhones.ToList());
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					_groups.Clear();
+					_lessons.Clear();
+					_schedules.Clear();
+					_students.Clear();
+					_subjects.Clear();
+					_teachers.Clear();
+					_teacherPhones.Clear();
+				});
+
+				foreach (var el in dataBase.Groups.ToList())
+					App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+				foreach (var el in dataBase.Lessons.ToList())
+					App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
+				foreach (var el in dataBase.Schedules.ToList())
+					App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
+				foreach(var el in dataBase.Students.ToList())
+					App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
+				foreach (var el in dataBase.Subjects.ToList())
+					App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+				foreach(var el in dataBase.Teachers.ToList())
+					App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
+				foreach (var el in dataBase.TeacherPhones.ToList())
+					App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
 			}
 		}
+		public async void LoadDataAsync()
+		{
+			await Task.Run(() =>
+			{
+				LoadData();
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					Groups=_groups;
+					Lessons = _lessons;
+					Schedules = _schedules;
+					Students = _students;
+					Teachers = _teachers;
+					TeacherPhones = _teacherPhones;
+				});
+			});
+		}
+
 
 		private ObservableCollection<Model.Group> _groups;
 		public ObservableCollection<Model.Group> Groups
