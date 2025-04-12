@@ -1,7 +1,11 @@
-﻿using System;
+﻿using SchoolSchedule.ViewModel.Comands;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SchoolSchedule.ViewModel
@@ -17,12 +21,12 @@ namespace SchoolSchedule.ViewModel
 			_subjects		= new ObservableCollection<Model.Subject>		(new List<Model.Subject>		());
 			_teachers		= new ObservableCollection<Model.Teacher>		(new List<Model.Teacher>		());
 			_teacherPhones	= new ObservableCollection<Model.TeacherPhone>	(new List<Model.TeacherPhone>	());
-			LoadDataAsync();
+			LoadData();
 		}
 
 		private void LoadData()
 		{
-			using(Model.SchoolScheduleEntities dataBase=new Model.SchoolScheduleEntities())
+			using(var dataBase=new Model.SchoolScheduleEntities())
 			{
 				dataBase.Configuration.ProxyCreationEnabled = false;
 				dataBase.Configuration.LazyLoadingEnabled = false;
@@ -54,21 +58,88 @@ namespace SchoolSchedule.ViewModel
 					App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
 			}
 		}
-		public async void LoadDataAsync()
+		private async void LoadDataAsync()
 		{
 			await Task.Run(() =>
 			{
 				LoadData();
-				App.Current.Dispatcher.Invoke(() =>
-				{
-					Groups=_groups;
-					Lessons = _lessons;
-					Schedules = _schedules;
-					Students = _students;
-					Teachers = _teachers;
-					TeacherPhones = _teacherPhones;
-				});
 			});
+		}
+
+		protected void UpdateList<T>(ObservableCollection<T> collection) where T : class
+		{
+			using (var dataBase = new Model.SchoolScheduleEntities())
+			{
+				List<T> elements = dataBase.Set<T>().ToList();
+
+				App.Current.Dispatcher.Invoke(() => { collection.Clear(); });
+				foreach (var el in elements)
+					App.Current.Dispatcher.Invoke(() => { collection.Add(el); });
+			}
+		}
+
+		// Тип аргумента: Type
+		RelayCommand _updateData;
+		public RelayCommand UpdateDataAsync
+		{
+			get
+			{
+				return _updateData ?? (_updateData = new RelayCommand(
+					param =>
+					{
+						if (!(param is Type targetType))
+						{
+							LoadDataAsync();
+							return;
+						}
+
+						Task.Run(() =>
+						{
+							FieldInfo targetField = null;
+							var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+
+							foreach (var field in fields)
+							{
+								if
+								(
+									IsObservableCollection(field.FieldType, out Type elementType)&& 
+									elementType == targetType
+								)
+								{
+									targetField = field;
+									break;
+								}
+							}
+
+							if (targetField == null)
+								throw new ArgumentException("Коллекция для указанного типа не найдена.");
+
+							var collection = (IList)targetField.GetValue(this);
+							var updateMethod = GetType().GetMethod(nameof(UpdateList), BindingFlags.NonPublic | BindingFlags.Instance);
+							var genericMethod = updateMethod.MakeGenericMethod(targetType);
+							genericMethod.Invoke(this, new object[] { collection });
+						});
+					}));
+			}
+		}
+		/// <summary>
+		/// Проверка на принадлежность шаблону ObservableCollection<T>, и возвращает T тип из шаблона
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="elementType"></param>
+		/// <returns></returns>
+		protected bool IsObservableCollection(Type type, out Type elementType)
+		{
+			elementType = null;
+
+			if (type.IsGenericType &&
+				type.GetGenericTypeDefinition() == typeof(ObservableCollection<>))
+			{
+				elementType = type.GetGenericArguments()[0];
+				return true;
+			}
+
+			return false;
 		}
 
 

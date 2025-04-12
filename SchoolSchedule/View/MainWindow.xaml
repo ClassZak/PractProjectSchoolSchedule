@@ -6,9 +6,10 @@
 		xmlns:hc="https://handyorg.github.io/handycontrol"
 		xmlns:local="clr-namespace:SchoolSchedule"
 		xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
+		xmlns:Model="clr-namespace:SchoolSchedule.Model"
 		mc:Ignorable="d"
 		Icon="/Resources/scheduleicon.ico"
-		Title="MainWindow" Height="450" Width="800"
+		Title="Школьное расписание" Height="436" Width="680"
 		MinWidth="500"
 		MinHeight="350"
 		>
@@ -16,99 +17,221 @@
 		<Style TargetType="DataGrid">
 			<Setter Property="Background" Value="#ccc"/>
 		</Style>
-		<Style TargetType="Grid">
-			<Setter Property="Background" Value="LightBlue"/>
-		</Style>
 	</Window.Resources>
 	<Grid>
 		<Grid.DataContext>
 			<ViewModel:MainViewModel/>
 		</Grid.DataContext>
-		<TabControl>
-			<TabItem Header="Классы">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Groups}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Год" Binding="{Binding Year}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Группа" Binding="{Binding Name}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-			<TabItem Header="Уроки">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Lessons}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Предмет" Binding="{Binding IdSubject}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Номер урока" Binding="{Binding Number}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-			<TabItem Header="Расписание">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Schedules}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Урок" Binding="{Binding IdLesson}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Время начала" Binding="{Binding StartTime}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Время завершения" Binding="{Binding EndTime}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Дата проведения" Binding="{Binding Date}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-			<TabItem Header="Предметы">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Название" Binding="{Binding Name}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-			<TabItem Header="Ученики">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Имя" Binding="{Binding Name}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-			<TabItem Header="Учителя">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Teachers}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Имя" Binding="{Binding Name}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-			<TabItem Header="Номера учителей">
-				<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TeacherPhones}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
-						</DataGridTextColumn>
-						<DataGridTextColumn Header="Телефон" Binding="{Binding PhoneNumber}">
-						</DataGridTextColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</TabItem>
-		</TabControl>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Menu Grid.RowSpan="2">
+			<MenuItem Header="Файл">
+				<MenuItem Header="Загрузить">
+					<MenuItem Header="Загрузить таблицу &quot;Ученики&quot; из сервера"			Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Student}"		/>
+					<MenuItem Header="Загрузить таблицу &quot;Учителя&quot; из сервера"			Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Teacher}"		/>
+					<MenuItem Header="Загрузить таблицу &quot;Номера учителей&quot; из сервера"	Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:TeacherPhone}"	/>
+					<MenuItem Header="Загрузить таблицу &quot;Предметы&quot; из сервера"		Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Subject}"		/>
+					<MenuItem Header="Загрузить таблицу &quot;Классы&quot; из сервера"			Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Group}"			/>
+					<MenuItem Header="Загрузить таблицу &quot;Уроки&quot; из сервера"			Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Lesson}"		/>
+					<MenuItem Header="Загрузить таблицу &quot;Расписание&quot; из сервера"		Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Schedule}"		/>
+				</MenuItem>
+			</MenuItem>
+		</Menu>
+		<Grid Margin="6" Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="30"/>
+			</Grid.RowDefinitions>
+			<TabControl>
+				<TabItem Header="Ученики">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Имя" Binding="{Binding Name}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button
+							Grid.Row="1"
+							Margin="5"
+							Content="Загрузить таблицу &quot;Ученики&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Student}"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Учителя">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Teachers}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Имя" Binding="{Binding Name}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button
+							Grid.Row="1"
+							Margin="5"
+							Content="Загрузить таблицу &quot;Учителя&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Teacher}"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Номера учителей">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TeacherPhones}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Телефон" Binding="{Binding PhoneNumber}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button
+							Grid.Row="1"
+							Margin="5"
+							Content="Загрузить таблицу &quot;Номера учителей&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:TeacherPhone}"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Предметы">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Название" Binding="{Binding Name}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button
+							Grid.Row="1"
+							Margin="5"
+							Content="Загрузить таблицу &quot;Предметы&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Subject}"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Классы">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Groups}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Год" Binding="{Binding Year}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Группа" Binding="{Binding Name}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button 
+							Grid.Row="1" 
+							Margin="5" 
+							Content="Загрузить таблицу &quot;Классы&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Group}"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Уроки">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Lessons}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Предмет" Binding="{Binding IdSubject}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Номер урока" Binding="{Binding Number}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button
+							Grid.Row="1"
+							Margin="5"
+							Content="Загрузить таблицу &quot;Уроки&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Lesson}"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Расписание">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Schedules}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Урок" Binding="{Binding IdLesson}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Время начала" Binding="{Binding StartTime}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Время завершения" Binding="{Binding EndTime}">
+								</DataGridTextColumn>
+								<DataGridTextColumn Header="Дата проведения" Binding="{Binding Date}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button 
+							Grid.Row="1"
+							Margin="5"
+							Content="Загрузить таблицу &quot;Расписание&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Schedule}"
+						/>
+					</Grid>
+				</TabItem>
+			</TabControl>
+
+
+			<Grid Grid.Row="1" Margin="0,5,0,5">
+				<Grid>
+					<Button 
+						Content="Загрузить все данные"
+						Command="{Binding UpdateDataAsync}"
+						CommandParameter="{x:Null}"
+					/>
+				</Grid>
+			</Grid>
+		</Grid>
 	</Grid>
 </Window>

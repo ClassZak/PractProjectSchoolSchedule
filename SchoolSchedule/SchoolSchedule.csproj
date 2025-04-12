@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
+    <Compile Include="ViewModel\Comands\RelayCommand.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -174,8 +175,6 @@
     <Resource Include="Resources\scheduleicon.ico" />
     <Resource Include="Resources\scheduleicon.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModel\Comands\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
