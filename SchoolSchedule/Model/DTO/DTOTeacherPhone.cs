@@ -25,7 +25,10 @@ namespace SchoolSchedule.Model.DTO
 		public void LoadTeacherLabel()
 		{
 			if (Teacher != null)
+			{
 				TeacherLabel = $"{Teacher.Surname} {Teacher.Name} {Teacher.Patronymic}";
+				return;
+			}
 			if(IdTeacher!=0)
 			{
 				try

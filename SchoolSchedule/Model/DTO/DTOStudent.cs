@@ -16,17 +16,17 @@ namespace SchoolSchedule.Model.DTO
 			Id = 0;
 			IdGroup = 0; 
 		}
-		public DTOStudent(Model.Student student) : this()
+		public DTOStudent(Model.Student other) : this()
 		{
-			Id = student.Id;
-			IdGroup = student.IdGroup;
+			Id = other.Id;
+			IdGroup = other.IdGroup;
 
-			Surname = student.Surname;
-			Name = student.Name;
-			Patronymic = student.Patronymic;
-			Email = student.Email;
+			Surname = other.Surname;
+			Name = other.Name;
+			Patronymic = other.Patronymic;
+			Email = other.Email;
 
-			Group = student.Group;
+			Group = other.Group;
 
 			LoadGroupLabel();
 		}

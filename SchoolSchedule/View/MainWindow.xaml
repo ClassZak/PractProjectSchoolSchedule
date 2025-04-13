@@ -293,9 +293,9 @@
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
+								<DataGridTextColumn Header="Класс" Binding="{Binding GroupLabel}">
 								</DataGridTextColumn>
-								<DataGridTextColumn Header="Предмет" Binding="{Binding IdSubject}">
+								<DataGridTextColumn Header="Предмет" Binding="{Binding SubjectLabel}">
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Номер урока" Binding="{Binding Number}">
 								</DataGridTextColumn>
@@ -340,16 +340,15 @@
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Урок" Binding="{Binding IdLesson}">
-								</DataGridTextColumn>
-								<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
-								</DataGridTextColumn>
-								<DataGridTextColumn Header="Время начала" Binding="{Binding StartTime}">
-								</DataGridTextColumn>
-								<DataGridTextColumn Header="Время завершения" Binding="{Binding EndTime}">
-								</DataGridTextColumn>
-								<DataGridTextColumn Header="Дата проведения" Binding="{Binding Date}">
-								</DataGridTextColumn>
+								<DataGridTextColumn Header="Предмет" Binding="{Binding Subject}"/>
+								<DataGridTextColumn Header="Класс" Binding="{Binding Group}"/>
+								<DataGridTextColumn Header="Номер урока" Binding="{Binding Number}"/>
+								<DataGridTextColumn Header="Фамилия учителя" Binding="{Binding Surname}"/>
+								<DataGridTextColumn Header="Имя учителя" Binding="{Binding Name}"/>
+								<DataGridTextColumn Header="Отчество учителя" Binding="{Binding Patronymic}"/>
+								<DataGridTextColumn Header="Время начала" Binding="{Binding StartTime}"/>
+								<DataGridTextColumn Header="Время завершения" Binding="{Binding EndTime}"/>
+								<DataGridTextColumn Header="Дата проведения" Binding="{Binding Date}"/>
 								<DataGridTemplateColumn>
 									<DataGridTemplateColumn.CellTemplate>
 										<DataTemplate>

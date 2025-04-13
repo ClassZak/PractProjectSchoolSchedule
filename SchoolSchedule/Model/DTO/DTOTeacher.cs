@@ -14,16 +14,16 @@ namespace SchoolSchedule.Model.DTO
 		{ 
 			Id = 0; 
 		}
-		public DTOTeacher(Model.Teacher teacher)
+		public DTOTeacher(Model.Teacher other)
 		{
-			Id = teacher.Id;
-			Surname = teacher.Surname;
-			Name = teacher.Name;
-			Patronymic = teacher.Patronymic;
+			Id = other.Id;
+			Surname = other.Surname;
+			Name = other.Name;
+			Patronymic = other.Patronymic;
 
-			SpecialityTeacher = teacher.SpecialityTeacher;
-			Schedule=teacher.Schedule;
-			TeacherPhone=teacher.TeacherPhone;
+			SpecialityTeacher = other.SpecialityTeacher;
+			Schedule=other.Schedule;
+			TeacherPhone=other.TeacherPhone;
 
 			LoadAllLabels();
 		}

@@ -18,8 +18,8 @@ namespace SchoolSchedule.ViewModel
 		public MainViewModel()
 		{
 			_groups			= new ObservableCollection<Model.Group>			(new List<Model.Group>			());
-			_lessons		= new ObservableCollection<Model.Lesson>		(new List<Model.Lesson>			());
-			_schedules		= new ObservableCollection<Model.Schedule>		(new List<Model.Schedule>		());
+			_lessons		= new ObservableCollection<Model.DTO.DTOLesson>		(new List<Model.DTO.DTOLesson>			());
+			_schedules		= new ObservableCollection<Model.DTO.DTOSchedule>		(new List<Model.DTO.DTOSchedule>		());
 			_students		= new ObservableCollection<Model.DTO.DTOStudent>		(new List<Model.DTO.DTOStudent>		());
 			_subjects		= new ObservableCollection<Model.Subject>		(new List<Model.Subject>		());
 			_teachers		= new ObservableCollection<Model.DTO.DTOTeacher>		(new List<Model.DTO.DTOTeacher>		());
@@ -58,9 +58,9 @@ namespace SchoolSchedule.ViewModel
 					foreach (var el in dataBase.Group.ToList())
 						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
 					foreach (var el in dataBase.Lesson.ToList())
-						App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
+						App.Current.Dispatcher.Invoke(() => { _lessons.Add(new Model.DTO.DTOLesson (el)); });
 					foreach (var el in dataBase.Schedule.ToList())
-						App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
+						App.Current.Dispatcher.Invoke(() => { _schedules.Add(new Model.DTO.DTOSchedule(el)); });
 					foreach (var el in dataBase.Student.ToList())
 						App.Current.Dispatcher.Invoke(() => { _students.Add(new Model.DTO.DTOStudent(el)); });
 					foreach (var el in dataBase.Subject.ToList())
@@ -235,12 +235,12 @@ namespace SchoolSchedule.ViewModel
 		public ObservableCollection<Model.Group> Groups
 		{ get {return _groups;}set {SetPropertyChanged(ref _groups, value);} }
 
-		private ObservableCollection<Model.Lesson> _lessons;
-		public ObservableCollection<Model.Lesson> Lessons
+		private ObservableCollection<Model.DTO.DTOLesson> _lessons;
+		public ObservableCollection<Model.DTO.DTOLesson> Lessons
 		{ get { return _lessons; } set { SetPropertyChanged(ref _lessons, value); } }
 
-		private ObservableCollection<Model.Schedule> _schedules;
-		public ObservableCollection<Model.Schedule> Schedules
+		private ObservableCollection<Model.DTO.DTOSchedule> _schedules;
+		public ObservableCollection<Model.DTO.DTOSchedule> Schedules
 		{ get { return _schedules; } set { SetPropertyChanged(ref _schedules, value); } }
 
 		private ObservableCollection<Model.DTO.DTOStudent> _students;

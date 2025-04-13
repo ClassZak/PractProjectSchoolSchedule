@@ -75,6 +75,8 @@
     <Compile Include="Model\ClassTeacher.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\DTO\DTOLesson.cs" />
+    <Compile Include="Model\DTO\DTOSchedule.cs" />
     <Compile Include="Model\DTO\DTOTeacher.cs" />
     <Compile Include="Model\DTO\DTOTeacherPhone.cs" />
     <Compile Include="Model\DTO\IDTO.cs" />
