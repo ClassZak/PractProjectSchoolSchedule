@@ -12,21 +12,13 @@ namespace SchoolSchedule.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class Group
+    public partial class SpecialityTeacher
     {
-        public Group()
-        {
-            this.ClassTeacher = new HashSet<ClassTeacher>();
-            this.Lesson = new HashSet<Lesson>();
-            this.Student = new HashSet<Student>();
-        }
-    
         public int Id { get; set; }
-        public int Year { get; set; }
-        public string Name { get; set; }
+        public int IdTeacher { get; set; }
+        public int IdSubject { get; set; }
     
-        public virtual ICollection<ClassTeacher> ClassTeacher { get; set; }
-        public virtual ICollection<Lesson> Lesson { get; set; }
-        public virtual ICollection<Student> Student { get; set; }
+        public virtual Subject Subject { get; set; }
+        public virtual Teacher Teacher { get; set; }
     }
 }

@@ -72,8 +72,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\ClassTeacher.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DTO\DTOTeacher.cs" />
+    <Compile Include="Model\DTO\DTOTeacherPhone.cs" />
     <Compile Include="Model\DTO\IDTO.cs" />
-    <Compile Include="Model\DTO\Student.cs" />
+    <Compile Include="Model\DTO\DTOStudent.cs" />
     <Compile Include="Model\Group.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
@@ -102,6 +107,9 @@
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\ShowStudentsByGroup_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SpecialityTeacher.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\Student.cs">
@@ -164,6 +172,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\scheduleicon.ico" />
+    <Resource Include="Resources\scheduleicon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Model\SchoolSchedule.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
@@ -174,9 +186,6 @@
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
       <LastGenOutput>SchoolSchedule.cs</LastGenOutput>
     </Content>
-    <Resource Include="Resources\scheduleicon.ico" />
-    <Resource Include="Resources\scheduleicon.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,9 +7,10 @@
 		xmlns:local="clr-namespace:SchoolSchedule"
 		xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
 		xmlns:Model="clr-namespace:SchoolSchedule.Model"
+		xmlns:DTOModel="clr-namespace:SchoolSchedule.Model.DTO"
 		mc:Ignorable="d"
 		Icon="/Resources/scheduleicon.ico"
-		Title="Школьное расписание" Height="436" Width="680"
+		Title="Школьное расписание" Height="400" Width="680"
 		MinWidth="500"
 		MinHeight="350"
 		>
@@ -65,7 +66,7 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
 								</DataGridTextColumn>
-								<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
+								<DataGridTextColumn Header="Класс" Binding="{Binding GroupLabel}">
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}">
 								</DataGridTextColumn>
@@ -89,7 +90,7 @@
 							Margin="5"
 							Content="Загрузить таблицу &quot;Ученики&quot; из сервера"
 							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type Model:Student}"
+							CommandParameter="{x:Type DTOModel:DTOStudent}"
 						/>
 					</Grid>
 				</TabItem>
@@ -116,6 +117,8 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
 								</DataGridTextColumn>
+								<DataGridTextColumn Header="Предмет(ы)" Binding="{Binding SubjectLabel}">
+								</DataGridTextColumn>
 								<DataGridTemplateColumn>
 									<DataGridTemplateColumn.CellTemplate>
 										<DataTemplate>
@@ -136,7 +139,7 @@
 							Margin="5"
 							Content="Загрузить таблицу &quot;Учителя&quot; из сервера"
 							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type Model:Teacher}"
+							CommandParameter="{x:Type DTOModel:DTOTeacher}"
 						/>
 					</Grid>
 				</TabItem>
@@ -157,7 +160,7 @@
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
+								<DataGridTextColumn Header="Учитель" Binding="{Binding TeacherLabel}">
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Телефон" Binding="{Binding PhoneNumber}">
 								</DataGridTextColumn>
@@ -181,7 +184,7 @@
 							Margin="5"
 							Content="Загрузить таблицу &quot;Номера учителей&quot; из сервера"
 							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type Model:TeacherPhone}"
+							CommandParameter="{x:Type DTOModel:DTOTeacherPhone}"
 						/>
 					</Grid>
 				</TabItem>

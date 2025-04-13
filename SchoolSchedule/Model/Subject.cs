@@ -16,14 +16,14 @@ namespace SchoolSchedule.Model
     {
         public Subject()
         {
-            this.Lessons = new HashSet<Lesson>();
-            this.Teachers = new HashSet<Teacher>();
+            this.Lesson = new HashSet<Lesson>();
+            this.SpecialityTeacher = new HashSet<SpecialityTeacher>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
     
-        public virtual ICollection<Lesson> Lessons { get; set; }
-        public virtual ICollection<Teacher> Teachers { get; set; }
+        public virtual ICollection<Lesson> Lesson { get; set; }
+        public virtual ICollection<SpecialityTeacher> SpecialityTeacher { get; set; }
     }
 }

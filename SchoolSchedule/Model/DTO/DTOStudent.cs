@@ -11,8 +11,12 @@ namespace SchoolSchedule.Model.DTO
 	{
 		protected const string UNKNOWN_GROUP = "Неизвестен";
 		public string GroupLabel { get; set; } = UNKNOWN_GROUP;
-		public DTOStudent() : base() { Id = 0; IdGroup = 0; }
-		public DTOStudent(Model.Student student, bool loadLabels=false) : this()
+		public DTOStudent() 
+		{
+			Id = 0;
+			IdGroup = 0; 
+		}
+		public DTOStudent(Model.Student student) : this()
 		{
 			Id = student.Id;
 			IdGroup = student.IdGroup;
@@ -22,8 +26,9 @@ namespace SchoolSchedule.Model.DTO
 			Patronymic = student.Patronymic;
 			Email = student.Email;
 
-			if(loadLabels)
-				LoadGroupLabel();
+			Group = student.Group;
+
+			LoadGroupLabel();
 		}
 		public void LoadAllLabels()
 		{
@@ -31,6 +36,9 @@ namespace SchoolSchedule.Model.DTO
 		}
 		public void LoadGroupLabel()
 		{
+			if (GroupLabel != null)
+				GroupLabel = $"{Group.Year}{Group.Name}";
+
 			try
 			{
 				if(IdGroup==0)
@@ -40,7 +48,7 @@ namespace SchoolSchedule.Model.DTO
 				}
 				using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 				{
-					var groupsList = dataBase.Groups.ToList().Where(el => el.Id == IdGroup);
+					var groupsList = dataBase.Group.ToList().Where(el => el.Id == IdGroup);
 					if (!groupsList.Any())
 					{
 						GroupLabel = UNKNOWN_GROUP;

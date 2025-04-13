@@ -28,13 +28,15 @@ namespace SchoolSchedule.Model
             throw new UnintentionalCodeFirstException();
         }
     
-        public DbSet<Group> Groups { get; set; }
-        public DbSet<Lesson> Lessons { get; set; }
-        public DbSet<Schedule> Schedules { get; set; }
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Subject> Subjects { get; set; }
-        public DbSet<Teacher> Teachers { get; set; }
-        public DbSet<TeacherPhone> TeacherPhones { get; set; }
+        public DbSet<ClassTeacher> ClassTeacher { get; set; }
+        public DbSet<Group> Group { get; set; }
+        public DbSet<Lesson> Lesson { get; set; }
+        public DbSet<Schedule> Schedule { get; set; }
+        public DbSet<SpecialityTeacher> SpecialityTeacher { get; set; }
+        public DbSet<Student> Student { get; set; }
+        public DbSet<Subject> Subject { get; set; }
+        public DbSet<Teacher> Teacher { get; set; }
+        public DbSet<TeacherPhone> TeacherPhone { get; set; }
     
         public virtual ObjectResult<ShowLessonsAtDayForTeacher_Result> ShowLessonsAtDayForTeacher(string surname, string name, string patronymic, Nullable<System.DateTime> date)
         {

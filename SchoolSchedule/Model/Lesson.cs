@@ -16,7 +16,7 @@ namespace SchoolSchedule.Model
     {
         public Lesson()
         {
-            this.Schedules = new HashSet<Schedule>();
+            this.Schedule = new HashSet<Schedule>();
         }
     
         public int Id { get; set; }
@@ -26,6 +26,6 @@ namespace SchoolSchedule.Model
     
         public virtual Group Group { get; set; }
         public virtual Subject Subject { get; set; }
-        public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<Schedule> Schedule { get; set; }
     }
 }
