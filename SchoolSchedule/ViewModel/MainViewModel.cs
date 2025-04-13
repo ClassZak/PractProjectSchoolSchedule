@@ -33,9 +33,6 @@ namespace SchoolSchedule.ViewModel
 			{
 				using (var dataBase = new Model.SchoolScheduleEntities())
 				{
-					dataBase.Configuration.ProxyCreationEnabled = false;
-					dataBase.Configuration.LazyLoadingEnabled = false;
-
 					App.Current.Dispatcher.Invoke(() =>
 					{
 						_groups.Clear();
@@ -56,19 +53,19 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _classesTeachers.Add(el); });
 
 					foreach (var el in dataBase.Group.ToList())
-						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+						App.Current.Dispatcher.Invoke(() => { Groups.Add(el); });
 					foreach (var el in dataBase.Lesson.ToList())
-						App.Current.Dispatcher.Invoke(() => { _lessons.Add(new Model.DTO.DTOLesson (el)); });
-					foreach (var el in dataBase.Schedule.ToList())
-						App.Current.Dispatcher.Invoke(() => { _schedules.Add(new Model.DTO.DTOSchedule(el)); });
+						App.Current.Dispatcher.Invoke(() => { Lessons.Add(new Model.DTO.DTOLesson (el)); });
 					foreach (var el in dataBase.Student.ToList())
-						App.Current.Dispatcher.Invoke(() => { _students.Add(new Model.DTO.DTOStudent(el)); });
+						App.Current.Dispatcher.Invoke(() => { Students.Add(new Model.DTO.DTOStudent(el)); });
 					foreach (var el in dataBase.Subject.ToList())
-						App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+						App.Current.Dispatcher.Invoke(() => { Subjects.Add(el); });
 					foreach (var el in dataBase.Teacher.ToList())
-						App.Current.Dispatcher.Invoke(() => { _teachers.Add(new Model.DTO.DTOTeacher(el)); });
+						App.Current.Dispatcher.Invoke(() => { Teachers.Add(new Model.DTO.DTOTeacher(el)); });
 					foreach (var el in dataBase.TeacherPhone.ToList())
-						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(new Model.DTO.DTOTeacherPhone(el)); });
+						App.Current.Dispatcher.Invoke(() => { TeacherPhones.Add(new Model.DTO.DTOTeacherPhone(el)); });
+					foreach (var el in dataBase.Schedule.ToList())
+						App.Current.Dispatcher.Invoke(() => { Schedules.Add(new Model.DTO.DTOSchedule(el)); });
 				}
 			}
 			// Для того, чтобы не было ошибки в xaml

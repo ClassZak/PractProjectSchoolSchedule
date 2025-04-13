@@ -10,13 +10,13 @@ namespace SchoolSchedule.Model.DTO
 	public class DTOSchedule : Model.Schedule, IDTO
 	{
 		// LessonLabels
-		public string Subject{ get { return Lesson?.Subject?.Name; } }
-		public string Group{ get { return $"{Lesson?.Group?.Year}{Lesson?.Group?.Name}"; } }
-		public int Number{ get { return Lesson?.Number?? 0; }}
+		public string Subject{ set { } get { return $"{Lesson?.Subject?.Name}"; } }
+		public string Group{ set { } get { return $"{Lesson?.Group?.Year}{Lesson?.Group?.Name}"; } }
+		public int Number{ set { } get { return Lesson?.Number?? 0; }}
 		// TeacherLabels
-		public string Surname { get { return Teacher?.Surname; } }
-		public string Name{ get { return Teacher?.Name; } }
-		public string Patronymic { get { return Teacher?.Patronymic; } }
+		public string Surname { set { } get { return Teacher?.Surname; } }
+		public string Name{ set { } get { return Teacher?.Name; } }
+		public string Patronymic { set { } get { return Teacher?.Patronymic; } }
 
 		public DTOSchedule() 
 		{
@@ -37,12 +37,40 @@ namespace SchoolSchedule.Model.DTO
 			LoadAllLabels();
 		}
 
+
+		void ReloadLesson()
+		{
+			try 
+			{
+				using (var dataBase = new SchoolScheduleEntities())
+				{
+					if (Lesson == null)
+					{
+						var list = dataBase.Lesson.ToList().Where(el => el.Id == IdLesson);
+						var first = list.First();
+						if (first != null)
+							Lesson = first;
+					}
+					if(Lesson!=null)
+					{
+						if(Lesson.Group == null)
+						{
+							var list = dataBase.Group.ToList().Where(el => el.Id == Lesson.IdGroup);
+							var first = list.First();
+							if (first != null)
+								Lesson.Group=first;
+						}
+					}
+				}
+			}
+			catch (Exception) 
+			{ }
+		}
+
 		public void LoadLessonLabels()
 		{
 			if (Lesson != null)
-			{
 				return;
-			}
 			if (IdLesson != 0)
 			{
 				try
@@ -73,10 +101,6 @@ namespace SchoolSchedule.Model.DTO
 		}
 		public void LoadTeacherLabels() 
 		{
-			if (Teacher != null)
-			{
-				return;
-			}
 			if (IdTeacher != 0)
 			{
 				try
