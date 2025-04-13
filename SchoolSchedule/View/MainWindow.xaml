@@ -13,11 +13,6 @@
 		MinWidth="500"
 		MinHeight="350"
 		>
-	<Window.Resources>
-		<Style TargetType="DataGrid">
-			<Setter Property="Background" Value="#ccc"/>
-		</Style>
-	</Window.Resources>
 	<Grid>
 		<Grid.DataContext>
 			<ViewModel:MainViewModel/>
@@ -36,6 +31,8 @@
 					<MenuItem Header="Загрузить таблицу &quot;Классы&quot; из сервера"			Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Group}"			/>
 					<MenuItem Header="Загрузить таблицу &quot;Уроки&quot; из сервера"			Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Lesson}"		/>
 					<MenuItem Header="Загрузить таблицу &quot;Расписание&quot; из сервера"		Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Schedule}"		/>
+					<Separator/>
+					<MenuItem Header="Загрузить все таблицы из сервера"							Command="{Binding UpdateDataAsync}"/>
 				</MenuItem>
 			</MenuItem>
 		</Menu>
@@ -52,6 +49,15 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
 								</DataGridTextColumn>
@@ -63,6 +69,19 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button
@@ -81,6 +100,15 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Teachers}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}">
 								</DataGridTextColumn>
@@ -88,6 +116,19 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button
@@ -106,11 +147,33 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TeacherPhones}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Учитель" Binding="{Binding IdTeacher}">
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Телефон" Binding="{Binding PhoneNumber}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button
@@ -129,9 +192,31 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Название" Binding="{Binding Name}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button
@@ -150,11 +235,33 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Groups}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Год" Binding="{Binding Year}">
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Группа" Binding="{Binding Name}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button 
@@ -173,6 +280,15 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Lessons}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Класс" Binding="{Binding IdGroup}">
 								</DataGridTextColumn>
@@ -180,6 +296,19 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Номер урока" Binding="{Binding Number}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button
@@ -198,6 +327,15 @@
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Schedules}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+										Header="Удалить"
+										Command="{Binding DeleteCommand}"
+										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+									/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Урок" Binding="{Binding IdLesson}">
 								</DataGridTextColumn>
@@ -209,6 +347,19 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Header="Дата проведения" Binding="{Binding Date}">
 								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Button
+												Content="Удалить"
+												Command=
+												"{Binding DataContext.DeleteCommand, 
+												RelativeSource={RelativeSource AncestorType=DataGrid}}"
+												CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Button 

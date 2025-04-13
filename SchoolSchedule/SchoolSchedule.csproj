@@ -72,6 +72,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\DTO\IDTO.cs" />
+    <Compile Include="Model\DTO\Student.cs" />
     <Compile Include="Model\Group.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>

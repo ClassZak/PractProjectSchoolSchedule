@@ -7,11 +7,14 @@ using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace SchoolSchedule.ViewModel
 {
 	public class MainViewModel : ABaseViewModel
 	{
+		bool [] _changedTables=new bool [8];
 		public MainViewModel()
 		{
 			_groups			= new ObservableCollection<Model.Group>			(new List<Model.Group>			());
@@ -24,38 +27,61 @@ namespace SchoolSchedule.ViewModel
 			LoadData();
 		}
 
-		private void LoadData()
+		private void LoadData() 
 		{
-			using(var dataBase=new Model.SchoolScheduleEntities())
+			try
 			{
-				dataBase.Configuration.ProxyCreationEnabled = false;
-				dataBase.Configuration.LazyLoadingEnabled = false;
-
-				App.Current.Dispatcher.Invoke(() =>
+				using (var dataBase = new Model.SchoolScheduleEntities())
 				{
-					_groups.Clear();
-					_lessons.Clear();
-					_schedules.Clear();
-					_students.Clear();
-					_subjects.Clear();
-					_teachers.Clear();
-					_teacherPhones.Clear();
-				});
+					dataBase.Configuration.ProxyCreationEnabled = false;
+					dataBase.Configuration.LazyLoadingEnabled = false;
 
-				foreach (var el in dataBase.Groups.ToList())
-					App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
-				foreach (var el in dataBase.Lessons.ToList())
-					App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
-				foreach (var el in dataBase.Schedules.ToList())
-					App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
-				foreach(var el in dataBase.Students.ToList())
-					App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
-				foreach (var el in dataBase.Subjects.ToList())
-					App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
-				foreach(var el in dataBase.Teachers.ToList())
-					App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
-				foreach (var el in dataBase.TeacherPhones.ToList())
-					App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
+					App.Current.Dispatcher.Invoke(() =>
+					{
+						_groups.Clear();
+						_lessons.Clear();
+						_schedules.Clear();
+						_students.Clear();
+						_subjects.Clear();
+						_teachers.Clear();
+						_teacherPhones.Clear();
+					});
+
+					foreach (var el in dataBase.Groups.ToList())
+						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+					foreach (var el in dataBase.Lessons.ToList())
+						App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
+					foreach (var el in dataBase.Schedules.ToList())
+						App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
+					foreach (var el in dataBase.Students.ToList())
+						App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
+					foreach (var el in dataBase.Subjects.ToList())
+						App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+					foreach (var el in dataBase.Teachers.ToList())
+						App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
+					foreach (var el in dataBase.TeacherPhones.ToList())
+						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
+				}
+			}
+			// Для того, чтобы не было ошибки в xaml
+			catch (System.InvalidOperationException)
+			{ }
+			catch (System.Data.EntityException ex)
+			{
+				Task.Run(() =>
+				{ 
+					MessageBox.Show
+					(
+						ex.InnerException != null ? ex.InnerException.Message : ex.Message, 
+						"Ошибка базы данных",
+						MessageBoxButton.OK,
+						MessageBoxImage.Stop
+					);
+				});
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message,"Ошибка базы данных",MessageBoxButton.OK,MessageBoxImage.Stop);
 			}
 		}
 		private async void LoadDataAsync()
@@ -68,14 +94,34 @@ namespace SchoolSchedule.ViewModel
 
 		protected void UpdateList<T>(ObservableCollection<T> collection) where T : class
 		{
-			using (var dataBase = new Model.SchoolScheduleEntities())
+			try
 			{
-				List<T> elements = dataBase.Set<T>().ToList();
+				using (var dataBase = new Model.SchoolScheduleEntities())
+				{
+					List<T> elements = dataBase.Set<T>().ToList();
 
-				App.Current.Dispatcher.Invoke(() => { collection.Clear(); });
-				foreach (var el in elements)
-					App.Current.Dispatcher.Invoke(() => { collection.Add(el); });
+					App.Current.Dispatcher.Invoke(() => { collection.Clear(); });
+					foreach (var el in elements)
+						App.Current.Dispatcher.Invoke(() => { collection.Add(el); });
+				}
 			}
+			catch(Exception ex)
+			{	
+				MessageBox.Show(ex.Message,"Ошибка базы данных",MessageBoxButton.OK,MessageBoxImage.Stop);
+			}
+		}
+
+		protected FieldInfo FindTargetField(Type targetType)
+		{
+			FieldInfo field = null;
+			foreach(var type in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+				if(IsObservableCollection(type.FieldType,out Type elementType) && elementType==targetType)
+				{
+					field = type;
+					break;
+				}
+
+			return field;
 		}
 
 		// Тип аргумента: Type
@@ -84,7 +130,9 @@ namespace SchoolSchedule.ViewModel
 		{
 			get
 			{
-				return _updateData ?? (_updateData = new RelayCommand(
+				return _updateData ??
+				(_updateData = new RelayCommand
+				(
 					param =>
 					{
 						if (!(param is Type targetType))
@@ -95,33 +143,65 @@ namespace SchoolSchedule.ViewModel
 
 						Task.Run(() =>
 						{
-							FieldInfo targetField = null;
-							var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-
-							foreach (var field in fields)
-							{
-								if
-								(
-									IsObservableCollection(field.FieldType, out Type elementType)&& 
-									elementType == targetType
-								)
-								{
-									targetField = field;
-									break;
-								}
-							}
-
+							FieldInfo targetField = FindTargetField(targetType);
 							if (targetField == null)
-								throw new ArgumentException("Коллекция для указанного типа не найдена.");
+								throw new ArgumentException("Коллекция для указанного типа не найдена");
 
 							var collection = (IList)targetField.GetValue(this);
-							var updateMethod = GetType().GetMethod(nameof(UpdateList), BindingFlags.NonPublic | BindingFlags.Instance);
+							var updateMethod =
+							GetType().GetMethod
+							(
+								nameof(UpdateList), BindingFlags.NonPublic | BindingFlags.Instance
+							);
 							var genericMethod = updateMethod.MakeGenericMethod(targetType);
 							genericMethod.Invoke(this, new object[] { collection });
 						});
-					}));
+					}
+				));
 			}
 		}
+		private RelayCommand _deleteCommand;
+		public RelayCommand DeleteCommand
+		{
+			get
+			{
+				return _deleteCommand ??
+				(_deleteCommand = new RelayCommand
+				(
+					param =>
+					{
+						DataGrid dataGridRef = param as DataGrid;
+						IEnumerable collectionRef = dataGridRef.ItemsSource;
+						if (dataGridRef == null)
+							throw new ArgumentException("Неверный аргумент для обновления таблицы с удаляемыми значениями");
+
+						Task.Run(() =>
+						{
+							if (!IsObservableCollection(collectionRef.GetType(), out Type paramType))
+								throw new ArgumentException("Неверный тип аргумента для обновления таблицы с удаляемыми значениями");
+
+							FieldInfo targetField = FindTargetField(paramType);
+
+							if (targetField == null)
+								throw new ArgumentException("Не найдена коллекция для обновления");
+
+							List<object> selectedItems = new List<object>();
+							App.Current.Dispatcher.Invoke(() => 
+							{ 
+								foreach(var el in dataGridRef.SelectedItems)
+									selectedItems.Add(el);
+							});
+
+							var collection = (IList)(targetField.GetValue(this));
+
+							foreach (var el in selectedItems)
+								App.Current.Dispatcher.Invoke(() =>{ collection.Remove(el); });
+						});
+					}
+				));
+			}
+		}
+
 		/// <summary>
 		/// Проверка на принадлежность шаблону ObservableCollection<T>, и возвращает T тип из шаблона
 		/// </summary>
