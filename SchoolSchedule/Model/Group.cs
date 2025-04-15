@@ -9,24 +9,29 @@
 
 namespace SchoolSchedule.Model
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Group
-    {
-        public Group()
-        {
-            this.Lesson = new HashSet<Lesson>();
-            this.Student = new HashSet<Student>();
-            this.Teacher = new HashSet<Teacher>();
-        }
-    
-        public int Id { get; set; }
-        public int Year { get; set; }
-        public string Name { get; set; }
-    
-        public virtual ICollection<Lesson> Lesson { get; set; }
-        public virtual ICollection<Student> Student { get; set; }
-        public virtual ICollection<Teacher> Teacher { get; set; }
-    }
+	using System;
+	using System.Collections.Generic;
+	
+	public partial class Group
+	{
+		public Group()
+		{
+			this.Lesson = new HashSet<Lesson>();
+			this.Student = new HashSet<Student>();
+			this.Teacher = new HashSet<Teacher>();
+		}
+		public Group(int year, string name)
+		{
+			Year = year;
+			Name = name;
+		}
+	
+		public int Id { get; set; }
+		public int Year { get; set; }
+		public string Name { get; set; }
+	
+		public virtual ICollection<Lesson> Lesson { get; set; }
+		public virtual ICollection<Student> Student { get; set; }
+		public virtual ICollection<Teacher> Teacher { get; set; }
+	}
 }

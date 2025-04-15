@@ -351,6 +351,8 @@
 					<MenuItem Header="Загрузить таблицу &quot;Расписание&quot; из сервера"		Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Schedule}"		/>
 					<Separator/>
 					<MenuItem Header="Загрузить все таблицы из сервера"							Command="{Binding UpdateDataAsync}"/>
+					<Separator/>
+					<MenuItem Header="Переподключиться к серверу"								Command="{Binding Reconnect}"/>
 				</MenuItem>
 			</MenuItem>
 		</Menu>
@@ -360,15 +362,66 @@
 				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
 			<TabControl>
+				<TabItem Header="Классы">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="80"/>
+						</Grid.ColumnDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOGroup}">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem
+									Header="Удалить"
+									Command="{Binding DeleteCommand}"
+									CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+								/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Год" Binding="{Binding Year}"/>
+								<DataGridTextColumn Header="Группа" Binding="{Binding Name}"/>
+							</DataGrid.Columns>
+							<DataGrid.RowStyle>
+								<Style TargetType="DataGridRow">
+									<Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+								</Style>
+							</DataGrid.RowStyle>
+						</DataGrid>
+						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<StackPanel>
+								<Button Margin="0,5,0,0" Content="Добавить"  Command="{Binding Insert}" CommandParameter="{x:Type Model:Group}"/>
+								<Button Margin="0,5,0,0" Content="Изменить"/>
+								<Button Margin="0,5,0,0" Content="Удалить"/>
+							</StackPanel>
+						</Grid>
+						<Button 
+						Grid.Row="1" 
+						Margin="5" 
+						Content="Загрузить таблицу &quot;Классы&quot; из сервера"
+						Command="{Binding UpdateDataAsync}"
+						CommandParameter="{x:Type Model:Group}"
+					/>
+					</Grid>
+				</TabItem>
 				<TabItem Header="Ученики">
 					<Grid>
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="80"/>
+						</Grid.ColumnDefinitions>
 						<DataGrid
 							AutoGenerateColumns="False"
 							ItemsSource="{Binding DTOStudents}"
+							IsReadOnly="True"
 							>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
@@ -387,6 +440,13 @@
 								<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}"/>
 							</DataGrid.Columns>
 						</DataGrid>
+						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<StackPanel>
+								<Button Margin="0,5,0,0" Content="Добавить"/>
+								<Button Margin="0,5,0,0" Content="Изменить"/>
+								<Button Margin="0,5,0,0" Content="Удалить"/>
+							</StackPanel>
+						</Grid>
 						<Button
 							Grid.Row="1"
 							Margin="5"
@@ -461,11 +521,15 @@
 				</TabItem>
 				<TabItem Header="Предметы">
 					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="17*"/>
+							<ColumnDefinition Width="312*"/>
+						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}">
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}" Grid.ColumnSpan="2">
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem
@@ -479,7 +543,7 @@
 								<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
 						</DataGrid>
-						<Grid Grid.Row="1">
+						<Grid Grid.ColumnSpan="2" Margin="0,263,0,0" Grid.RowSpan="2">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition/>
 								<ColumnDefinition/>
@@ -498,41 +562,6 @@
 								CommandParameter="{x:Type Model:Subject}"
 							/>
 						</Grid>
-					</Grid>
-				</TabItem>
-				<TabItem Header="Классы">
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition Height="30"/>
-						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOGroup}">
-							<DataGrid.ContextMenu>
-								<ContextMenu>
-									<MenuItem
-										Header="Удалить"
-										Command="{Binding DeleteCommand}"
-										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-									/>
-								</ContextMenu>
-							</DataGrid.ContextMenu>
-							<DataGrid.Columns>
-								<DataGridTextColumn Header="Год" Binding="{Binding Year}"/>
-								<DataGridTextColumn Header="Группа" Binding="{Binding Name}"/>
-							</DataGrid.Columns>
-							<DataGrid.RowStyle>
-								<Style TargetType="DataGridRow">
-									<Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
-								</Style>
-							</DataGrid.RowStyle>
-						</DataGrid>
-						<Button 
-							Grid.Row="1" 
-							Margin="5" 
-							Content="Загрузить таблицу &quot;Классы&quot; из сервера"
-							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type Model:Group}"
-						/>
 					</Grid>
 				</TabItem>
 				<TabItem Header="Уроки">

@@ -1,4 +1,5 @@
 ﻿using SchoolSchedule.Model.DTO;
+using SchoolSchedule.View;
 using SchoolSchedule.ViewModel.Comands;
 using SchoolSchedule.ViewModel.Table;
 using System;
@@ -16,6 +17,7 @@ namespace SchoolSchedule.ViewModel
 {
 	public class MainViewModel : ABaseViewModel
 	{
+		private Model.SchoolScheduleEntities _dataBase=new Model.SchoolScheduleEntities();
 		public MainViewModel()
 		{
 			_groups			= new List<Model.Group>			(new List<Model.Group>			());
@@ -32,47 +34,44 @@ namespace SchoolSchedule.ViewModel
 		{
 			try
 			{
-				using (var dataBase = new Model.SchoolScheduleEntities())
+				App.Current.Dispatcher.Invoke(() =>
 				{
-					App.Current.Dispatcher.Invoke(() =>
-					{
-						_groups.Clear();
-						_lessons.Clear();
-						_schedules.Clear();
-						_students.Clear();
-						_subjects.Clear();
-						_teachers.Clear();
-						_teacherPhones.Clear();
+					_groups.Clear();
+					_lessons.Clear();
+					_schedules.Clear();
+					_students.Clear();
+					_subjects.Clear();
+					_teachers.Clear();
+					_teacherPhones.Clear();
 
 
-						_studentTable.Clear();
-						_groupTable.Clear();
+					_studentTable.Clear();
+					_groupTable.Clear();
+				});
+
+				foreach (var el in _dataBase.Group.ToList())
+					App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+				foreach (var el in _dataBase.Lesson.ToList())
+					App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
+				foreach (var el in _dataBase.Schedule.ToList())
+					App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
+				foreach (var el in _dataBase.Student.ToList())
+					App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
+				foreach (var el in _dataBase.Subject.ToList())
+					App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+				foreach (var el in _dataBase.Teacher.ToList())
+					App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
+				foreach (var el in _dataBase.TeacherPhone.ToList())
+					App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
+
+				foreach (var el in _students)
+					App.Current.Dispatcher.Invoke(() => {
+						_studentTable.Entries.Add(new DTOStudent(el));
 					});
-
-					foreach (var el in dataBase.Group.ToList())
-						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
-					foreach (var el in dataBase.Lesson.ToList())
-						App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
-					foreach (var el in dataBase.Schedule.ToList())
-						App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
-					foreach (var el in dataBase.Student.ToList())
-						App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
-					foreach (var el in dataBase.Subject.ToList())
-						App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
-					foreach (var el in dataBase.Teacher.ToList())
-						App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
-					foreach (var el in dataBase.TeacherPhone.ToList())
-						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
-
-					foreach (var el in _students)
-						App.Current.Dispatcher.Invoke(() => {
-							_studentTable.Entries.Add(new DTOStudent(el));
-						});
-					foreach (var el in _groups)
-						App.Current.Dispatcher.Invoke(() => {
-							_groupTable.Entries.Add(new DTOGroup(el));
-						});
-				}
+				foreach (var el in _groups)
+					App.Current.Dispatcher.Invoke(() => {
+						_groupTable.Entries.Add(new DTOGroup(el));
+					});
 			}
 			// Для того, чтобы не было ошибки в xaml
 			catch (System.InvalidOperationException)
@@ -154,23 +153,33 @@ namespace SchoolSchedule.ViewModel
 
 						Task.Run(() =>
 						{
-							FieldInfo targetField = FindTargetField(targetType);
-							if (targetField == null)
-								throw new ArgumentException("Коллекция для указанного типа не найдена");
+							if (targetType.Name == typeof(Model.Group).Name)
+							{
+								_groups.Clear();
+								foreach (var el in _dataBase.Group.ToList())
+									App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+								foreach (var el in _dataBase.Group.ToList())
+									App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
+							}
+							if (targetType.Name == typeof(Model.Student).Name)
+							{
+								_updateData.Execute(typeof(Model.Group));
+								_students.Clear();
+								foreach(var el in _dataBase.Student.ToList())
+									App.Current.Dispatcher.Invoke(() => {_students.Add(el); });
 
-							var collection = (IList)targetField.GetValue(this);
-							var updateMethod =
-							GetType().GetMethod
-							(
-								nameof(UpdateList), BindingFlags.NonPublic | BindingFlags.Instance
-							);
-							var genericMethod = updateMethod.MakeGenericMethod(targetType);
-							genericMethod.Invoke(this, new object[] { collection });
+								_studentTable.Clear();
+								foreach (var el in _students)
+									App.Current.Dispatcher.Invoke(() => {
+										_studentTable.Entries.Add(new DTOStudent(el));
+									});
+							}
 						});
 					}
 				));
 			}
 		}
+		// Тип аргумента: Type
 		private RelayCommand _deleteCommand;
 		public RelayCommand DeleteCommand
 		{
@@ -208,6 +217,78 @@ namespace SchoolSchedule.ViewModel
 							foreach (var el in selectedItems)
 								App.Current.Dispatcher.Invoke(() =>{ collection.Remove(el); });
 						});
+					}
+				));
+			}
+		}
+		// Тип аргумента: Type
+		private RelayCommand _insert;
+		public RelayCommand Insert
+		{
+			get
+			{
+				return _insert ?? 
+				( _insert= new RelayCommand(
+					param=> 
+					{
+						try
+						{
+							if (!(param is Type targetType))
+								throw new ArgumentException("Выбран неверный тип аргумента");
+
+							if (targetType.Name == typeof(Model.Group).Name)
+							{
+								GroupAddWindow groupAddWindow = new GroupAddWindow(_groupTable.Entries);
+								groupAddWindow.ShowDialog();
+
+								if (groupAddWindow.dialogResult)
+								{
+									_reconnect.Execute(null);
+									LoadData();
+									_dataBase.Group.Add(new Model.Group(groupAddWindow.NewGroup.ModelRef.Year,groupAddWindow.NewGroup.ModelRef.Name));
+									_dataBase.SaveChanges();
+									_updateData.Execute(typeof(Model.Group));
+								}
+							}
+						}
+						catch (System.Data.EntityException ex)
+						{
+							Task.Run(() =>
+							{
+								MessageBox.Show
+								(
+									ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+									"Ошибка базы данных",
+									MessageBoxButton.OK,
+									MessageBoxImage.Stop
+								);
+							});
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						finally
+						{
+							_reconnect.Execute(null);
+							_updateData.Execute(null);
+						}
+					}
+				));
+			}
+		}
+
+		private RelayCommand _reconnect;
+		public RelayCommand Reconnect
+		{
+			get
+			{
+				return _reconnect ??
+				(_reconnect = new RelayCommand
+				(
+					param =>
+					{
+						_dataBase = new Model.SchoolScheduleEntities();
 					}
 				));
 			}
