@@ -16,6 +16,15 @@
 
 		>
 	<Window.Resources>
+		<ControlTemplate x:Key="ValidationErrorTemplate">
+			<DockPanel>
+				<TextBlock Foreground="Red" 
+                   Text="{Binding ErrorContent}"
+                   DockPanel.Dock="Right"/>
+				<AdornedElementPlaceholder/>
+			</DockPanel>
+		</ControlTemplate>
+
 		<BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />
 		<!--Style and template for the resize control on the DataGridColumnHeader.-->
 		<Style x:Key="ColumnHeaderGripperStyle"
@@ -313,15 +322,8 @@
 		<Style TargetType="Button">
 			<Setter Property="Background">
 				<Setter.Value>
-					<LinearGradientBrush>
-						<LinearGradientBrush.RelativeTransform>
-							<TransformGroup>
-								<ScaleTransform CenterY="0.5" CenterX="0.5"/>
-								<SkewTransform CenterX="0.5" CenterY="0.5"/>
-								<RotateTransform CenterX="0.5" CenterY="0.5" Angle="90"/>
-								<TranslateTransform/>
-							</TransformGroup>
-						</LinearGradientBrush.RelativeTransform>
+					<LinearGradientBrush StartPoint="0,0"
+                                   EndPoint="0,1">
 						<GradientStop Color="{StaticResource ControlLightColor}" Offset="0.997"/>
 						<GradientStop Color="{StaticResource ControlMediumColor}" Offset="0"/>
 					</LinearGradientBrush>
@@ -364,7 +366,10 @@
 							<RowDefinition/>
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}">
+						<DataGrid
+							AutoGenerateColumns="False"
+							ItemsSource="{Binding DTOStudents}"
+							>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem
@@ -387,10 +392,11 @@
 							Margin="5"
 							Content="Загрузить таблицу &quot;Ученики&quot; из сервера"
 							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type DTOModel:DTOStudent}"
+							CommandParameter="{x:Type Model:Student}"
 						/>
 					</Grid>
 				</TabItem>
+
 				<TabItem Header="Учителя">
 					<Grid>
 						<Grid.RowDefinitions>
@@ -419,7 +425,7 @@
 							Margin="5"
 							Content="Загрузить таблицу &quot;Учителя&quot; из сервера"
 							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type DTOModel:DTOTeacher}"
+							CommandParameter="{x:Type Model:Teacher}"
 						/>
 					</Grid>
 				</TabItem>
@@ -449,7 +455,7 @@
 							Margin="5"
 							Content="Загрузить таблицу &quot;Номера учителей&quot; из сервера"
 							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type DTOModel:DTOTeacherPhone}"
+							CommandParameter="{x:Type Model:TeacherPhone}"
 						/>
 					</Grid>
 				</TabItem>
@@ -473,13 +479,25 @@
 								<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
 						</DataGrid>
-						<Button
-							Grid.Row="1"
-							Margin="5"
-							Content="Загрузить таблицу &quot;Предметы&quot; из сервера"
-							Command="{Binding UpdateDataAsync}"
-							CommandParameter="{x:Type Model:Subject}"
-						/>
+						<Grid Grid.Row="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Button
+								Margin="5"
+								Content="Загрузить таблицу &quot;Предметы&quot; из сервера"
+								Command="{Binding UpdateDataAsync}"
+								CommandParameter="{x:Type Model:Subject}"
+							/>
+							<Button
+								Grid.Column="1"
+								Margin="5"
+								Content="Сохранить изменения на сервере"
+								Command="{Binding UpdateDataAsync}"
+								CommandParameter="{x:Type Model:Subject}"
+							/>
+						</Grid>
 					</Grid>
 				</TabItem>
 				<TabItem Header="Классы">
@@ -488,7 +506,7 @@
 							<RowDefinition/>
 							<RowDefinition Height="30"/>
 						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Groups}">
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOGroup}">
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem
@@ -502,6 +520,11 @@
 								<DataGridTextColumn Header="Год" Binding="{Binding Year}"/>
 								<DataGridTextColumn Header="Группа" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
+							<DataGrid.RowStyle>
+								<Style TargetType="DataGridRow">
+									<Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+								</Style>
+							</DataGrid.RowStyle>
 						</DataGrid>
 						<Button 
 							Grid.Row="1" 

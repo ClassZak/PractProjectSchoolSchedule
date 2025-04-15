@@ -6,42 +6,35 @@ using System.Threading.Tasks;
 
 namespace SchoolSchedule.Model.DTO
 {
-	public class DTOTeacher : Model.Teacher, IDTO
+	public class DTOTeacher : ADTO<Model.Teacher>
 	{
 		protected const string UNKNOWN_SUBJECT = "Неизвестен";
 		public string SubjectLabel { get; set; }=UNKNOWN_SUBJECT;
-		public DTOTeacher()
-		{ 
-			Id = 0; 
-		}
-		public DTOTeacher(Model.Teacher other)
+		public DTOTeacher(Model.Teacher other) 
 		{
-			Id = other.Id;
-			Surname = other.Surname;
-			Name = other.Name;
-			Patronymic = other.Patronymic;
+			ModelRef = other;
 
-			SpecialityTeacher = other.SpecialityTeacher;
-			Schedule=other.Schedule;
-			TeacherPhone=other.TeacherPhone;
-
-			LoadAllLabels();
+			LoadSubjectLabel();
 		}
-		protected void LoadSubjectLabel()
+
+		public override bool HasReferenceOfNotExistingObject()
+		{
+			return false;
+		}
+		void LoadSubjectLabel()
 		{
 			StringBuilder stringBuilder = new StringBuilder();
-			foreach (var el in SpecialityTeacher)
+			foreach (var el in ModelRef.Subject)
 			{
-				stringBuilder.Append(el.Subject.Name);
-				if(!ReferenceEquals(el, SpecialityTeacher.ToList().Last()))
+				stringBuilder.Append(el.Name);
+				if (!ReferenceEquals(el, ModelRef.Subject.ToList().Last()))
 					stringBuilder.Append(", ");
 			}
-			string buildedString=stringBuilder.ToString();
-			SubjectLabel = buildedString!=string.Empty ? buildedString : UNKNOWN_SUBJECT;
+			string buildedString = stringBuilder.ToString();
+			SubjectLabel = buildedString != string.Empty ? buildedString : UNKNOWN_SUBJECT;
 		}
-		public void LoadAllLabels()
+		protected override void LoadAllLabels(ref Model.SchoolScheduleEntities dataBase)
 		{
-			LoadSubjectLabel();
 		}
 	}
 }

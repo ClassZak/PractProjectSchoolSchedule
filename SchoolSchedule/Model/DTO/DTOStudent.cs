@@ -7,72 +7,43 @@ using System.Windows;
 
 namespace SchoolSchedule.Model.DTO
 {
-	public class DTOStudent : Model.Student, IDTO
+	public class DTOStudent : ADTO<Model.Student>
 	{
+		public string Surname{ get { return ModelRef.Surname; } set { ModelRef.Surname = value; } }
+		public string Name{ get { return ModelRef.Name; } set { ModelRef.Name = value; } }
+		public string Patronymic{ get { return ModelRef.Patronymic; } set { ModelRef.Patronymic = value; } }
+		public string Email { get { return ModelRef.Email; } set { ModelRef.Email = value; } }
+
+
+
+
 		protected const string UNKNOWN_GROUP = "Неизвестен";
-		public string GroupLabel { get; set; } = UNKNOWN_GROUP;
-		public DTOStudent() 
+
+		public int DTOIdGroup { get; set; } = 0;
+
+		string _groupLabel=UNKNOWN_GROUP;
+		public string GroupLabel { get { return _groupLabel; } set { } }
+
+
+		static int _lastDTOId = 0;
+		public DTOStudent()
 		{
-			Id = 0;
-			IdGroup = 0; 
+			DTOId=++_lastDTOId;
 		}
-		public DTOStudent(Model.Student other) : this()
+		public DTOStudent(Model.Student other) 
 		{
-			Id = other.Id;
-			IdGroup = other.IdGroup;
-
-			Surname = other.Surname;
-			Name = other.Name;
-			Patronymic = other.Patronymic;
-			Email = other.Email;
-
-			Group = other.Group;
-
-			LoadGroupLabel();
+			ModelRef = other;
+			_groupLabel = $"{other.Group.Year}{other.Group.Name}";
 		}
-		public void LoadAllLabels()
+		
+		public override bool HasReferenceOfNotExistingObject()
 		{
-			LoadGroupLabel();
+			return DTOIdGroup != 0;
 		}
-		public void LoadGroupLabel()
+
+		protected override void LoadAllLabels(ref Model.SchoolScheduleEntities dataBase)
 		{
-			if (GroupLabel != null)
-				GroupLabel = $"{Group.Year}{Group.Name}";
-
-			try
-			{
-				if(IdGroup==0)
-				{
-					GroupLabel = UNKNOWN_GROUP;
-					return;
-				}
-				using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-				{
-					var groupsList = dataBase.Group.ToList().Where(el => el.Id == IdGroup);
-					if (!groupsList.Any())
-					{
-						GroupLabel = UNKNOWN_GROUP;
-						return;
-					}
-					var group= groupsList.First();
-
-					GroupLabel = $"{group.Year}{group.Name}";
-				}
-			}
-			catch (System.Data.EntityException ex)
-			{
-				MessageBox.Show
-				(
-					ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-					"Ошибка базы данных",
-					MessageBoxButton.OK,
-					MessageBoxImage.Stop
-				);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-			}
+			
 		}
 	}
 }

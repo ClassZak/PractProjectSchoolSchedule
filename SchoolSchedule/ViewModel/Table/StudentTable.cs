@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolSchedule.Model.DTO
+namespace SchoolSchedule.ViewModel.Table
 {
-	public interface IDTO
+	public class StudentTable : ATable<Model.DTO.DTOStudent>
 	{
-		void LoadAllLabels();
+		
 	}
 }

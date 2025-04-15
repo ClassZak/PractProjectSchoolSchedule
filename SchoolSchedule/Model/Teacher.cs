@@ -16,20 +16,20 @@ namespace SchoolSchedule.Model
     {
         public Teacher()
         {
-            this.ClassTeacher = new HashSet<ClassTeacher>();
             this.Schedule = new HashSet<Schedule>();
-            this.SpecialityTeacher = new HashSet<SpecialityTeacher>();
             this.TeacherPhone = new HashSet<TeacherPhone>();
+            this.Group = new HashSet<Group>();
+            this.Subject = new HashSet<Subject>();
         }
-    
+        
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Patronymic { get; set; }
     
-        public virtual ICollection<ClassTeacher> ClassTeacher { get; set; }
         public virtual ICollection<Schedule> Schedule { get; set; }
-        public virtual ICollection<SpecialityTeacher> SpecialityTeacher { get; set; }
         public virtual ICollection<TeacherPhone> TeacherPhone { get; set; }
+        public virtual ICollection<Group> Group { get; set; }
+        public virtual ICollection<Subject> Subject { get; set; }
     }
 }

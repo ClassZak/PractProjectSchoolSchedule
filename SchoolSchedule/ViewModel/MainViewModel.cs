@@ -1,4 +1,6 @@
-﻿using SchoolSchedule.ViewModel.Comands;
+﻿using SchoolSchedule.Model.DTO;
+using SchoolSchedule.ViewModel.Comands;
+using SchoolSchedule.ViewModel.Table;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,16 +16,15 @@ namespace SchoolSchedule.ViewModel
 {
 	public class MainViewModel : ABaseViewModel
 	{
-		bool [] _changedTables=new bool [8];
 		public MainViewModel()
 		{
-			_groups			= new ObservableCollection<Model.Group>			(new List<Model.Group>			());
-			_lessons		= new ObservableCollection<Model.DTO.DTOLesson>		(new List<Model.DTO.DTOLesson>			());
-			_schedules		= new ObservableCollection<Model.DTO.DTOSchedule>		(new List<Model.DTO.DTOSchedule>		());
-			_students		= new ObservableCollection<Model.DTO.DTOStudent>		(new List<Model.DTO.DTOStudent>		());
-			_subjects		= new ObservableCollection<Model.Subject>		(new List<Model.Subject>		());
-			_teachers		= new ObservableCollection<Model.DTO.DTOTeacher>		(new List<Model.DTO.DTOTeacher>		());
-			_teacherPhones	= new ObservableCollection<Model.DTO.DTOTeacherPhone>	(new List<Model.DTO.DTOTeacherPhone>	());
+			_groups			= new List<Model.Group>			(new List<Model.Group>			());
+			_lessons		= new List<Model.Lesson>		(new List<Model.Lesson>			());
+			_schedules		= new List<Model.Schedule>		(new List<Model.Schedule>		());
+			_students		= new List<Model.Student>		(new List<Model.Student>		());
+			_subjects		= new List<Model.Subject>		(new List<Model.Subject>		());
+			_teachers		= new List<Model.Teacher>		(new List<Model.Teacher>		());
+			_teacherPhones	= new List<Model.TeacherPhone>	(new List<Model.TeacherPhone>	());
 			LoadData();
 		}
 
@@ -43,29 +44,34 @@ namespace SchoolSchedule.ViewModel
 						_teachers.Clear();
 						_teacherPhones.Clear();
 
-						_classesTeachers.Clear();
-						_specialityTeachers.Clear();
+
+						_studentTable.Clear();
+						_groupTable.Clear();
 					});
 
-					foreach (var el in dataBase.SpecialityTeacher.ToList())
-						App.Current.Dispatcher.Invoke(() => { _specialityTeachers.Add(el); });
-					foreach (var el in dataBase.ClassTeacher.ToList())
-						App.Current.Dispatcher.Invoke(() => { _classesTeachers.Add(el); });
-
 					foreach (var el in dataBase.Group.ToList())
-						App.Current.Dispatcher.Invoke(() => { Groups.Add(el); });
+						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
 					foreach (var el in dataBase.Lesson.ToList())
-						App.Current.Dispatcher.Invoke(() => { Lessons.Add(new Model.DTO.DTOLesson (el)); });
-					foreach (var el in dataBase.Student.ToList())
-						App.Current.Dispatcher.Invoke(() => { Students.Add(new Model.DTO.DTOStudent(el)); });
-					foreach (var el in dataBase.Subject.ToList())
-						App.Current.Dispatcher.Invoke(() => { Subjects.Add(el); });
-					foreach (var el in dataBase.Teacher.ToList())
-						App.Current.Dispatcher.Invoke(() => { Teachers.Add(new Model.DTO.DTOTeacher(el)); });
-					foreach (var el in dataBase.TeacherPhone.ToList())
-						App.Current.Dispatcher.Invoke(() => { TeacherPhones.Add(new Model.DTO.DTOTeacherPhone(el)); });
+						App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
 					foreach (var el in dataBase.Schedule.ToList())
-						App.Current.Dispatcher.Invoke(() => { Schedules.Add(new Model.DTO.DTOSchedule(el)); });
+						App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
+					foreach (var el in dataBase.Student.ToList())
+						App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
+					foreach (var el in dataBase.Subject.ToList())
+						App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+					foreach (var el in dataBase.Teacher.ToList())
+						App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
+					foreach (var el in dataBase.TeacherPhone.ToList())
+						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
+
+					foreach (var el in _students)
+						App.Current.Dispatcher.Invoke(() => {
+							_studentTable.Entries.Add(new DTOStudent(el));
+						});
+					foreach (var el in _groups)
+						App.Current.Dispatcher.Invoke(() => {
+							_groupTable.Entries.Add(new DTOGroup(el));
+						});
 				}
 			}
 			// Для того, чтобы не было ошибки в xaml
@@ -228,38 +234,43 @@ namespace SchoolSchedule.ViewModel
 		}
 
 
-		private ObservableCollection<Model.Group> _groups;
-		public ObservableCollection<Model.Group> Groups
-		{ get {return _groups;}set {SetPropertyChanged(ref _groups, value);} }
+		private List<Model.Group> _groups;
+		public List<Model.Group> Groups
+		{ get { return _groups; } set { SetPropertyChanged(ref _groups, value); } }
 
-		private ObservableCollection<Model.DTO.DTOLesson> _lessons;
-		public ObservableCollection<Model.DTO.DTOLesson> Lessons
+		private List<Model.Lesson> _lessons;
+		public List<Model.Lesson> Lessons
 		{ get { return _lessons; } set { SetPropertyChanged(ref _lessons, value); } }
 
-		private ObservableCollection<Model.DTO.DTOSchedule> _schedules;
-		public ObservableCollection<Model.DTO.DTOSchedule> Schedules
+		private List<Model.Schedule> _schedules;
+		public List<Model.Schedule> Schedules
 		{ get { return _schedules; } set { SetPropertyChanged(ref _schedules, value); } }
 
-		private ObservableCollection<Model.DTO.DTOStudent> _students;
-		public ObservableCollection<Model.DTO.DTOStudent> Students
+		private List<Model.Student> _students;
+		public List<Model.Student> Students
 		{ get { return _students; } set { SetPropertyChanged(ref _students, value); } }
 
-		private ObservableCollection<Model.Subject> _subjects;
-		public ObservableCollection<Model.Subject> Subjects
+		private List<Model.Subject> _subjects;
+		public List<Model.Subject> Subjects
 		{ get { return _subjects; } set { SetPropertyChanged(ref _subjects, value); } }
 
-		private ObservableCollection<Model.DTO.DTOTeacher> _teachers;
-		public ObservableCollection<Model.DTO.DTOTeacher> Teachers
+		private List<Model.Teacher> _teachers;
+		public List<Model.Teacher> Teachers
 		{ get { return _teachers; } set { SetPropertyChanged(ref _teachers, value); } }
 
-		private ObservableCollection<Model.DTO.DTOTeacherPhone> _teacherPhones;
-		public ObservableCollection<Model.DTO.DTOTeacherPhone> TeacherPhones
+		private List<Model.TeacherPhone> _teacherPhones;
+		public List<Model.TeacherPhone> TeacherPhones
 		{ get { return _teacherPhones; } set { SetPropertyChanged(ref _teacherPhones, value); } }
 
 
 
 
-		private List<Model.SpecialityTeacher> _specialityTeachers=new List<Model.SpecialityTeacher>();
-		private List<Model.ClassTeacher> _classesTeachers=new List<Model.ClassTeacher>();
-	}
+		private StudentTable _studentTable=new StudentTable();
+		public ObservableCollection<DTOStudent> DTOStudents
+		{get { return _studentTable.Entries; } set { OnPropertyChanged(nameof(DTOStudents)); _studentTable.Entries=value; }}
+
+		private GroupTable _groupTable=new GroupTable();
+		public ObservableCollection<DTOGroup> DTOGroup
+		{get { return _groupTable.Entries; } set { OnPropertyChanged(nameof(DTOGroup)); _groupTable.Entries=value; }}
+ 	}
 }

@@ -260,52 +260,52 @@ GO
 
 
 INSERT INTO Student ([Name], Surname, Patronymic, IdGroup, Email) VALUES 
-('Иван', 'Свофорд', 'Кузьмич', 1, 'zvzov@mail.ru')
-('Сигма', 'Сигма', 'Сигманович', 5, '228777XXXzxcSigma@yandex.ru')
+('Иван', 'Свофорд', 'Кузьмич', 1, 'zvzov@mail.ru'),
+('Сигма', 'Сигма', 'Сигманович', 5, '228777XXXzxcSigma@yandex.ru'),
 ('Гой', 'Путин', 'Петрович', 3, NULL)
 GO
 
 
 INSERT INTO Subject ([Name]) VALUES 
-('Математика')
-('ОБЖ')
-('Информатика')
+('Математика'),
+('ОБЖ'),
+('Информатика'),
 ('Алгебра')
 GO
 
 
 INSERT INTO Lesson (IdSubject, IdGroup, [Number]) VALUES 
-(2, 1, 1)
-(2, 1, 2)
-(2, 1, 3)
-(2, 1, 4)
-(2, 1, 5)
-(2, 1, 6)
+(2, 1, 1),
+(2, 1, 2),
+(2, 1, 3),
+(2, 1, 4),
+(2, 1, 5),
+(2, 1, 6),
 (2, 1, 7)
 GO
 
 INSERT INTO Teacher ([Name], Surname, Patronymic) VALUES 
-('Марина', 'Погорелова', 'Николаевна')
-('Сергей', 'Дегтярёв', 'Николаевич')
-('Владимир', 'Косицкий', 'Александрович')
+('Марина', 'Погорелова', 'Николаевна'),
+('Сергей', 'Дегтярёв', 'Николаевич'),
+('Владимир', 'Косицкий', 'Александрович'),
 ('Иван', 'Грахов', 'Вадимович')
 GO
 
 
 INSERT INTO Schedule (IdLesson, IdTeacher, StartTime, EndTime, [Date]) VALUES 
-(1, 2, CAST('08:00:00' AS Time), CAST('08:40:00' AS Time), CAST('2025-10-04' AS Date))
-(2, 2, CAST('08:50:00' AS Time), CAST('09:30:00' AS Time), CAST('2025-10-04' AS Date))
+(1, 2, CAST('08:00:00' AS Time), CAST('08:40:00' AS Time), CAST('2025-10-04' AS Date)),
+(2, 2, CAST('08:50:00' AS Time), CAST('09:30:00' AS Time), CAST('2025-10-04' AS Date)),
 (3, 2, CAST('09:40:00' AS Time), CAST('10:20:00' AS Time), CAST('2025-10-04' AS Date))
 GO
 
 
 
 
-INSERT INTO  TeacherPhone] (IdTeacher, PhoneNumber) VALUES 
-(1, '+7 123 456-78-90')
-(1, '+7 342 555-77-90')
-(2, '+7 245 222-33-22')
-(3, '+7 890 374-85-82')
+INSERT INTO  TeacherPhone (IdTeacher, PhoneNumber) VALUES 
+(1, '+7 123 456-78-90'),
+(1, '+7 342 555-77-90'),
+(2, '+7 245 222-33-22'),
+(3, '+7 890 374-85-82'),
 (4, '+7 452 214-53-51')
 GO
 

@@ -28,11 +28,9 @@ namespace SchoolSchedule.Model
             throw new UnintentionalCodeFirstException();
         }
     
-        public DbSet<ClassTeacher> ClassTeacher { get; set; }
         public DbSet<Group> Group { get; set; }
         public DbSet<Lesson> Lesson { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
-        public DbSet<SpecialityTeacher> SpecialityTeacher { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Subject> Subject { get; set; }
         public DbSet<Teacher> Teacher { get; set; }
