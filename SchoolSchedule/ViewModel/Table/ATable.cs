@@ -18,26 +18,48 @@ namespace SchoolSchedule.ViewModel.Table
 		}
 		public void CancelChanges()
 		{
-			Entries.Clear();
+			App.Current.Dispatcher.Invoke(() =>
+			{ 
+				Entries.Clear();
 
-			T[] array=new T[PreviousEntries.Count];
-			PreviousEntries.ToList().CopyTo(array);
-			for(int i = 0; i < array.Length; i++)
-				Entries.Add(array[i]);
+				T[] array=new T[PreviousEntries.Count];
+				PreviousEntries.ToList().CopyTo(array);
+				for(int i = 0; i < array.Length; i++)
+					Entries.Add(array[i]);
+			});
 		}
-		public void Clear()
+		public void SaveChanges()
 		{
-			if(Entries.Count > 0)
-			{
+			App.Current.Dispatcher.Invoke(() =>
+			{ 
 				PreviousEntries.Clear();
 
 				T[] array = new T[Entries.Count];
 				Entries.ToList().CopyTo(array);
 				for (int i = 0; i < array.Length; i++)
 					PreviousEntries.Add(array[i]);
-			}
+			});
+		}
+		public void Clear()
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{ 
+				if(Entries.Count > 0)
+					SaveChanges();
 
-			Entries.Clear();
+				Entries.Clear();
+			});
+		}
+		public void Remove(ICollection<T> values)
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{ 
+				if (values.Count == 0)
+					return;
+				SaveChanges();
+				for(int i = 0; i < values.Count; ++i)
+					Entries.Remove(values.ElementAt(i));
+			});
 		}
 
 		bool Changed()

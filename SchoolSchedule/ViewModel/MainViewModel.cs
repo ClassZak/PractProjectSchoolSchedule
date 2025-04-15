@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,24 +20,24 @@ namespace SchoolSchedule.ViewModel
 	public class MainViewModel : ABaseViewModel
 	{
 		public MainWindow MainWindow { get; set; }
-		public ObservableCollection<object> SelectedSubjects { get; set; } = new ObservableCollection<object>();
+		public ObservableCollection<DTOSubject> SelectedSubjects { get; set; } = new ObservableCollection<DTOSubject>();
 		public MainViewModel()
 		{
-			_groups			= new List<Model.Group>			(new List<Model.Group>			());
-			_lessons		= new List<Model.Lesson>		(new List<Model.Lesson>			());
-			_schedules		= new List<Model.Schedule>		(new List<Model.Schedule>		());
-			_students		= new List<Model.Student>		(new List<Model.Student>		());
-			_subjects		= new List<Model.Subject>		(new List<Model.Subject>		());
-			_teachers		= new List<Model.Teacher>		(new List<Model.Teacher>		());
-			_teacherPhones	= new List<Model.TeacherPhone>	(new List<Model.TeacherPhone>	());
+			_groups = new List<Model.Group>(new List<Model.Group>());
+			_lessons = new List<Model.Lesson>(new List<Model.Lesson>());
+			_schedules = new List<Model.Schedule>(new List<Model.Schedule>());
+			_students = new List<Model.Student>(new List<Model.Student>());
+			_subjects = new List<Model.Subject>(new List<Model.Subject>());
+			_teachers = new List<Model.Teacher>(new List<Model.Teacher>());
+			_teacherPhones = new List<Model.TeacherPhone>(new List<Model.TeacherPhone>());
 			LoadData();
 		}
 
-		private void LoadData() 
+		private void LoadData()
 		{
 			try
 			{
-				using(var dataBase=new SchoolSchedule.Model.SchoolScheduleEntities())
+				using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 				{
 
 					App.Current.Dispatcher.Invoke(() =>
@@ -71,11 +72,11 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
 
 					foreach (var el in _students)
-						App.Current.Dispatcher.Invoke(() => {_studentTable.Entries.Add(new DTOStudent(el));});
+						App.Current.Dispatcher.Invoke(() => { _studentTable.Entries.Add(new DTOStudent(el)); });
 					foreach (var el in _groups)
-						App.Current.Dispatcher.Invoke(() => {_groupTable.Entries.Add(new DTOGroup(el));});
+						App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
 					foreach (var el in _subjects)
-						App.Current.Dispatcher.Invoke(() => {_subjectTable.Entries.Add(new DTOSubject(el));});
+						App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
 
 					OnPropertyChanged(nameof(DTOGroup));
 					OnPropertyChanged(nameof(DTOStudents));
@@ -88,10 +89,10 @@ namespace SchoolSchedule.ViewModel
 			catch (System.Data.EntityException ex)
 			{
 				Task.Run(() =>
-				{ 
+				{
 					MessageBox.Show
 					(
-						ex.InnerException != null ? ex.InnerException.Message : ex.Message, 
+						ex.InnerException != null ? ex.InnerException.Message : ex.Message,
 						"Ошибка базы данных",
 						MessageBoxButton.OK,
 						MessageBoxImage.Stop
@@ -100,7 +101,7 @@ namespace SchoolSchedule.ViewModel
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message,"Ошибка базы данных",MessageBoxButton.OK,MessageBoxImage.Stop);
+				MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 			}
 		}
 		private async void LoadDataAsync()
@@ -124,17 +125,17 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { collection.Add(el); });
 				}
 			}
-			catch(Exception ex)
-			{	
-				MessageBox.Show(ex.Message,"Ошибка базы данных",MessageBoxButton.OK,MessageBoxImage.Stop);
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 			}
 		}
 
 		protected FieldInfo FindTargetField(Type targetType)
 		{
 			FieldInfo field = null;
-			foreach(var type in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-				if(IsObservableCollection(type.FieldType,out Type elementType) && elementType==targetType)
+			foreach (var type in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+				if (IsObservableCollection(type.FieldType, out Type elementType) && elementType == targetType)
 				{
 					field = type;
 					break;
@@ -154,73 +155,69 @@ namespace SchoolSchedule.ViewModel
 				return _updateData ??
 				(_updateData = new RelayCommand
 				(
-					param =>
+					async param => await Task.Run(() =>
 					{
 						if (!(param is Type targetType))
 						{
 							LoadDataAsync();
 							return;
 						}
-
-						Task.Run(() =>
+						try
 						{
-							try
+							using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 							{
-								using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+								if (targetType.Name == typeof(Model.Group).Name)
 								{
-									if (targetType.Name == typeof(Model.Group).Name)
-									{
-										_groups.Clear();
-										App.Current.Dispatcher.Invoke(() => {_groupTable.Clear();});
-										foreach (var el in dataBase.Group.ToList())
-											App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
-										foreach (var el in dataBase.Group.ToList())
-											App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
-									}
-									if (targetType.Name == typeof(Model.Student).Name)
-									{
-										_updateData.Execute(typeof(Model.Group));
-										_students.Clear();
-										foreach(var el in dataBase.Student.ToList())
-											App.Current.Dispatcher.Invoke(() => {_students.Add(el); });
+									_groups.Clear();
+									App.Current.Dispatcher.Invoke(() => { _groupTable.Clear(); });
+									foreach (var el in dataBase.Group.ToList())
+										App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+									foreach (var el in dataBase.Group.ToList())
+										App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
+								}
+								if (targetType.Name == typeof(Model.Student).Name)
+								{
+									_updateData.Execute(typeof(Model.Group));
+									_students.Clear();
+									foreach (var el in dataBase.Student.ToList())
+										App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
 
-										_studentTable.Clear();
-										foreach (var el in _students)
-											App.Current.Dispatcher.Invoke(() => {
-												_studentTable.Entries.Add(new DTOStudent(el));
-											});
-									}
-									if(targetType.Name==typeof(Model.Subject).Name)
-									{
-										_subjects.Clear();
-										App.Current.Dispatcher.Invoke(() => {_subjectTable.Clear();});
-										foreach (var el in dataBase.Subject.ToList())
-											App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
-										foreach (var el in dataBase.Subject.ToList())
-											App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
-									}
+									_studentTable.Clear();
+									foreach (var el in _students)
+										App.Current.Dispatcher.Invoke(() => {
+											_studentTable.Entries.Add(new DTOStudent(el));
+										});
+								}
+								if (targetType.Name == typeof(Model.Subject).Name)
+								{
+									_subjects.Clear();
+									App.Current.Dispatcher.Invoke(() => { _subjectTable.Clear(); });
+									foreach (var el in dataBase.Subject.ToList())
+										App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+									foreach (var el in dataBase.Subject.ToList())
+										App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
 								}
 							}
-							catch (System.Data.EntityException ex)
+						}
+						catch (System.Data.EntityException ex)
+						{
+							Task.Run(() =>
 							{
-								Task.Run(() =>
-								{
-									MessageBox.Show
-									(
-										ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-										"Ошибка базы данных",
-										MessageBoxButton.OK,
-										MessageBoxImage.Stop
-									);
-								});
-							}
-							catch (Exception ex)
-							{
-								MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-							}
-						});
+								MessageBox.Show
+								(
+									ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+									"Ошибка базы данных",
+									MessageBoxButton.OK,
+									MessageBoxImage.Stop
+								);
+							});
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
 					}
-				));
+				)));
 			}
 		}
 		#endregion
@@ -234,25 +231,61 @@ namespace SchoolSchedule.ViewModel
 				return _deleteCommand ??
 				(_deleteCommand = new RelayCommand
 				(
-					param =>
+					async param => await Task.Run(async () =>
 					{
-						DataGrid dataGridRef = param as DataGrid;
-						if (dataGridRef == null)
-							throw new ArgumentException("Неверный аргумент для обновления таблицы с удаляемыми значениями");
-						IEnumerable collectionRef = dataGridRef.ItemsSource;
-
-						Task.Run(() =>
+						try
 						{
-							List<object> selectedItems = new List<object>();
-							App.Current.Dispatcher.Invoke(() => 
+							if (param != null)
 							{
-								if(dataGridRef.SelectedItems!=null)
-								foreach(var el in dataGridRef.SelectedItems)
-									selectedItems.Add(el);
-							});
-						});
+								if (ReferenceEquals(param, SelectedSubjects))
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										var teachers = await dataBase.Teacher.ToListAsync();
+										var lessons= await dataBase.Lesson.ToListAsync();
+										foreach (var el in SelectedSubjects)
+										{
+											var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, el.ModelRef.Id);
+											var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, el.ModelRef.Id);
+
+											if (teachersUsesSubject.Count() != 0 || lessonsUsesSubject.Count()!=0)
+												throw new Exception($"Удалите все объекты, ссылающиеся на предмет \"{el.Name}\"");
+
+											var forDelete = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == el.ModelRef.Id);
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											dataBase.Subject.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_subjectTable.Remove((param as ObservableCollection<DTOSubject>));
+									_updateData.Execute(typeof(Model.Subject));
+								}
+							}
+						}
+						catch (System.Data.EntityException ex)
+						{
+							MessageBox.Show
+							(
+								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+								"Ошибка базы данных",
+								MessageBoxButton.OK,
+								MessageBoxImage.Stop
+							);
+							_updateData.Execute(null);
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							_updateData.Execute(null);
+						}
+						finally
+						{
+							
+						}
 					}
-				));
+				)));
 			}
 		}
 		#endregion
@@ -265,91 +298,96 @@ namespace SchoolSchedule.ViewModel
 			{
 				return _insert ??
 				(_insert = new RelayCommand(
-					param =>
+					async param => await Task.Run(async () =>
 					{
-						Task.Run(() =>
+						try
 						{
-							try
+							if (!(param is Type targetType))
+								throw new ArgumentException("Выбран неверный тип аргумента");
+
+							if (targetType.Name == typeof(Model.Group).Name)
 							{
-								if (!(param is Type targetType))
-									throw new ArgumentException("Выбран неверный тип аргумента");
+								GroupAddWindow addingWindow = null;
 
-								if (targetType.Name == typeof(Model.Group).Name)
+								App.Current.Dispatcher.Invoke(() =>
 								{
-									GroupAddWindow addingWindow = null;
-
-									App.Current.Dispatcher.Invoke(() =>
-									{
-										addingWindow = new GroupAddWindow(_groupTable.Entries);
-										addingWindow.Owner=MainWindow;
-										addingWindow.ShowDialog();
-									});
+									addingWindow = new GroupAddWindow(_groupTable.Entries);
+									addingWindow.Owner = MainWindow;
+									addingWindow.ShowDialog();
+								});
 
 
-									if (addingWindow.dialogResult)
-									{
-										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-										{
-											dataBase.Group.Add(addingWindow.NewGroup);
-											dataBase.SaveChanges();
-										}
-										_updateData.Execute(typeof(Model.Group));
-									}
-								}
-								if(targetType.Name== typeof(Model.Subject).Name)
+								if (addingWindow.dialogResult)
 								{
-									SubjectAddWindow addingWindow = null;
-
-									App.Current.Dispatcher.Invoke(() =>
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
-										addingWindow = new SubjectAddWindow(_subjectTable.Entries);
-										addingWindow.Owner=MainWindow;
-										addingWindow.ShowDialog();
-									});
-
-									if(addingWindow.dialogResult)
-									{
-										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-										{
-											dataBase.Subject.Add(addingWindow.NewSubject);
-											dataBase.SaveChanges();
-										}
-										_updateData.Execute(typeof(Model.Subject));
+										dataBase.Group.Add(addingWindow.NewGroup);
+										await dataBase.SaveChangesAsync();
 									}
+									_updateData.Execute(typeof(Model.Group));
 								}
 							}
-							// Для того, чтобы не было ошибки в xaml
-							catch (System.InvalidOperationException)
+							if (targetType.Name == typeof(Model.Subject).Name)
 							{
-								_updateData.Execute(null);
+								SubjectAddWindow addingWindow = null;
+
+								App.Current.Dispatcher.Invoke(() =>
+								{
+									addingWindow = new SubjectAddWindow(_subjectTable.Entries);
+									addingWindow.Owner = MainWindow;
+									addingWindow.ShowDialog();
+								});
+
+								if (addingWindow.dialogResult)
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										dataBase.Subject.Add(addingWindow.NewSubject);
+										dataBase.Subject.Add(addingWindow.NewSubject);
+										dataBase.SaveChanges();
+									}
+									_updateData.Execute(typeof(Model.Subject));
+								}
 							}
-							catch (System.Data.EntityException ex)
-							{
-								MessageBox.Show
-								(
-									ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-									"Ошибка базы данных",
-									MessageBoxButton.OK,
-									MessageBoxImage.Stop
-								);
-								_updateData.Execute(null);
-							}
-							catch (Exception ex)
-							{
-								MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-								_updateData.Execute(null);
-							}
-							finally
-							{
-								
-							}
-						});
+						}
+						catch (System.Data.EntityException ex)
+						{
+							MessageBox.Show
+							(
+								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+								"Ошибка базы данных",
+								MessageBoxButton.OK,
+								MessageBoxImage.Stop
+							);
+							_updateData.Execute(null);
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							_updateData.Execute(null);
+						}
+						finally
+						{
+
+						}
 					}
-				));
+				)));
 			}
 		}
 		#endregion
 		#endregion
+
+		#region Проверки на использование объекта
+		IEnumerable<Model.Teacher> FindTeachersUsesSubject(ref List<Model.Teacher> list, int id) 
+		{
+			return list.Where(t => t.Subject.ToList().Exists(s => s.Id == id)); 
+		}
+		IEnumerable<Model.Lesson> FindLessonsUsesSubject(ref List<Model.Lesson> list, int id) 
+		{ 
+			return list.Where(l => l.Subject.Id == id); 
+		}
+		#endregion
+
 		/// <summary>
 		/// Проверка на принадлежность шаблону ObservableCollection<T>, и возвращает T тип из шаблона
 		/// </summary>
