@@ -29,6 +29,8 @@ namespace SchoolSchedule.ViewModel.Table
 		{
 			if(Entries.Count > 0)
 			{
+				PreviousEntries.Clear();
+
 				T[] array = new T[Entries.Count];
 				Entries.ToList().CopyTo(array);
 				for (int i = 0; i < array.Length; i++)

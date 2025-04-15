@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchoolSchedule.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,8 @@ namespace SchoolSchedule.View
 		public MainWindow()
 		{
 			InitializeComponent();
+			//this.DataContext = new MainViewModel();
+			//(this.DataContext as MainViewModel).MainWindow=this;
 		}
     }
 }

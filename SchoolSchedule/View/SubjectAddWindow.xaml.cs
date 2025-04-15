@@ -1,4 +1,5 @@
-﻿using SchoolSchedule.Model.DTO;
+﻿using SchoolSchedule.Model;
+using SchoolSchedule.Model.DTO;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,11 +26,12 @@ namespace SchoolSchedule.View
 		private SubjectAddWindow()
 		{
 			InitializeComponent();
+			DataContext = NewSubject;
 		}
 
 		public bool dialogResult = false;
 
-		public Model.Subject NewGroup { get; set; }
+		public Model.Subject NewSubject { get; set; } = new Model.Subject();
 
 		private List<DTOSubject> _subjects=new List<DTOSubject>();
 		public SubjectAddWindow(ICollection<DTOSubject> list):this()
@@ -46,41 +48,16 @@ namespace SchoolSchedule.View
 		}
 		private void Button_Click_Add(object sender, RoutedEventArgs e)
 		{
-			byte year;
-			bool parsed= byte.TryParse(YearTextBox.Text, out year);
-			if (!parsed)
+			if(string.IsNullOrWhiteSpace(NewSubject.Name))
 			{
-				MessageBox.Show("Неудалось получить число при вводе", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("Введите название нвого предмета", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
-			if (year<1 || year >11)
+			if (_subjects.Find(x => x.Name == NewSubject.Name) != null)
 			{
-				MessageBox.Show("Год обучения должен быть от 1 до 11 включительно", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show($"Предмет {NewSubject.Name} уже существует", "Ошибка добавления элемента", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
-
-			string nameText=GroupTextBox.Text.ToUpper();
-			if(string.IsNullOrEmpty(nameText))
-			{
-				MessageBox.Show("Введите букву для группы", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
-			if(nameText.Length!=1)
-			{
-				MessageBox.Show("Введите только одну букву для группы", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
-			if(nameText[0]<'А' ||  nameText[0]>'Е')
-			{
-				MessageBox.Show("Введите только одну букву для группы от \'А до \'Е", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
-
-			NewGroup = new Model.Subject
-			{
-				Name = nameText
-			};
-			
 
 			dialogResult = true;
 			Close();

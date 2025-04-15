@@ -134,6 +134,7 @@
     <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Comands\RelayCommand.cs" />
+    <Compile Include="View\DataGridBehavior.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Table\ATable.cs" />
     <Compile Include="ViewModel\Table\GroupTable.cs" />

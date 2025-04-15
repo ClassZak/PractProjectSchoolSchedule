@@ -18,6 +18,8 @@ namespace SchoolSchedule.ViewModel
 {
 	public class MainViewModel : ABaseViewModel
 	{
+		public MainWindow MainWindow { get; set; }
+		public ObservableCollection<object> SelectedSubjects { get; set; } = new ObservableCollection<object>();
 		public MainViewModel()
 		{
 			_groups			= new List<Model.Group>			(new List<Model.Group>			());
@@ -50,6 +52,7 @@ namespace SchoolSchedule.ViewModel
 
 						_studentTable.Clear();
 						_groupTable.Clear();
+						_subjectTable.Clear();
 					});
 
 					foreach (var el in dataBase.Group.ToList())
@@ -68,15 +71,15 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
 
 					foreach (var el in _students)
-						App.Current.Dispatcher.Invoke(() => {
-							_studentTable.Entries.Add(new DTOStudent(el));
-						});
+						App.Current.Dispatcher.Invoke(() => {_studentTable.Entries.Add(new DTOStudent(el));});
 					foreach (var el in _groups)
-						App.Current.Dispatcher.Invoke(() => {
-							_groupTable.Entries.Add(new DTOGroup(el));
-						});
+						App.Current.Dispatcher.Invoke(() => {_groupTable.Entries.Add(new DTOGroup(el));});
+					foreach (var el in _subjects)
+						App.Current.Dispatcher.Invoke(() => {_subjectTable.Entries.Add(new DTOSubject(el));});
 
-
+					OnPropertyChanged(nameof(DTOGroup));
+					OnPropertyChanged(nameof(DTOStudents));
+					OnPropertyChanged(nameof(DTOSubject));
 				}
 			}
 			// Для того, чтобы не было ошибки в xaml
@@ -140,6 +143,8 @@ namespace SchoolSchedule.ViewModel
 			return field;
 		}
 
+		#region Команды
+		#region Команда обновления
 		// Тип аргумента: Type
 		RelayCommand _updateData;
 		public RelayCommand UpdateDataAsync
@@ -166,9 +171,7 @@ namespace SchoolSchedule.ViewModel
 									if (targetType.Name == typeof(Model.Group).Name)
 									{
 										_groups.Clear();
-										App.Current.Dispatcher.Invoke(() => {
-											_groupTable.Clear();
-										});
+										App.Current.Dispatcher.Invoke(() => {_groupTable.Clear();});
 										foreach (var el in dataBase.Group.ToList())
 											App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
 										foreach (var el in dataBase.Group.ToList())
@@ -186,6 +189,15 @@ namespace SchoolSchedule.ViewModel
 											App.Current.Dispatcher.Invoke(() => {
 												_studentTable.Entries.Add(new DTOStudent(el));
 											});
+									}
+									if(targetType.Name==typeof(Model.Subject).Name)
+									{
+										_subjects.Clear();
+										App.Current.Dispatcher.Invoke(() => {_subjectTable.Clear();});
+										foreach (var el in dataBase.Subject.ToList())
+											App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+										foreach (var el in dataBase.Subject.ToList())
+											App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
 									}
 								}
 							}
@@ -211,6 +223,8 @@ namespace SchoolSchedule.ViewModel
 				));
 			}
 		}
+		#endregion
+		#region Команда удаления
 		// Тип аргумента: Type
 		private RelayCommand _deleteCommand;
 		public RelayCommand DeleteCommand
@@ -223,48 +237,38 @@ namespace SchoolSchedule.ViewModel
 					param =>
 					{
 						DataGrid dataGridRef = param as DataGrid;
-						IEnumerable collectionRef = dataGridRef.ItemsSource;
 						if (dataGridRef == null)
 							throw new ArgumentException("Неверный аргумент для обновления таблицы с удаляемыми значениями");
+						IEnumerable collectionRef = dataGridRef.ItemsSource;
 
 						Task.Run(() =>
 						{
-							if (!IsObservableCollection(collectionRef.GetType(), out Type paramType))
-								throw new ArgumentException("Неверный тип аргумента для обновления таблицы с удаляемыми значениями");
-
-							FieldInfo targetField = FindTargetField(paramType);
-
-							if (targetField == null)
-								throw new ArgumentException("Не найдена коллекция для обновления");
-
 							List<object> selectedItems = new List<object>();
 							App.Current.Dispatcher.Invoke(() => 
-							{ 
+							{
+								if(dataGridRef.SelectedItems!=null)
 								foreach(var el in dataGridRef.SelectedItems)
 									selectedItems.Add(el);
 							});
-
-							var collection = (IList)(targetField.GetValue(this));
-
-							foreach (var el in selectedItems)
-								App.Current.Dispatcher.Invoke(() =>{ collection.Remove(el); });
 						});
 					}
 				));
 			}
 		}
+		#endregion
+		#region Команда добавления
 		// Тип аргумента: Type
 		private RelayCommand _insert;
 		public RelayCommand Insert
 		{
 			get
 			{
-				return _insert ?? 
-				( _insert= new RelayCommand(
-					param=> 
+				return _insert ??
+				(_insert = new RelayCommand(
+					param =>
 					{
 						Task.Run(() =>
-						{ 
+						{
 							try
 							{
 								if (!(param is Type targetType))
@@ -272,30 +276,53 @@ namespace SchoolSchedule.ViewModel
 
 								if (targetType.Name == typeof(Model.Group).Name)
 								{
-									GroupAddWindow groupAddWindow=null;
+									GroupAddWindow addingWindow = null;
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										groupAddWindow = new GroupAddWindow(_groupTable.Entries);
-										groupAddWindow.ShowDialog();
+										addingWindow = new GroupAddWindow(_groupTable.Entries);
+										addingWindow.Owner=MainWindow;
+										addingWindow.ShowDialog();
 									});
 
 
-									if (groupAddWindow.dialogResult)
+									if (addingWindow.dialogResult)
 									{
 										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 										{
-											// Принудительно сообщаем, что объект новый.
-											dataBase.Group.Add(groupAddWindow.NewGroup);
+											dataBase.Group.Add(addingWindow.NewGroup);
 											dataBase.SaveChanges();
 										}
 										_updateData.Execute(typeof(Model.Group));
 									}
 								}
+								if(targetType.Name== typeof(Model.Subject).Name)
+								{
+									SubjectAddWindow addingWindow = null;
+
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new SubjectAddWindow(_subjectTable.Entries);
+										addingWindow.Owner=MainWindow;
+										addingWindow.ShowDialog();
+									});
+
+									if(addingWindow.dialogResult)
+									{
+										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+										{
+											dataBase.Subject.Add(addingWindow.NewSubject);
+											dataBase.SaveChanges();
+										}
+										_updateData.Execute(typeof(Model.Subject));
+									}
+								}
 							}
 							// Для того, чтобы не было ошибки в xaml
 							catch (System.InvalidOperationException)
-							{ }
+							{
+								_updateData.Execute(null);
+							}
 							catch (System.Data.EntityException ex)
 							{
 								MessageBox.Show
@@ -305,21 +332,24 @@ namespace SchoolSchedule.ViewModel
 									MessageBoxButton.OK,
 									MessageBoxImage.Stop
 								);
+								_updateData.Execute(null);
 							}
 							catch (Exception ex)
 							{
 								MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+								_updateData.Execute(null);
 							}
 							finally
 							{
-								_updateData.Execute(null);
+								
 							}
 						});
 					}
 				));
 			}
 		}
-
+		#endregion
+		#endregion
 		/// <summary>
 		/// Проверка на принадлежность шаблону ObservableCollection<T>, и возвращает T тип из шаблона
 		/// </summary>

@@ -87,24 +87,19 @@
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0"
                            EndPoint="0,1">
-						<GradientStop Color="{StaticResource ControlLightColor}" Offset="0.997"/>
-						<GradientStop Color="{StaticResource ControlMediumColor}" Offset="0"/>
-					</LinearGradientBrush>
-				</Setter.Value>
-			</Setter>
-		</Style>
-		<Style TargetType="Grid">
-			<Setter Property="Background">
-				<Setter.Value>
-					<LinearGradientBrush StartPoint="0,0"
-                           EndPoint="0,1">
-						<GradientStop Color="{StaticResource ControlLightColor}" Offset="0.997"/>
+						<GradientStop Color="{StaticResource ControlLightColor}" Offset="1"/>
 						<GradientStop Color="{StaticResource ControlMediumColor}" Offset="0"/>
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
 		</Style>
 	</Window.Resources>
+	<Window.Background>
+		<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+			<GradientStop Color="{StaticResource ControlLightColor}" Offset="1"/>
+			<GradientStop Color="{StaticResource ControlMediumColor}" Offset="0"/>
+		</LinearGradientBrush>
+	</Window.Background>
 	<UniformGrid Rows="2" Columns="2" Margin="5">
 		<StackPanel Margin="5">
 			<TextBlock Text="Год"/>

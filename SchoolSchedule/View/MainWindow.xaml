@@ -6,6 +6,7 @@
 		xmlns:hc="https://handyorg.github.io/handycontrol"
 		xmlns:local="clr-namespace:SchoolSchedule"
 		xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
+		xmlns:View="clr-namespace:SchoolSchedule.View"
 		xmlns:Model="clr-namespace:SchoolSchedule.Model"
 		xmlns:DTOModel="clr-namespace:SchoolSchedule.Model.DTO"
 		mc:Ignorable="d"
@@ -13,14 +14,16 @@
 		Title="Школьное расписание" Height="400" Width="680"
 		MinWidth="500"
 		MinHeight="350" FontFamily="Arial" WindowStartupLocation="CenterScreen"
-
 		>
+	<Window.DataContext>
+		<ViewModel:MainViewModel/>
+	</Window.DataContext>
 	<Window.Resources>
 		<ControlTemplate x:Key="ValidationErrorTemplate">
 			<DockPanel>
 				<TextBlock Foreground="Red" 
-                   Text="{Binding ErrorContent}"
-                   DockPanel.Dock="Right"/>
+				   Text="{Binding ErrorContent}"
+				   DockPanel.Dock="Right"/>
 				<AdornedElementPlaceholder/>
 			</DockPanel>
 		</ControlTemplate>
@@ -59,43 +62,43 @@
 		</Style>
 		<Style TargetType="{x:Type DataGridColumnHeader}">
 			<Setter Property="VerticalContentAlignment"
-          Value="Center" />
+		  Value="Center" />
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
 						<Grid>
 							<Border x:Name="columnHeaderBorder"
-                  BorderThickness="1"
-                  Padding="3,0,3,0">
+				  BorderThickness="1"
+				  Padding="3,0,3,0">
 								<Border.BorderBrush>
 									<LinearGradientBrush EndPoint="0.5,1"
-                                   StartPoint="0.5,0">
+								   StartPoint="0.5,0">
 										<GradientStop Color="{DynamicResource BorderLightColor}"
-                              Offset="0" />
+							  Offset="0" />
 										<GradientStop Color="{DynamicResource BorderDarkColor}"
-                              Offset="1" />
+							  Offset="1" />
 									</LinearGradientBrush>
 								</Border.BorderBrush>
 								<Border.Background>
 									<LinearGradientBrush EndPoint="0.5,1"
-                                   StartPoint="0.5,0">
+								   StartPoint="0.5,0">
 										<GradientStop Color="{DynamicResource ControlLightColor}"
-                              Offset="0" />
+							  Offset="0" />
 										<GradientStop Color="{DynamicResource ControlMediumColor}"
-                              Offset="1" />
+							  Offset="1" />
 									</LinearGradientBrush>
 								</Border.Background>
 								<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+							  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+							  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
 							</Border>
 
 							<Thumb x:Name="PART_LeftHeaderGripper"
-                 HorizontalAlignment="Left"
-                 Style="{StaticResource ColumnHeaderGripperStyle}" />
+				 HorizontalAlignment="Left"
+				 Style="{StaticResource ColumnHeaderGripperStyle}" />
 							<Thumb x:Name="PART_RightHeaderGripper"
-                 HorizontalAlignment="Right"
-                 Style="{StaticResource ColumnHeaderGripperStyle}" />
+				 HorizontalAlignment="Right"
+				 Style="{StaticResource ColumnHeaderGripperStyle}" />
 						</Grid>
 					</ControlTemplate>
 				</Setter.Value>
@@ -103,11 +106,11 @@
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush EndPoint="0.5,1"
-                           StartPoint="0.5,0">
+						   StartPoint="0.5,0">
 						<GradientStop Color="{DynamicResource ControlLightColor}"
-                      Offset="0" />
+					  Offset="0" />
 						<GradientStop Color="{DynamicResource ControlMediumColor}"
-                      Offset="1" />
+					  Offset="1" />
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -156,29 +159,29 @@
 		<Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
 
 		<LinearGradientBrush x:Key="MenuPopupBrush"
-                     EndPoint="0.5,1"
-                     StartPoint="0.5,0">
+					 EndPoint="0.5,1"
+					 StartPoint="0.5,0">
 			<GradientStop Color="{DynamicResource ControlLightColor}"
-                Offset="0" />
+				Offset="0" />
 			<GradientStop Color="{DynamicResource ControlMediumColor}"
-                Offset="0.5" />
+				Offset="0.5" />
 			<GradientStop Color="{DynamicResource ControlLightColor}"
-                Offset="1" />
+				Offset="1" />
 		</LinearGradientBrush>
 
 		<LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill"
-                     StartPoint="0,0"
-                     EndPoint="1,0">
+					 StartPoint="0,0"
+					 EndPoint="1,0">
 			<LinearGradientBrush.GradientStops>
 				<GradientStopCollection>
 					<GradientStop Color="#000000FF"
-                    Offset="0" />
+					Offset="0" />
 					<GradientStop Color="#600000FF"
-                    Offset="0.4" />
+					Offset="0.4" />
 					<GradientStop Color="#600000FF"
-                    Offset="0.6" />
+					Offset="0.6" />
 					<GradientStop Color="#000000FF"
-                    Offset="1" />
+					Offset="1" />
 				</GradientStopCollection>
 			</LinearGradientBrush.GradientStops>
 		</LinearGradientBrush>
@@ -191,9 +194,9 @@
 		<!--~TabControl-->
 		<Style  TargetType="{x:Type TabControl}">
 			<Setter Property="OverridesDefaultStyle"
-          Value="True" />
+		  Value="True" />
 			<Setter Property="SnapsToDevicePixels"
-          Value="True" />
+		  Value="True" />
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type TabControl}">
@@ -207,34 +210,34 @@
 									<VisualState x:Name="Disabled">
 										<Storyboard>
 											<ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                Storyboard.TargetProperty="(Border.BorderBrush).
-                    (SolidColorBrush.Color)">
+												Storyboard.TargetProperty="(Border.BorderBrush).
+					(SolidColorBrush.Color)">
 												<EasingColorKeyFrame KeyTime="0"
-                                         Value="#FFAAAAAA" />
+										 Value="#FFAAAAAA" />
 											</ColorAnimationUsingKeyFrames>
 										</Storyboard>
 									</VisualState>
 								</VisualStateGroup>
 							</VisualStateManager.VisualStateGroups>
 							<TabPanel x:Name="HeaderPanel"
-                    Grid.Row="0"
-                    Panel.ZIndex="1"
-                    Margin="0,0,4,-1"
-                    IsItemsHost="True"
-                    KeyboardNavigation.TabIndex="1"
-                    Background="Transparent" />
+					Grid.Row="0"
+					Panel.ZIndex="1"
+					Margin="0,0,4,-1"
+					IsItemsHost="True"
+					KeyboardNavigation.TabIndex="1"
+					Background="Transparent" />
 							<Border x:Name="Border"
-                  Grid.Row="1"
-                  BorderThickness="1"
-                  KeyboardNavigation.TabNavigation="Local"
-                  KeyboardNavigation.DirectionalNavigation="Contained"
-                  KeyboardNavigation.TabIndex="2" >
+				  Grid.Row="1"
+				  BorderThickness="1"
+				  KeyboardNavigation.TabNavigation="Local"
+				  KeyboardNavigation.DirectionalNavigation="Contained"
+				  KeyboardNavigation.TabIndex="2" >
 								<Border.BorderBrush>
 									<SolidColorBrush Color="{StaticResource BorderDarkColor}"/>
 								</Border.BorderBrush>
 								<ContentPresenter x:Name="PART_SelectedContentHost"
-                              Margin="4"
-                              ContentSource="SelectedContent" />
+							  Margin="4"
+							  ContentSource="SelectedContent" />
 							</Border>
 						</Grid>
 					</ControlTemplate>
@@ -253,15 +256,15 @@
 									<VisualState x:Name="Selected">
 										<Storyboard>
 											<ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                Storyboard.TargetProperty="(Panel.Background).
-                    (GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												Storyboard.TargetProperty="(Panel.Background).
+					(GradientBrush.GradientStops)[1].(GradientStop.Color)">
 												<EasingColorKeyFrame KeyTime="0"
-                                         Value="{StaticResource ControlPressedColor}" />
+										 Value="{StaticResource ControlPressedColor}" />
 											</ColorAnimationUsingKeyFrames>
 											<ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderThickness)"
-                                                    Storyboard.TargetName="Border">
+													Storyboard.TargetName="Border">
 												<EasingThicknessKeyFrame KeyTime="0"
-                                             Value="1,1,1,0" />
+											 Value="1,1,1,0" />
 											</ThicknessAnimationUsingKeyFrames>
 										</Storyboard>
 									</VisualState>
@@ -272,56 +275,56 @@
 									<VisualState x:Name="Disabled">
 										<Storyboard>
 											<ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                Storyboard.TargetProperty="(Panel.Background).
-                    (GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												Storyboard.TargetProperty="(Panel.Background).
+					(GradientBrush.GradientStops)[1].(GradientStop.Color)">
 												<EasingColorKeyFrame KeyTime="0"
-                                         Value="{StaticResource DisabledControlDarkColor}" />
+										 Value="{StaticResource DisabledControlDarkColor}" />
 											</ColorAnimationUsingKeyFrames>
 											<ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
-                                                Storyboard.TargetProperty="(Border.BorderBrush).
-                    (SolidColorBrush.Color)">
+												Storyboard.TargetProperty="(Border.BorderBrush).
+					(SolidColorBrush.Color)">
 												<EasingColorKeyFrame KeyTime="0"
-                                         Value="{StaticResource DisabledBorderLightColor}"/>
+										 Value="{StaticResource DisabledBorderLightColor}"/>
 											</ColorAnimationUsingKeyFrames>
 										</Storyboard>
 									</VisualState>
 								</VisualStateGroup>
 							</VisualStateManager.VisualStateGroups>
 							<Border x:Name="Border"
-                  Margin="0,0,-4,0"
-                  BorderThickness="1,1,1,1"
-                  CornerRadius="2,12,0,0">
+				  Margin="0,0,-4,0"
+				  BorderThickness="1,1,1,1"
+				  CornerRadius="2,12,0,0">
 								<Border.BorderBrush>
 									<SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
 								</Border.BorderBrush>
 								<Border.Background>
 
 									<LinearGradientBrush StartPoint="0,0"
-                                   EndPoint="0,1">
+								   EndPoint="0,1">
 										<LinearGradientBrush.GradientStops>
 											<GradientStopCollection>
 												<GradientStop Color="{DynamicResource ControlLightColor}"
-                                  Offset="0.0" />
+								  Offset="0.0" />
 												<GradientStop Color="{DynamicResource ControlMediumColor}"
-                                  Offset="1.0" />
+								  Offset="1.0" />
 											</GradientStopCollection>
 										</LinearGradientBrush.GradientStops>
 									</LinearGradientBrush>
 
 								</Border.Background>
 								<ContentPresenter x:Name="ContentSite"
-                              VerticalAlignment="Center"
-                              HorizontalAlignment="Center"
-                              ContentSource="Header"
-                              Margin="12,2,12,2"
-                              RecognizesAccessKey="True" />
+							  VerticalAlignment="Center"
+							  HorizontalAlignment="Center"
+							  ContentSource="Header"
+							  Margin="12,2,12,2"
+							  RecognizesAccessKey="True" />
 							</Border>
 						</Grid>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsSelected"
-                   Value="True">
+				   Value="True">
 								<Setter Property="Panel.ZIndex"
-                    Value="100" />
+					Value="100" />
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -335,8 +338,8 @@
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0"
-                                   EndPoint="0,1">
-						<GradientStop Color="{StaticResource ControlLightColor}" Offset="0.997"/>
+								   EndPoint="0,1">
+						<GradientStop Color="{StaticResource ControlLightColor}" Offset="1"/>
 						<GradientStop Color="{StaticResource ControlMediumColor}" Offset="0"/>
 					</LinearGradientBrush>
 				</Setter.Value>
@@ -344,9 +347,6 @@
 		</Style>
 	</Window.Resources>
 	<Grid Background="AntiqueWhite">
-		<Grid.DataContext>
-			<ViewModel:MainViewModel/>
-		</Grid.DataContext>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20"/>
 			<RowDefinition/>
@@ -372,6 +372,38 @@
 				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
 			<TabControl>
+				<TabItem Header="Предметы">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="30"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="80"/>
+						</Grid.ColumnDefinitions>
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOSubject}" View:DataGridBehavior.SelectedItems="{Binding SelectedSubjects}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<StackPanel>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding Insert}" CommandParameter="{x:Type Model:Subject}"/>
+								<Button Margin="0,5,0,0" Content="Изменить" />
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}"
+                              CommandParameter="{Binding SelectedSubjects}"/>
+							</StackPanel>
+						</Grid>
+						<Button
+							Margin="5"
+							Grid.Row="1"
+							Content="Загрузить таблицу &quot;Предметы&quot; из сервера"
+							Command="{Binding UpdateDataAsync}"
+							CommandParameter="{x:Type Model:Subject}"
+						/>
+					</Grid>
+				</TabItem>
 				<TabItem Header="Классы">
 					<Grid>
 						<Grid.RowDefinitions>
@@ -382,7 +414,7 @@
 							<ColumnDefinition/>
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOGroup}">
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOGroup}">
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem
@@ -396,11 +428,6 @@
 								<DataGridTextColumn Header="Год" Binding="{Binding Year}"/>
 								<DataGridTextColumn Header="Группа" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
-							<DataGrid.RowStyle>
-								<Style TargetType="DataGridRow">
-									<Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
-								</Style>
-							</DataGrid.RowStyle>
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
@@ -527,51 +554,6 @@
 							Command="{Binding UpdateDataAsync}"
 							CommandParameter="{x:Type Model:TeacherPhone}"
 						/>
-					</Grid>
-				</TabItem>
-				<TabItem Header="Предметы">
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="17*"/>
-							<ColumnDefinition Width="312*"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition Height="30"/>
-						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Subjects}" Grid.ColumnSpan="2">
-							<DataGrid.ContextMenu>
-								<ContextMenu>
-									<MenuItem
-										Header="Удалить"
-										Command="{Binding DeleteCommand}"
-										CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-									/>
-								</ContextMenu>
-							</DataGrid.ContextMenu>
-							<DataGrid.Columns>
-								<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
-							</DataGrid.Columns>
-						</DataGrid>
-						<Grid Grid.ColumnSpan="2" Margin="0,263,0,0" Grid.RowSpan="2">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
-							<Button
-								Margin="5"
-								Content="Загрузить таблицу &quot;Предметы&quot; из сервера"
-								Command="{Binding UpdateDataAsync}"
-								CommandParameter="{x:Type Model:Subject}"
-							/>
-							<Button
-								Grid.Column="1"
-								Margin="5"
-								Content="Сохранить изменения на сервере"
-								Command="{Binding UpdateDataAsync}"
-								CommandParameter="{x:Type Model:Subject}"
-							/>
-						</Grid>
 					</Grid>
 				</TabItem>
 				<TabItem Header="Уроки">
