@@ -12,7 +12,7 @@
 		Icon="/Resources/scheduleicon.ico"
 		Title="Школьное расписание" Height="400" Width="680"
 		MinWidth="500"
-		MinHeight="350" FontFamily="Arial"
+		MinHeight="350" FontFamily="Arial" WindowStartupLocation="CenterScreen"
 
 		>
 	<Window.Resources>
@@ -45,6 +45,18 @@
 			</Setter>
 		</Style>
 		<!--Style and template for the DataGridColumnHeader.-->
+		<Style TargetType="DataGrid">
+			<Setter Property="RowBackground">
+				<Setter.Value>
+					<SolidColorBrush Color="{DynamicResource ControlLightColor}"/>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="AlternatingRowBackground">
+				<Setter.Value>
+					<SolidColorBrush Color="{DynamicResource ControlMediumColor}"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
 		<Style TargetType="{x:Type DataGridColumnHeader}">
 			<Setter Property="VerticalContentAlignment"
           Value="Center" />
@@ -351,8 +363,6 @@
 					<MenuItem Header="Загрузить таблицу &quot;Расписание&quot; из сервера"		Command="{Binding UpdateDataAsync}" CommandParameter="{x:Type Model:Schedule}"		/>
 					<Separator/>
 					<MenuItem Header="Загрузить все таблицы из сервера"							Command="{Binding UpdateDataAsync}"/>
-					<Separator/>
-					<MenuItem Header="Переподключиться к серверу"								Command="{Binding Reconnect}"/>
 				</MenuItem>
 			</MenuItem>
 		</Menu>

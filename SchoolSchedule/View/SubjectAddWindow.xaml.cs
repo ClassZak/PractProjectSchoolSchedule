@@ -20,22 +20,22 @@ namespace SchoolSchedule.View
 	/// <summary>
 	/// Логика взаимодействия для GroupAddWindow.xaml
 	/// </summary>
-	public partial class GroupAddWindow : Window
+	public partial class SubjectAddWindow : Window
 	{
-		private GroupAddWindow()
+		private SubjectAddWindow()
 		{
 			InitializeComponent();
 		}
 
 		public bool dialogResult = false;
 
-		public Model.Group NewGroup { get; set; }
+		public Model.Subject NewGroup { get; set; }
 
-		private List<DTOGroup> _groups=new List<DTOGroup>();
-		public GroupAddWindow(ICollection<DTOGroup> group):this()
+		private List<DTOSubject> _subjects=new List<DTOSubject>();
+		public SubjectAddWindow(ICollection<DTOSubject> list):this()
 		{
-			foreach(var el in group)
-				_groups.Add(el);
+			foreach(var el in list)
+				_subjects.Add(el);
 		}
 
 		private void Button_Click_Cancel(object sender, RoutedEventArgs e)
@@ -76,17 +76,10 @@ namespace SchoolSchedule.View
 				return;
 			}
 
-			NewGroup = new Model.Group
+			NewGroup = new Model.Subject
 			{
-				Year = year,
 				Name = nameText
 			};
-
-			if (_groups.Find(x=> x.Name==NewGroup.Name && x.Year==NewGroup.Year)!=null)
-			{
-				MessageBox.Show($"Класс {NewGroup.Year}{NewGroup.Name} уже существует","Ошибка добавления элемента", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
 			
 
 			dialogResult = true;

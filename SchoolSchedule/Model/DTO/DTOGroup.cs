@@ -11,38 +11,13 @@ namespace SchoolSchedule.Model.DTO
 		public int Year
 		{
 			get => ModelRef.Year;
-			set
-			{
-				if (value < 1 || value > 11)
-					AddError(nameof(ModelRef.Year), "Год должен быть между 1 и 11 включительно!");
-				else
-					ClearErrors(nameof(Year));
-
-				ModelRef.Year = value;
-			}
+			set => ModelRef.Year = value;
 		}
 
 		public string Name
 		{
 			get => ModelRef.Name;
-			set
-			{
-				if (string.IsNullOrWhiteSpace(value))
-				{
-					AddError(nameof(ModelRef.Name), "Буква класса не может быть пустой!");
-					return;
-				}
-				else
-				if (value.Length!=1)
-				{
-					AddError(nameof(ModelRef.Name), "В записи класса требуется одна буква!");
-					return;
-				}
-				else
-					ClearErrors(nameof(ModelRef.Name));
-
-				ModelRef.Name = value.ToUpper();
-			}
+			set => ModelRef.Name = value.ToUpper();
 		}
 
 		static int _lastDTOId = 0;

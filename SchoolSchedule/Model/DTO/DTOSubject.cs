@@ -8,6 +8,14 @@ namespace SchoolSchedule.Model.DTO
 {
 	public class DTOSubject : ADTO<Model.Subject>
 	{
+		//Свойства от ссылки
+		public string Name
+		{
+			get => ModelRef.Name;
+			set => ModelRef.Name = value;
+		}
+		
+		
 		static int _lastDTOId = 0;
 		public DTOSubject() 
 		{
