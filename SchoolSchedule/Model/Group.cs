@@ -20,7 +20,7 @@ namespace SchoolSchedule.Model
 			this.Student = new HashSet<Student>();
 			this.Teacher = new HashSet<Teacher>();
 		}
-		public Group(int year, string name)
+		public Group(int year, string name) : this()
 		{
 			Year = year;
 			Name = name;
