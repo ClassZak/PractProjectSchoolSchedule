@@ -33,7 +33,7 @@ namespace SchoolSchedule.Model.DTO
 		public DTOStudent(Model.Student other) 
 		{
 			ModelRef = other;
-			_groupLabel = $"{other.Group.Year}{other.Group.Name}";
+			_groupLabel = $"{ModelRef.Group.Year}{ModelRef.Group.Name}";
 		}
 		
 		public override bool HasReferenceOfNotExistingObject()

@@ -83,7 +83,7 @@ namespace SchoolSchedule.View.Edit
 				if (isNewObject)
 				{
 					newObjectLabel.Text = "Новый класс";
-					EditObject = new Model.Group();
+					EditObject = new Model.Group { Year = 1, Name="А" }; 
 				}
 				else
 					newObjectLabel.Text = $"Изменение класса \"{(EditObject as Model.Group).Year}{(EditObject as Model.Group).Name}\"";

@@ -30,9 +30,10 @@ namespace SchoolSchedule.Model.DTO
 		#endregion
 
 
-		protected const string UNKNOWN= "Неизвестен";
+		protected const string UNKNOWN= "Неизвестно";
 		public string Subject { get; set; }=UNKNOWN;
 		public string Group{  get; set; }=UNKNOWN;
+		public string PhoneNumber{  get; set; }=UNKNOWN;
 
 		static int _lastDTOId = 0;
 		public DTOTeacher()
@@ -61,11 +62,26 @@ namespace SchoolSchedule.Model.DTO
 			}
 			string buildedString = stringBuilder.ToString();
 			Subject = buildedString != string.Empty ? buildedString : UNKNOWN;
-
-
+			
 			stringBuilder.Clear();
 			foreach(var el in ModelRef.Group)
-			{ }
+			{
+				stringBuilder.Append(el.Name);
+				if (!ReferenceEquals(el, ModelRef.Group.ToList().Last()))
+					stringBuilder.Append(", ");
+			}
+			buildedString = stringBuilder.ToString();
+			Group = buildedString != string.Empty ? buildedString : UNKNOWN;
+
+			stringBuilder.Clear();
+			foreach(var el in ModelRef.TeacherPhone)
+			{
+				stringBuilder.Append(el.PhoneNumber);
+				if (!ReferenceEquals(el, ModelRef.TeacherPhone.ToList().Last()))
+					stringBuilder.Append(", ");
+			}
+			buildedString = stringBuilder.ToString();
+			PhoneNumber = buildedString != string.Empty ? buildedString : UNKNOWN;
 		}
 	}
 }

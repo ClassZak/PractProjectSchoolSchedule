@@ -13,11 +13,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 	public partial class EditPageGroup : Page, IEditPage<Model.Group>
 	{
 		public List<Model.Group> GroupsForCheck { get; set; } = new List<Model.Group>();
-		public Model.Group ValueRef{ get ; set ; }
+		public Model.Group ValueRef { get; set; } = new Model.Group();
 		public EditPageGroup()
 		{
 			InitializeComponent();
-			DataContext = ValueRef ;
+			DataContext = ValueRef;
 		}
 		public EditPageGroup(Model.Group group, List<Model.Group> groups) : this()
 		{

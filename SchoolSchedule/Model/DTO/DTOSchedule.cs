@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace SchoolSchedule.Model.DTO
 {
@@ -35,6 +36,10 @@ namespace SchoolSchedule.Model.DTO
 		}
 
 
+		public int LessonNumber
+		{
+			get => ModelRef.Lesson.Number; set { }
+		}
 		public string Subject
 		{
 			get => ModelRef.Lesson.Subject.Name; set { }

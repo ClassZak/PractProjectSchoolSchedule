@@ -62,6 +62,8 @@ namespace SchoolSchedule.ViewModel
 						_groupTable.Clear();
 						_subjectTable.Clear();
 						_teacherTable.Clear();
+						_lessonTable.Clear();
+						_scheduleTable.Clear();
 					});
 
 					foreach (var el in dataBase.Group.ToList())
@@ -87,10 +89,17 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
 					foreach (var el in _teachers)
 						App.Current.Dispatcher.Invoke(() => { _teacherTable.Entries.Add(new DTOTeacher(el)); });
+					foreach (var el in _lessons)
+						App.Current.Dispatcher.Invoke(() => { _lessonTable.Entries.Add(new DTOLesson(el)); });
+					foreach (var el in _schedules)
+						App.Current.Dispatcher.Invoke(() => { _scheduleTable.Entries.Add(new DTOSchedule(el)); });
 
 					OnPropertyChanged(nameof(DTOGroup));
 					OnPropertyChanged(nameof(DTOStudents));
 					OnPropertyChanged(nameof(DTOSubject));
+					OnPropertyChanged(nameof(DTOTeacher));
+					OnPropertyChanged(nameof(DTOLesson));
+					OnPropertyChanged(nameof(DTOSchedule));
 				}
 			}
 			// Для того, чтобы не было ошибки в xaml
@@ -109,25 +118,33 @@ namespace SchoolSchedule.ViewModel
 			});
 		}
 
-		protected void UpdateList<T>(ObservableCollection<T> collection) where T : class
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="collection"></param>
+		/// <returns>true - успех</returns>
+		protected async Task<bool> UpdateList<T>(IList<T> collection) where T : class
 		{
 			try
 			{
 				using (var dataBase = new Model.SchoolScheduleEntities())
 				{
-					List<T> elements = dataBase.Set<T>().ToList();
+					List<T> elements = await dataBase.Set<T>().ToListAsync();
 
 					App.Current.Dispatcher.Invoke(() => { collection.Clear(); });
 					foreach (var el in elements)
 						App.Current.Dispatcher.Invoke(() => { collection.Add(el); });
 				}
+
+				return true;
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка чтения базы данных при обновлении содержимого таблиц", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return false;
 			}
 		}
-
 		protected FieldInfo FindTargetField(Type targetType)
 		{
 			FieldInfo field = null;
@@ -222,7 +239,7 @@ namespace SchoolSchedule.ViewModel
 				return _updateData ??
 				(_updateData = new RelayCommand
 				(
-					async param => await Task.Run(() =>
+					async param => await Task.Run(async () =>
 					{
 						if (!(param is Type targetType))
 						{
@@ -237,32 +254,71 @@ namespace SchoolSchedule.ViewModel
 								{
 									_groups.Clear();
 									App.Current.Dispatcher.Invoke(() => { _groupTable.Clear(); });
-									foreach (var el in dataBase.Group.ToList())
-										App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
-									foreach (var el in dataBase.Group.ToList())
+									var list = await dataBase.Group.ToListAsync();
+									foreach (var el in list)
+										_groups.Add(el);
+									foreach (var el in list)
 										App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
+
+									_updateData.Execute(typeof(Model.Schedule));
+									_updateData.Execute(typeof(Model.Teacher));
+									_updateData.Execute(typeof(Model.Student));
 								}
 								if (targetType.Name == typeof(Model.Student).Name)
 								{
-									_updateData.Execute(typeof(Model.Group));
 									_students.Clear();
-									foreach (var el in dataBase.Student.ToList())
-										App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
+									var list = await dataBase.Student.ToListAsync();
+									foreach (var el in list)
+										_students.Add(el);
 
 									_studentTable.Clear();
 									foreach (var el in _students)
-										App.Current.Dispatcher.Invoke(() => {
-											_studentTable.Entries.Add(new DTOStudent(el));
-										});
+										App.Current.Dispatcher.Invoke(() => { _studentTable.Entries.Add(new DTOStudent(el)); });
 								}
 								if (targetType.Name == typeof(Model.Subject).Name)
 								{
 									_subjects.Clear();
 									App.Current.Dispatcher.Invoke(() => { _subjectTable.Clear(); });
-									foreach (var el in dataBase.Subject.ToList())
-										App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
-									foreach (var el in dataBase.Subject.ToList())
+									var list = await dataBase.Subject.ToListAsync();
+									foreach (var el in list)
+										_subjects.Add(el);
+									foreach (var el in list)
 										App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
+
+									_updateData.Execute(typeof(Model.Lesson));
+									_updateData.Execute(typeof(Model.Teacher));
+								}
+								if (targetType.Name == typeof(Model.Lesson).Name)
+								{
+									_lessons.Clear();
+									App.Current.Dispatcher.Invoke(() => { _lessonTable.Clear(); });
+									var list = await dataBase.Lesson.ToListAsync();
+									foreach (var el in list)
+										_lessons.Add(el);
+									foreach (var el in list)
+										App.Current.Dispatcher.Invoke(() => { _lessonTable.Entries.Add(new DTOLesson(el)); });
+
+									_updateData.Execute(typeof(Model.Schedule));
+								}
+								if(targetType.Name==typeof(Model.Teacher).Name || targetType.Name == typeof(Model.TeacherPhone).Name)
+								{
+									_teachers.Clear();
+									App.Current.Dispatcher.Invoke(() => { _teacherTable.Clear(); });
+									var list=await dataBase.Teacher.ToListAsync();
+									foreach (var el in list)
+										_teachers.Add(el);
+									foreach (var el in list)
+										App.Current.Dispatcher.Invoke(() => { _teacherTable.Entries.Add(new DTOTeacher(el)); });
+								}
+								if (targetType.Name == typeof(Model.Schedule).Name)
+								{
+									_schedules.Clear();
+									App.Current.Dispatcher.Invoke(() => { _scheduleTable.Clear(); });
+									var list = await dataBase.Schedule.ToListAsync();
+									foreach (var el in list)
+										_schedules.Add(el);
+									foreach (var el in list)
+										App.Current.Dispatcher.Invoke(() => { _scheduleTable.Entries.Add(new DTOSchedule(el)); });
 								}
 							}
 						}
@@ -515,6 +571,14 @@ namespace SchoolSchedule.ViewModel
 		private TemplateTable<DTOTeacher> _teacherTable =new TemplateTable<DTOTeacher>();
 		public ObservableCollection<DTOTeacher> DTOTeacher
 		{get { return _teacherTable.Entries; } set { OnPropertyChanged(nameof(DTOTeacher)); _teacherTable.Entries=value; }}
+
+		private TemplateTable<DTOLesson> _lessonTable =new TemplateTable<DTOLesson>();
+		public ObservableCollection<DTOLesson> DTOLesson
+		{get { return _lessonTable.Entries; } set { OnPropertyChanged(nameof(DTOLesson)); _lessonTable.Entries=value; }}
+
+		private TemplateTable<DTOSchedule> _scheduleTable =new TemplateTable<DTOSchedule>();
+		public ObservableCollection<DTOSchedule> DTOSchedule
+		{ get { return _scheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOSchedule)); _scheduleTable.Entries = value; } }
 
  	}
 }
