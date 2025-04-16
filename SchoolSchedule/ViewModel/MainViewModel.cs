@@ -1,5 +1,6 @@
 ﻿using SchoolSchedule.Model.DTO;
 using SchoolSchedule.View;
+using SchoolSchedule.View.Edit;
 using SchoolSchedule.ViewModel.Comands;
 using SchoolSchedule.ViewModel.Table;
 using System;
@@ -20,7 +21,13 @@ namespace SchoolSchedule.ViewModel
 	public class MainViewModel : ABaseViewModel
 	{
 		public MainWindow MainWindow { get; set; }
-		public ObservableCollection<DTOSubject> SelectedSubjects { get; set; } = new ObservableCollection<DTOSubject>();
+		public ObservableCollection<Object> SelectedSubjects { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Object> SelectedGroups { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Object> SelectedStudents { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Object> SelectedTeachers { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Object> SelectedLessons{ get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Object> SelectedSchedules { get; set; } = new ObservableCollection<Object>();
 		public MainViewModel()
 		{
 			_groups = new List<Model.Group>(new List<Model.Group>());
@@ -145,150 +152,6 @@ namespace SchoolSchedule.ViewModel
 		}
 
 		#region Команды
-		#region Команда обновления
-		// Тип аргумента: Type
-		RelayCommand _updateData;
-		public RelayCommand UpdateDataAsync
-		{
-			get
-			{
-				return _updateData ??
-				(_updateData = new RelayCommand
-				(
-					async param => await Task.Run(() =>
-					{
-						if (!(param is Type targetType))
-						{
-							LoadDataAsync();
-							return;
-						}
-						try
-						{
-							using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-							{
-								if (targetType.Name == typeof(Model.Group).Name)
-								{
-									_groups.Clear();
-									App.Current.Dispatcher.Invoke(() => { _groupTable.Clear(); });
-									foreach (var el in dataBase.Group.ToList())
-										App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
-									foreach (var el in dataBase.Group.ToList())
-										App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
-								}
-								if (targetType.Name == typeof(Model.Student).Name)
-								{
-									_updateData.Execute(typeof(Model.Group));
-									_students.Clear();
-									foreach (var el in dataBase.Student.ToList())
-										App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
-
-									_studentTable.Clear();
-									foreach (var el in _students)
-										App.Current.Dispatcher.Invoke(() => {
-											_studentTable.Entries.Add(new DTOStudent(el));
-										});
-								}
-								if (targetType.Name == typeof(Model.Subject).Name)
-								{
-									_subjects.Clear();
-									App.Current.Dispatcher.Invoke(() => { _subjectTable.Clear(); });
-									foreach (var el in dataBase.Subject.ToList())
-										App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
-									foreach (var el in dataBase.Subject.ToList())
-										App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
-								}
-							}
-						}
-						catch (System.Data.EntityException ex)
-						{
-							Task.Run(() =>
-							{
-								MessageBox.Show
-								(
-									ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-									"Ошибка базы данных",
-									MessageBoxButton.OK,
-									MessageBoxImage.Stop
-								);
-							});
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-						}
-					}
-				)));
-			}
-		}
-		#endregion
-		#region Команда удаления
-		// Тип аргумента: Type
-		private RelayCommand _deleteCommand;
-		public RelayCommand DeleteCommand
-		{
-			get
-			{
-				return _deleteCommand ??
-				(_deleteCommand = new RelayCommand
-				(
-					async param => await Task.Run(async () =>
-					{
-						try
-						{
-							if (param != null)
-							{
-								if (ReferenceEquals(param, SelectedSubjects))
-								{
-									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-									{
-										var teachers = await dataBase.Teacher.ToListAsync();
-										var lessons= await dataBase.Lesson.ToListAsync();
-										foreach (var el in SelectedSubjects)
-										{
-											var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, el.ModelRef.Id);
-											var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, el.ModelRef.Id);
-
-											if (teachersUsesSubject.Count() != 0 || lessonsUsesSubject.Count()!=0)
-												throw new Exception($"Удалите все объекты, ссылающиеся на предмет \"{el.Name}\"");
-
-											var forDelete = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == el.ModelRef.Id);
-											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления");
-											dataBase.Subject.Remove(forDelete);
-										}
-
-										await dataBase.SaveChangesAsync();
-									}
-									_subjectTable.Remove((param as ObservableCollection<DTOSubject>));
-									_updateData.Execute(typeof(Model.Subject));
-								}
-							}
-						}
-						catch (System.Data.EntityException ex)
-						{
-							MessageBox.Show
-							(
-								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-								"Ошибка базы данных",
-								MessageBoxButton.OK,
-								MessageBoxImage.Stop
-							);
-							_updateData.Execute(null);
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-							_updateData.Execute(null);
-						}
-						finally
-						{
-							
-						}
-					}
-				)));
-			}
-		}
-		#endregion
 		#region Команда добавления
 		// Тип аргумента: Type
 		private RelayCommand _insert;
@@ -369,6 +232,233 @@ namespace SchoolSchedule.ViewModel
 						finally
 						{
 
+						}
+					}
+				)));
+			}
+		}
+		#endregion
+		#region Команда обновления
+		// Тип аргумента: Type
+		RelayCommand _updateData;
+		public RelayCommand UpdateDataAsync
+		{
+			get
+			{
+				return _updateData ??
+				(_updateData = new RelayCommand
+				(
+					async param => await Task.Run(() =>
+					{
+						if (!(param is Type targetType))
+						{
+							LoadDataAsync();
+							return;
+						}
+						try
+						{
+							using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+							{
+								if (targetType.Name == typeof(Model.Group).Name)
+								{
+									_groups.Clear();
+									App.Current.Dispatcher.Invoke(() => { _groupTable.Clear(); });
+									foreach (var el in dataBase.Group.ToList())
+										App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
+									foreach (var el in dataBase.Group.ToList())
+										App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
+								}
+								if (targetType.Name == typeof(Model.Student).Name)
+								{
+									_updateData.Execute(typeof(Model.Group));
+									_students.Clear();
+									foreach (var el in dataBase.Student.ToList())
+										App.Current.Dispatcher.Invoke(() => { _students.Add(el); });
+
+									_studentTable.Clear();
+									foreach (var el in _students)
+										App.Current.Dispatcher.Invoke(() => {
+											_studentTable.Entries.Add(new DTOStudent(el));
+										});
+								}
+								if (targetType.Name == typeof(Model.Subject).Name)
+								{
+									_subjects.Clear();
+									App.Current.Dispatcher.Invoke(() => { _subjectTable.Clear(); });
+									foreach (var el in dataBase.Subject.ToList())
+										App.Current.Dispatcher.Invoke(() => { _subjects.Add(el); });
+									foreach (var el in dataBase.Subject.ToList())
+										App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
+								}
+							}
+						}
+						catch (System.Data.EntityException ex)
+						{
+							Task.Run(() =>
+							{
+								MessageBox.Show
+								(
+									ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+									"Ошибка базы данных",
+									MessageBoxButton.OK,
+									MessageBoxImage.Stop
+								);
+							});
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+					}
+				)));
+			}
+		}
+		#endregion
+		#region Команда изменения
+		RelayCommand _editCommand;
+		public RelayCommand EditCommand
+		{
+			get
+			{
+				return _editCommand ??
+				(_editCommand=new RelayCommand(
+					async param => await Task.Run(async ()=>
+					{
+						try
+						{
+							if (param != null)
+							{
+								var selectedObjects = SelectedSubjects as IEnumerable;
+								if (ReferenceEquals(param, SelectedSubjects))
+								{
+									List<Model.DTO.DTOSubject> selectedSubjectsList = new List<Model.DTO.DTOSubject>();
+									foreach (var el in selectedObjects)
+										selectedSubjectsList.Add(el as Model.DTO.DTOSubject);
+
+									if(selectedSubjectsList.Count!=1)
+									{
+										MessageBox.Show("Выбирете один объект для изменения","Ошибка выбора объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
+										return;
+									}
+
+									var selectedSubject = selectedSubjectsList[0];
+									EditWindow addingWindow = null;
+
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new EditWindow(typeof(Model.Subject), selectedSubject.ModelRef,_groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones);
+										addingWindow.Owner = MainWindow;
+										addingWindow.ShowDialog();
+									});
+
+									if(addingWindow.DialogResult)
+									{
+										var newObject = (addingWindow.EditObject as Model.Subject);
+										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+										{
+											var forUpdate = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == selectedSubject.ModelRef.Id);
+											if (forUpdate == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											forUpdate.Name= newObject.Name;
+
+											await dataBase.SaveChangesAsync();
+										}
+										_updateData.Execute(typeof(Model.Subject));
+										_updateData.Execute(typeof(Model.Teacher));
+										_updateData.Execute(typeof(Model.Lesson));
+										_updateData.Execute(typeof(Model.Schedule));
+									}
+								}
+							}
+						}
+						catch (System.Data.EntityException ex)
+						{
+							MessageBox.Show
+							(
+								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+								"Ошибка базы данных",
+								MessageBoxButton.OK,
+								MessageBoxImage.Stop
+							);
+							_updateData.Execute(null);
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							_updateData.Execute(null);
+						}
+						finally
+						{
+
+						}
+					}
+				)));
+			}
+		}
+		#endregion
+		#region Команда удаления
+		// Тип аргумента: Type
+		private RelayCommand _deleteCommand;
+		public RelayCommand DeleteCommand
+		{
+			get
+			{
+				return _deleteCommand ??
+				(_deleteCommand = new RelayCommand
+				(
+					async param => await Task.Run(async () =>
+					{
+						try
+						{
+							if (param != null)
+							{
+								if (ReferenceEquals(param, SelectedSubjects))
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										var teachers = await dataBase.Teacher.ToListAsync();
+										var lessons= await dataBase.Lesson.ToListAsync();
+										foreach (var el in SelectedSubjects)
+										{
+											var elRef = (el as Model.DTO.DTOSubject);
+											var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, elRef.ModelRef.Id);
+											var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, elRef.ModelRef.Id);
+
+											if (teachersUsesSubject.Count() != 0 || lessonsUsesSubject.Count() != 0)
+												throw new Exception($"Удалите все объекты, ссылающиеся на предмет \"{elRef.Name}\"");
+
+											var forDelete = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											dataBase.Subject.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_subjectTable.Remove((param as ObservableCollection<DTOSubject>));
+									_updateData.Execute(typeof(Model.Subject));
+								}
+							}
+						}
+						catch (System.Data.EntityException ex)
+						{
+							MessageBox.Show
+							(
+								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+								"Ошибка базы данных",
+								MessageBoxButton.OK,
+								MessageBoxImage.Stop
+							);
+							_updateData.Execute(null);
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							_updateData.Execute(null);
+						}
+						finally
+						{
+							
 						}
 					}
 				)));

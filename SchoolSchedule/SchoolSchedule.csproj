@@ -68,6 +68,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="View\Edit\EditPage\EditPageSubject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Edit\EditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\SubjectAddWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -140,6 +148,13 @@
     <Compile Include="ViewModel\Table\GroupTable.cs" />
     <Compile Include="ViewModel\Table\StudentTable.cs" />
     <Compile Include="ViewModel\Table\SubjectTable.cs" />
+    <Compile Include="View\Edit\EditPage\IEditPage.cs" />
+    <Compile Include="View\Edit\EditPage\EditPageSubject.xaml.cs">
+      <DependentUpon>EditPageSubject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Edit\EditWindow.xaml.cs">
+      <DependentUpon>EditWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SubjectAddWindow.xaml.cs">
       <DependentUpon>SubjectAddWindow.xaml</DependentUpon>
     </Compile>
@@ -205,6 +220,7 @@
       <LastGenOutput>SchoolSchedule.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

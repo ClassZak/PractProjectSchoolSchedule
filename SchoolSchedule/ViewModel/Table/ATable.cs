@@ -52,6 +52,8 @@ namespace SchoolSchedule.ViewModel.Table
 		}
 		public void Remove(ICollection<T> values)
 		{
+			if (values == null)
+				return;
 			App.Current.Dispatcher.Invoke(() =>
 			{ 
 				if (values.Count == 0)
