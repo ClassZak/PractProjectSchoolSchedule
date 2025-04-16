@@ -1,17 +1,6 @@
-﻿using SchoolSchedule.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SchoolSchedule.View.Edit
 {
@@ -20,6 +9,8 @@ namespace SchoolSchedule.View.Edit
 	/// </summary>
 	public partial class EditWindow : Window
 	{
+		private bool isNewObject=false;
+		
 		public Type EditType { get; set; }
 		public object EditObject { get; set; }
 		public new bool DialogResult { get; set; } = false;
@@ -66,16 +57,38 @@ namespace SchoolSchedule.View.Edit
 
 		void SelectPage()
 		{
-			if(EditObject==null)
+			if (EditObject == null)
+				isNewObject = true;
+			if (isNewObject)
 			{
 				Title = "Добавление";
-				okButton.Content="Добавить";
+				okButton.Content = "Добавить";
 			}
+
+
 			if (EditType.Name == typeof(Model.Subject).Name)
 			{
-				if(EditObject==null)
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новый предмет";
 					EditObject = new Model.Subject();
-				mainFrame.Content = new EditPage.EditPageSubject(EditObject as Subject,_subjects);
+				}
+				else
+					newObjectLabel.Text = $"Изменение предмета \"{(EditObject as Model.Subject).Name}\"";
+
+				mainFrame.Content = new EditPage.EditPageSubject(EditObject as Model.Subject, _subjects);
+			}
+			if (EditType.Name == typeof(Model.Group).Name)
+			{
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новый класс";
+					EditObject = new Model.Group();
+				}
+				else
+					newObjectLabel.Text = $"Изменение класса \"{(EditObject as Model.Group).Year}{(EditObject as Model.Group).Name}\"";
+
+				mainFrame.Content = new EditPage.EditPageGroup(EditObject as Model.Group, _groups);
 			}
 		}
 
@@ -86,7 +99,16 @@ namespace SchoolSchedule.View.Edit
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageSubject).CheckInputRules();
 				if(!checkResult.Key)
 				{
-					MessageBox.Show(checkResult.Value,"Ошибка редактирования",MessageBoxButton.OK,MessageBoxImage.Stop);
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
+					return;
+				}
+			}
+			if (EditType.Name == typeof(Model.Group).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageGroup).CheckInputRules();
+				if(!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
 					return;
 				}
 			}

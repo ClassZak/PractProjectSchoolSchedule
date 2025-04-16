@@ -30,9 +30,5 @@ namespace SchoolSchedule.Model.DTO
 		{
 			return false;
 		}
-
-		protected override void LoadAllLabels(ref Model.SchoolScheduleEntities dataBase)
-		{
-		}
 	}
 }

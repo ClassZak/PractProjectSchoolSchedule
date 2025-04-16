@@ -40,10 +40,5 @@ namespace SchoolSchedule.Model.DTO
 		{
 			return DTOIdGroup != 0;
 		}
-
-		protected override void LoadAllLabels(ref Model.SchoolScheduleEntities dataBase)
-		{
-			
-		}
 	}
 }

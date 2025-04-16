@@ -8,8 +8,37 @@ namespace SchoolSchedule.Model.DTO
 {
 	public class DTOTeacher : ADTO<Model.Teacher>
 	{
-		protected const string UNKNOWN_SUBJECT = "Неизвестен";
-		public string SubjectLabel { get; set; }=UNKNOWN_SUBJECT;
+		#region Свойства DTOTeacher
+		public int Id
+		{
+			get=>ModelRef.Id; set=>ModelRef.Id = value;	
+		}
+		public string Surname
+		{
+			get => ModelRef.Surname; set => ModelRef.Surname= value;
+		}
+		public string Name
+		{
+			get => ModelRef.Name; set => ModelRef.Name = value;
+		}
+		public string Patronymic
+		{
+			get => ModelRef.Patronymic; set => ModelRef.Patronymic = value;
+		}
+
+
+		#endregion
+
+
+		protected const string UNKNOWN= "Неизвестен";
+		public string Subject { get; set; }=UNKNOWN;
+		public string Group{  get; set; }=UNKNOWN;
+
+		static int _lastDTOId = 0;
+		public DTOTeacher()
+		{
+			DTOId = ++_lastDTOId;
+		}
 		public DTOTeacher(Model.Teacher other) 
 		{
 			ModelRef = other;
@@ -31,10 +60,12 @@ namespace SchoolSchedule.Model.DTO
 					stringBuilder.Append(", ");
 			}
 			string buildedString = stringBuilder.ToString();
-			SubjectLabel = buildedString != string.Empty ? buildedString : UNKNOWN_SUBJECT;
-		}
-		protected override void LoadAllLabels(ref Model.SchoolScheduleEntities dataBase)
-		{
+			Subject = buildedString != string.Empty ? buildedString : UNKNOWN;
+
+
+			stringBuilder.Clear();
+			foreach(var el in ModelRef.Group)
+			{ }
 		}
 	}
 }

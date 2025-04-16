@@ -68,19 +68,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="View\Edit\EditPage\EditPageGroup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Edit\EditPage\EditPageSubject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Edit\EditWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\SubjectAddWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\GroupAddWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -93,6 +89,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\DTO\DTOGroup.cs" />
+    <Compile Include="Model\DTO\DTOLesson.cs" />
+    <Compile Include="Model\DTO\DTOSchedule.cs" />
     <Compile Include="Model\DTO\DTOSubject.cs" />
     <Compile Include="Model\DTO\DTOTeacher.cs" />
     <Compile Include="Model\DTO\ADTO.cs" />
@@ -142,24 +140,22 @@
     <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Comands\RelayCommand.cs" />
+    <Compile Include="ViewModel\Table\TemplateTable.cs" />
     <Compile Include="View\DataGridBehavior.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Table\ATable.cs" />
     <Compile Include="ViewModel\Table\GroupTable.cs" />
     <Compile Include="ViewModel\Table\StudentTable.cs" />
     <Compile Include="ViewModel\Table\SubjectTable.cs" />
+    <Compile Include="View\Edit\EditPage\EditPageGroup.xaml.cs">
+      <DependentUpon>EditPageGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Edit\EditPage\IEditPage.cs" />
     <Compile Include="View\Edit\EditPage\EditPageSubject.xaml.cs">
       <DependentUpon>EditPageSubject.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Edit\EditWindow.xaml.cs">
       <DependentUpon>EditWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\SubjectAddWindow.xaml.cs">
-      <DependentUpon>SubjectAddWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\GroupAddWindow.xaml.cs">
-      <DependentUpon>GroupAddWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

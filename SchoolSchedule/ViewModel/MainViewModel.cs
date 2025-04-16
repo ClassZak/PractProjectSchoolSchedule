@@ -61,6 +61,7 @@ namespace SchoolSchedule.ViewModel
 						_studentTable.Clear();
 						_groupTable.Clear();
 						_subjectTable.Clear();
+						_teacherTable.Clear();
 					});
 
 					foreach (var el in dataBase.Group.ToList())
@@ -84,6 +85,8 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
 					foreach (var el in _subjects)
 						App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
+					foreach (var el in _teachers)
+						App.Current.Dispatcher.Invoke(() => { _teacherTable.Entries.Add(new DTOTeacher(el)); });
 
 					OnPropertyChanged(nameof(DTOGroup));
 					OnPropertyChanged(nameof(DTOStudents));
@@ -93,22 +96,9 @@ namespace SchoolSchedule.ViewModel
 			// Для того, чтобы не было ошибки в xaml
 			catch (System.InvalidOperationException)
 			{ }
-			catch (System.Data.EntityException ex)
-			{
-				Task.Run(() =>
-				{
-					MessageBox.Show
-					(
-						ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-						"Ошибка базы данных",
-						MessageBoxButton.OK,
-						MessageBoxImage.Stop
-					);
-				});
-			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 			}
 		}
 		private async void LoadDataAsync()
@@ -154,13 +144,13 @@ namespace SchoolSchedule.ViewModel
 		#region Команды
 		#region Команда добавления
 		// Тип аргумента: Type
-		private RelayCommand _insert;
-		public RelayCommand Insert
+		private RelayCommand _insertCommand;
+		public RelayCommand InsertCommand
 		{
 			get
 			{
-				return _insert ??
-				(_insert = new RelayCommand(
+				return _insertCommand ??
+				(_insertCommand = new RelayCommand(
 					async param => await Task.Run(async () =>
 					{
 						try
@@ -170,21 +160,21 @@ namespace SchoolSchedule.ViewModel
 
 							if (targetType.Name == typeof(Model.Group).Name)
 							{
-								GroupAddWindow addingWindow = null;
+								EditWindow addingWindow = null;
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new GroupAddWindow(_groupTable.Entries);
+									addingWindow = new EditWindow(typeof(Model.Group), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
 									addingWindow.Owner = MainWindow;
 									addingWindow.ShowDialog();
 								});
 
 
-								if (addingWindow.dialogResult)
+								if (addingWindow.DialogResult)
 								{
 									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
-										dataBase.Group.Add(addingWindow.NewGroup);
+										dataBase.Group.Add(addingWindow.EditObject as Model.Group);
 										await dataBase.SaveChangesAsync();
 									}
 									_updateData.Execute(typeof(Model.Group));
@@ -206,31 +196,16 @@ namespace SchoolSchedule.ViewModel
 									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
 										dataBase.Subject.Add(addingWindow.EditObject as Model.Subject);
-										dataBase.SaveChanges();
+										await dataBase.SaveChangesAsync();
 									}
 									_updateData.Execute(typeof(Model.Subject));
 								}
 							}
 						}
-						catch (System.Data.EntityException ex)
-						{
-							MessageBox.Show
-							(
-								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-								"Ошибка базы данных",
-								MessageBoxButton.OK,
-								MessageBoxImage.Stop
-							);
-							_updateData.Execute(null);
-						}
 						catch (Exception ex)
 						{
-							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 							_updateData.Execute(null);
-						}
-						finally
-						{
-
 						}
 					}
 				)));
@@ -291,22 +266,9 @@ namespace SchoolSchedule.ViewModel
 								}
 							}
 						}
-						catch (System.Data.EntityException ex)
-						{
-							Task.Run(() =>
-							{
-								MessageBox.Show
-								(
-									ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-									"Ошибка базы данных",
-									MessageBoxButton.OK,
-									MessageBoxImage.Stop
-								);
-							});
-						}
 						catch (Exception ex)
 						{
-							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
 					}
 				)));
@@ -330,22 +292,22 @@ namespace SchoolSchedule.ViewModel
 								var selectedObjects = SelectedSubjects as IEnumerable;
 								if (ReferenceEquals(param, SelectedSubjects))
 								{
-									List<Model.DTO.DTOSubject> selectedSubjectsList = new List<Model.DTO.DTOSubject>();
+									List<Model.DTO.DTOSubject> selectedObjectsList = new List<Model.DTO.DTOSubject>();
 									foreach (var el in selectedObjects)
-										selectedSubjectsList.Add(el as Model.DTO.DTOSubject);
+										selectedObjectsList.Add(el as Model.DTO.DTOSubject);
 
-									if(selectedSubjectsList.Count!=1)
+									if(selectedObjectsList.Count!=1)
 									{
 										MessageBox.Show("Выбирете один объект для изменения","Ошибка выбора объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
 										return;
 									}
 
-									var selectedSubject = selectedSubjectsList[0];
+									var selectedObject = selectedObjectsList[0];
 									EditWindow addingWindow = null;
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Subject), selectedSubject.ModelRef,_groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Subject), selectedObject.ModelRef,_groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
@@ -355,7 +317,7 @@ namespace SchoolSchedule.ViewModel
 										var newObject = (addingWindow.EditObject as Model.Subject);
 										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 										{
-											var forUpdate = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == selectedSubject.ModelRef.Id);
+											var forUpdate = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
 												throw new Exception("Не удалось найти объект для удаления");
 											forUpdate.Name= newObject.Name;
@@ -368,27 +330,52 @@ namespace SchoolSchedule.ViewModel
 										_updateData.Execute(typeof(Model.Schedule));
 									}
 								}
+								if(ReferenceEquals(param,SelectedGroups))
+								{
+									List<Model.DTO.DTOGroup> selectedObjectsList = new List<Model.DTO.DTOGroup>();
+									foreach (var el in selectedObjects)
+										selectedObjectsList.Add(el as Model.DTO.DTOGroup);
+
+									if (selectedObjectsList.Count != 1)
+									{
+										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+										return;
+									}
+
+									var selectedObject = selectedObjectsList[0];
+									EditWindow addingWindow = null;
+
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new EditWindow(typeof(Model.Group), selectedObject.ModelRef,_groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones);
+										addingWindow.Owner = MainWindow;
+										addingWindow.ShowDialog();
+									});
+									if(addingWindow.DialogResult)
+									{
+										var newObject = (addingWindow.EditObject as Model.Group);
+										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+										{
+											var forUpdate = await dataBase.Group.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+											if (forUpdate == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											forUpdate.Name = newObject.Name;
+											forUpdate.Year = newObject.Year;
+
+											await dataBase.SaveChangesAsync();
+										}
+										_updateData.Execute(typeof(Model.Lesson));
+										_updateData.Execute(typeof(Model.Student));
+										_updateData.Execute(typeof(Model.Teacher));
+										_updateData.Execute(typeof(Model.Schedule));
+									}
+								}
 							}
-						}
-						catch (System.Data.EntityException ex)
-						{
-							MessageBox.Show
-							(
-								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-								"Ошибка базы данных",
-								MessageBoxButton.OK,
-								MessageBoxImage.Stop
-							);
-							_updateData.Execute(null);
 						}
 						catch (Exception ex)
 						{
-							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 							_updateData.Execute(null);
-						}
-						finally
-						{
-
 						}
 					}
 				)));
@@ -439,25 +426,10 @@ namespace SchoolSchedule.ViewModel
 								}
 							}
 						}
-						catch (System.Data.EntityException ex)
-						{
-							MessageBox.Show
-							(
-								ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-								"Ошибка базы данных",
-								MessageBoxButton.OK,
-								MessageBoxImage.Stop
-							);
-							_updateData.Execute(null);
-						}
 						catch (Exception ex)
 						{
-							MessageBox.Show(ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 							_updateData.Execute(null);
-						}
-						finally
-						{
-							
 						}
 					}
 				)));
@@ -528,16 +500,21 @@ namespace SchoolSchedule.ViewModel
 
 
 
-		private StudentTable _studentTable=new StudentTable();
+		private TemplateTable<DTOStudent> _studentTable=new TemplateTable<DTOStudent>();
 		public ObservableCollection<DTOStudent> DTOStudents
 		{get { return _studentTable.Entries; } set { OnPropertyChanged(nameof(DTOStudents)); _studentTable.Entries=value; }}
 
-		private GroupTable _groupTable=new GroupTable();
+		private TemplateTable<DTOGroup> _groupTable =new TemplateTable<DTOGroup>();
 		public ObservableCollection<DTOGroup> DTOGroup
 		{get { return _groupTable.Entries; } set { OnPropertyChanged(nameof(DTOGroup)); _groupTable.Entries=value; }}
 
-		private SubjectTable _subjectTable=new SubjectTable();
+		private TemplateTable<DTOSubject> _subjectTable =new TemplateTable<DTOSubject>();
 		public ObservableCollection<DTOSubject> DTOSubject
 		{get { return _subjectTable.Entries; } set { OnPropertyChanged(nameof(DTOSubject)); _subjectTable.Entries=value; }}
+
+		private TemplateTable<DTOTeacher> _teacherTable =new TemplateTable<DTOTeacher>();
+		public ObservableCollection<DTOTeacher> DTOTeacher
+		{get { return _teacherTable.Entries; } set { OnPropertyChanged(nameof(DTOTeacher)); _teacherTable.Entries=value; }}
+
  	}
 }

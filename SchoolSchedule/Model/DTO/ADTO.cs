@@ -13,7 +13,13 @@ namespace SchoolSchedule.Model.DTO
 	{
 		public T ModelRef { get; set; } = new T();
 		public int DTOId { get; set; } = 0;
-		protected abstract void LoadAllLabels(ref Model.SchoolScheduleEntities dataBase);
+
+
+		protected ADTO(){}
+		public ADTO(T modelRef)
+		{
+			ModelRef = modelRef;
+		}
 
 		public bool ExistsInDataBase()
 		{

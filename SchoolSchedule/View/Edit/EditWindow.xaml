@@ -8,7 +8,7 @@
         FontFamily="Arial"
         ResizeMode="NoResize"
         Icon="/Resources/scheduleicon.ico"
-        Title="Редактирование" Height="210" Width="340" WindowStartupLocation="CenterOwner">
+        Title="Редактирование" Height="240" Width="360" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
 		<!--Control colors.-->
 		<Color x:Key="WindowColor">#FFE8EDF9</Color>
@@ -103,12 +103,14 @@
 	<Grid>
 		<Grid Margin="5">
 			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
 				<RowDefinition/>
 				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
-			<Frame NavigationUIVisibility="Hidden" x:Name="mainFrame">
+			<TextBlock Name="newObjectLabel" Text="Новый объект" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold"/>
+			<Frame Grid.Row="1" NavigationUIVisibility="Hidden" x:Name="mainFrame" Margin="10">
 			</Frame>
-			<Grid Grid.Row="1">
+			<Grid Grid.Row="2">
 				<Button Margin="5" Name="okButton" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Изменить" Width="80" Click="Button_Click_Ok"/>
 				<Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Отмена"  Width="80" Click="Button_Click_Cancel"/>
 			</Grid>
