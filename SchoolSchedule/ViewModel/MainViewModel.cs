@@ -192,21 +192,20 @@ namespace SchoolSchedule.ViewModel
 							}
 							if (targetType.Name == typeof(Model.Subject).Name)
 							{
-								SubjectAddWindow addingWindow = null;
+                                EditWindow addingWindow = null;
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new SubjectAddWindow(_subjectTable.Entries);
+									addingWindow = new EditWindow(typeof(Model.Subject), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
 									addingWindow.Owner = MainWindow;
 									addingWindow.ShowDialog();
 								});
 
-								if (addingWindow.dialogResult)
+								if (addingWindow.DialogResult)
 								{
 									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
-										dataBase.Subject.Add(addingWindow.NewSubject);
-										dataBase.Subject.Add(addingWindow.NewSubject);
+										dataBase.Subject.Add(addingWindow.EditObject as Model.Subject);
 										dataBase.SaveChanges();
 									}
 									_updateData.Execute(typeof(Model.Subject));
@@ -466,7 +465,6 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#endregion
-
 		#region Проверки на использование объекта
 		IEnumerable<Model.Teacher> FindTeachersUsesSubject(ref List<Model.Teacher> list, int id) 
 		{
