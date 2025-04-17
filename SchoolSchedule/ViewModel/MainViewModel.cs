@@ -28,7 +28,7 @@ namespace SchoolSchedule.ViewModel
 		public ObservableCollection<Object> SelectedStudents { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Object> SelectedTeachers { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
-		public ObservableCollection<Object> SelectedLessons{ get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Model.DTO.DTOLesson> SelectedLessons{ get; set; } = new ObservableCollection<Model.DTO.DTOLesson>();
 		public ObservableCollection<Object> SelectedSchedules { get; set; } = new ObservableCollection<Object>();
 		public MainViewModel()
 		{
@@ -41,7 +41,6 @@ namespace SchoolSchedule.ViewModel
 			_teacherPhones = new List<Model.TeacherPhone>(new List<Model.TeacherPhone>());
 			LoadData();
 		}
-		bool _updateMutex = false;
 		private void LoadData()
 		{
 			try
@@ -295,8 +294,6 @@ namespace SchoolSchedule.ViewModel
 				(
 					async param => await Task.Run(async () =>
 					{
-						while (_updateMutex) ;
-						_updateMutex = true;
 						if (!(param is Type targetType))
 						{
 							LoadDataAsync();
@@ -381,10 +378,6 @@ namespace SchoolSchedule.ViewModel
 						catch (Exception ex)
 						{
 							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-						}
-						finally
-						{
-							_updateMutex = false;
 						}
 					}
 				)));
@@ -514,6 +507,39 @@ namespace SchoolSchedule.ViewModel
 											forUpdate.Patronymic = newObject.Patronymic;
 											forUpdate.IdGroup = newObject.IdGroup;
 											forUpdate.Email = newObject.Email;
+
+											await dataBase.SaveChangesAsync();
+										}
+										_updateData.Execute(null);
+									}
+								}
+								if(ReferenceEquals(param,SelectedLessons))
+								{
+									if(SelectedLessons.Count != 1)
+									{
+										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+										return;
+									}
+									var selectedObject = SelectedLessons[0];
+
+									EditWindow addingWindow = null;
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new EditWindow(typeof(Model.Lesson), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow.Owner = MainWindow;
+										addingWindow.ShowDialog();
+									});
+									if (addingWindow.DialogResult)
+									{
+										var newObject = (addingWindow.EditObject as Model.Lesson);
+										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+										{
+											var forUpdate = await dataBase.Lesson.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+											if (forUpdate == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											forUpdate.IdSubject = selectedObject.ModelRef.IdSubject;
+											forUpdate.IdGroup= selectedObject.ModelRef.IdGroup;
+											forUpdate.Number= selectedObject.ModelRef.Number;
 
 											await dataBase.SaveChangesAsync();
 										}
