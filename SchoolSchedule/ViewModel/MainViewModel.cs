@@ -381,7 +381,7 @@ namespace SchoolSchedule.ViewModel
 						{
 							if (param != null)
 							{
-								var selectedObjects = SelectedSubjects as IEnumerable;
+								var selectedObjects = param as IList;
 								if (ReferenceEquals(param, SelectedSubjects))
 								{
 									List<Model.DTO.DTOSubject> selectedObjectsList = new List<Model.DTO.DTOSubject>();
@@ -416,10 +416,7 @@ namespace SchoolSchedule.ViewModel
 
 											await dataBase.SaveChangesAsync();
 										}
-										_updateData.Execute(typeof(Model.Subject));
-										_updateData.Execute(typeof(Model.Teacher));
-										_updateData.Execute(typeof(Model.Lesson));
-										_updateData.Execute(typeof(Model.Schedule));
+										_updateData.Execute(null);
 									}
 								}
 								if(ReferenceEquals(param,SelectedGroups))
@@ -456,10 +453,7 @@ namespace SchoolSchedule.ViewModel
 
 											await dataBase.SaveChangesAsync();
 										}
-										_updateData.Execute(typeof(Model.Lesson));
-										_updateData.Execute(typeof(Model.Student));
-										_updateData.Execute(typeof(Model.Teacher));
-										_updateData.Execute(typeof(Model.Schedule));
+										_updateData.Execute(null);
 									}
 								}
 								if(ReferenceEquals(param, SelectedStudents))
@@ -499,7 +493,7 @@ namespace SchoolSchedule.ViewModel
 
 											await dataBase.SaveChangesAsync();
 										}
-										_updateData.Execute(typeof(Model.Student));
+										_updateData.Execute(null);
 									}
 								}
 							}
@@ -554,7 +548,57 @@ namespace SchoolSchedule.ViewModel
 										await dataBase.SaveChangesAsync();
 									}
 									_subjectTable.Remove((param as ObservableCollection<DTOSubject>));
-									_updateData.Execute(typeof(Model.Subject));
+									_updateData.Execute(null);
+								}
+								if (ReferenceEquals(param, SelectedGroups))
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										var teachers = await dataBase.Teacher.ToListAsync();
+										var lessons = await dataBase.Lesson.ToListAsync();
+										var students = await dataBase.Student.ToListAsync();
+										foreach (var el in SelectedGroups)
+										{
+											var elRef = (el as Model.DTO.DTOGroup);
+											var teachersUses = FindTeachersUsesSubject(ref teachers, elRef.ModelRef.Id);
+											var lessonsUses = FindLessonsUsesSubject(ref lessons, elRef.ModelRef.Id);
+											var studentsUsees = FindStudentsUsesGroup(ref students, elRef.ModelRef.Id);
+
+											if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count()!=0)
+												throw new Exception($"Удалите все объекты, ссылающиеся на класс \"{elRef.ModelRef}\"");
+
+											var forDelete = await dataBase.Group.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											dataBase.Group.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
+								if(ReferenceEquals(param,SelectedStudents))
+								{
+									MessageBoxResult messageBoxResult=
+									MessageBox.Show("Вы уверены начать отчисление учеников?", "Отчисление", MessageBoxButton.YesNo, MessageBoxImage.Question);
+									if (messageBoxResult != MessageBoxResult.Yes)
+										return;
+
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										foreach (var el in SelectedStudents)
+										{
+											var elRef = (el as Model.DTO.DTOStudent);
+
+											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											dataBase.Student.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
 								}
 							}
 						}
@@ -577,6 +621,19 @@ namespace SchoolSchedule.ViewModel
 		IEnumerable<Model.Lesson> FindLessonsUsesSubject(ref List<Model.Lesson> list, int id) 
 		{ 
 			return list.Where(l => l.Subject.Id == id); 
+		}
+
+		IEnumerable<Model.Teacher> FindTeachersUsesGroup(ref List<Model.Teacher> list, int id) 
+		{
+			return list.Where(t => t.Group.ToList().Exists(g => g.Id == id)); 
+		}
+		IEnumerable<Model.Lesson> FindLessonsUsesGroup(ref List<Model.Lesson> list, int id) 
+		{
+			return list.Where(l => l.IdGroup==id); 
+		}
+		IEnumerable<Model.Student> FindStudentsUsesGroup(ref List<Model.Student> list, int id) 
+		{
+			return list.Where(s => s.IdGroup==id);
 		}
 		#endregion
 

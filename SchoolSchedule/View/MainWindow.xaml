@@ -419,7 +419,7 @@
 							<ColumnDefinition/>
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOStudents}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedGroups}">
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOStudents}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedStudents}">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -432,7 +432,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Student}"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedStudents}"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedGroups}"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedStudents}"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -444,7 +444,7 @@
 							<ColumnDefinition/>
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
-						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOTeacher}">
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOTeacher}" View:DataGridBehavior.SelectedItems="{Binding SelectedTeachers}">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -469,7 +469,7 @@
 							<ColumnDefinition/>
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOLesson}" IsReadOnly="True">
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOLesson}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedLessons}">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Класс" Binding="{Binding Group}"/>
 								<DataGridTextColumn Header="Предмет" Binding="{Binding Subject}"/>
@@ -491,7 +491,7 @@
 							<ColumnDefinition/>
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOSchedule}" IsReadOnly="True">
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedSchedules}">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Предмет"			Binding="{Binding Subject}"/>
 								<DataGridTextColumn Header="Класс"				Binding="{Binding Group}"/>
