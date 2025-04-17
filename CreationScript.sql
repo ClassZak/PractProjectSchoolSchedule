@@ -87,7 +87,8 @@ CREATE TABLE Lesson(
 	FOREIGN KEY (IdSubject)	REFERENCES Subject,
 	FOREIGN KEY	(IdGroup)	REFERENCES [Group]
 )
-
+ALTER TABLE Lesson ADD CONSTRAINT
+LessonNumberCheck CHECK ([Number]>=1 AND [Number]<=8)
 
 
 CREATE TABLE Teacher(

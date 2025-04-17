@@ -129,6 +129,18 @@ namespace SchoolSchedule.View.Edit
 
 				mainFrame.Content = new EditPage.EditPageTeacherPhone(EditObject as Model.TeacherPhone,_teacherPhones);
 			}
+			if(EditType.Name==typeof(Model.Lesson).Name)
+			{
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новый урок";
+					EditObject = new Model.Lesson();
+				}
+				else
+					newObjectLabel.Text = $"Редактирование урока";
+
+				mainFrame.Content=new EditPage.EditPageLesson(_lessons,_groups,_subjects,isNewObject,EditObject as Model.Lesson);
+			}
 		}
 
 		private void Button_Click_Ok(object sender, RoutedEventArgs e)
@@ -169,6 +181,16 @@ namespace SchoolSchedule.View.Edit
 					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 					return;					
 				}
+			}
+			if(EditType.Name==typeof (Model.Lesson).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageLesson).CheckInputRules();
+				if(!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;					
+				}
+				EditObject = ((mainFrame.Content as EditPage.EditPageLesson).DataContext as EditLessonViewModel).CurrentLesson;
 			}
 
 			DialogResult=true;

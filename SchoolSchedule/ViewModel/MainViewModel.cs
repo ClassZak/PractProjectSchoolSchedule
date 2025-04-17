@@ -41,7 +41,7 @@ namespace SchoolSchedule.ViewModel
 			_teacherPhones = new List<Model.TeacherPhone>(new List<Model.TeacherPhone>());
 			LoadData();
 		}
-
+		bool _updateMutex = false;
 		private void LoadData()
 		{
 			try
@@ -252,6 +252,26 @@ namespace SchoolSchedule.ViewModel
 									addingWindow.ShowDialog();
 								});
 							}
+							if (targetType.Name == typeof(Model.Lesson).Name)
+							{
+								EditWindow addingWindow = null;
+
+								App.Current.Dispatcher.Invoke(() =>
+								{
+									addingWindow = new EditWindow(typeof(Model.Lesson), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+									addingWindow.Owner = MainWindow;
+									addingWindow.ShowDialog();
+								});
+								if (addingWindow.DialogResult)
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										dataBase.Lesson.Add(addingWindow.EditObject as Model.Lesson);
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
+							}
 						}
 						catch (Exception ex)
 						{
@@ -275,6 +295,8 @@ namespace SchoolSchedule.ViewModel
 				(
 					async param => await Task.Run(async () =>
 					{
+						while (_updateMutex) ;
+						_updateMutex = true;
 						if (!(param is Type targetType))
 						{
 							LoadDataAsync();
@@ -359,6 +381,10 @@ namespace SchoolSchedule.ViewModel
 						catch (Exception ex)
 						{
 							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						finally
+						{
+							_updateMutex = false;
 						}
 					}
 				)));

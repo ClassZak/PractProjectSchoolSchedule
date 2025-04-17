@@ -9,7 +9,7 @@
       d:DesignHeight="150" d:DesignWidth="320"
 	  xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit">
 	<Page.DataContext>
-		<EditViewModel:EditStudentViewModel/>
+		<EditViewModel:EditLessonViewModel/>
 	</Page.DataContext>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -17,20 +17,19 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		<StackPanel Margin="20,0,20,0">
-			<TextBlock Text="Фамилия"/>
-			<TextBox Text="{Binding CurrentStudent.Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
-			<TextBlock Text="Имя"/>
-			<TextBox Text="{Binding CurrentStudent.Name}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
-			<TextBlock Text="Отчество"/>
-			<TextBox Text="{Binding CurrentStudent.Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBlock Text="Номер урока"/>
+			<TextBox Text="{Binding CurrentLesson.Number}" PreviewTextInput="NumberTextBox_PreviewTextInput"/>
 		</StackPanel>
 		<StackPanel Grid.Column="1" Margin="10,0,10,0">
-			<TextBlock Text="Электронная почта"/>
-			<TextBox Text="{Binding CurrentStudent.Email}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
 			<TextBlock Text="Класс"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentStudent.IdGroup}"
+				SelectedValue="{Binding CurrentLesson.IdGroup}"
+			/>
+			<TextBlock Text="Предмет"/>
+			<ComboBox Text="Класс" ItemsSource="{Binding Subjects}" 
+				SelectedValuePath="Id"
+				SelectedValue="{Binding CurrentLesson.IdSubject}"
 			/>
 		</StackPanel>
 	</Grid>

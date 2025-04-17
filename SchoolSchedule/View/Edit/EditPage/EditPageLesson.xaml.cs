@@ -37,16 +37,16 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 
 		private EditLessonViewModel _viewModel;
-		public EditPageLesson(List<Lesson> students, List<Model.Group> groups, bool objectIsNew, Lesson student) : this()
+		public EditPageLesson(List<Lesson> lessons, List<Model.Group> groups,List<Model.Subject> subjects, bool objectIsNew, Lesson lesson) : this()
 		{
 			ObjectIsNew= objectIsNew;
 
 			if (ObjectIsNew)
 				ValueRef = new Lesson();
 			else
-				ValueRef = student;
+				ValueRef = lesson;
 
-			//_viewModel = new EditLessonViewModel(ValueRef, groups,);
+			_viewModel = new EditLessonViewModel(ValueRef, groups,subjects);
 			DataContext = _viewModel;
 		}
 
