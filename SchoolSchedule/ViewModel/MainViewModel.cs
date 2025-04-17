@@ -584,8 +584,8 @@ namespace SchoolSchedule.ViewModel
 										foreach (var el in SelectedGroups)
 										{
 											var elRef = (el as Model.DTO.DTOGroup);
-											var teachersUses = FindTeachersUsesSubject(ref teachers, elRef.ModelRef.Id);
-											var lessonsUses = FindLessonsUsesSubject(ref lessons, elRef.ModelRef.Id);
+											var teachersUses = FindTeachersUsesGroup(ref teachers, elRef.ModelRef.Id);
+											var lessonsUses = FindLessonsUsesGroup(ref lessons, elRef.ModelRef.Id);
 											var studentsUsees = FindStudentsUsesGroup(ref students, elRef.ModelRef.Id);
 
 											if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count()!=0)
@@ -624,6 +624,28 @@ namespace SchoolSchedule.ViewModel
 									}
 									_updateData.Execute(null);
 								}
+								if(ReferenceEquals(param,SelectedLessons))
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										var schedules = await dataBase.Schedule.ToListAsync();
+										foreach (var el in SelectedLessons)
+										{
+											var elRef = (el as Model.DTO.DTOLesson);
+											var schedulesUseesLesson= FindSchedulesUsesLesson(ref schedules,elRef.Id);
+											if (schedulesUseesLesson.Any())
+												throw new Exception($"Удалите все объекты расписания, в которых проводится занятие по предмету \"{elRef.Subject}\" с классом \"{elRef.Group}\"");
+
+											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											dataBase.Student.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -638,6 +660,7 @@ namespace SchoolSchedule.ViewModel
 		#endregion
 		#endregion
 		#region Проверки на использование объекта
+		#region Для удаления предмета
 		IEnumerable<Model.Teacher> FindTeachersUsesSubject(ref List<Model.Teacher> list, int id) 
 		{
 			return list.Where(t => t.Subject.ToList().Exists(s => s.Id == id)); 
@@ -646,7 +669,8 @@ namespace SchoolSchedule.ViewModel
 		{ 
 			return list.Where(l => l.Subject.Id == id); 
 		}
-
+		#endregion
+		#region Для удаления класса
 		IEnumerable<Model.Teacher> FindTeachersUsesGroup(ref List<Model.Teacher> list, int id) 
 		{
 			return list.Where(t => t.Group.ToList().Exists(g => g.Id == id)); 
@@ -659,6 +683,13 @@ namespace SchoolSchedule.ViewModel
 		{
 			return list.Where(s => s.IdGroup==id);
 		}
+		#endregion
+		#region Для удаления урока
+		IEnumerable<Model.Schedule> FindSchedulesUsesLesson(ref List<Model.Schedule> list, int id)
+		{
+			return list.Where(s => s.IdLesson == id);
+		}
+		#endregion
 		#endregion
 
 		/// <summary>
