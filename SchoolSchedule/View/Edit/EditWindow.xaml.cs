@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchoolSchedule.ViewModel.Edit;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -90,6 +91,18 @@ namespace SchoolSchedule.View.Edit
 
 				mainFrame.Content = new EditPage.EditPageGroup(EditObject as Model.Group, _groups);
 			}
+			if(EditType.Name==typeof(Model.Student).Name)
+			{
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новый ученик";
+					EditObject = new Model.Student();
+				}
+				else
+					newObjectLabel.Text = $"Изменение данных ученика \"{(EditObject as Model.Student).Surname} {(EditObject as Model.Student).Name} {(EditObject as Model.Student).Patronymic}\"";
+
+				mainFrame.Content = new EditPage.EditPageStudent(_students, _groups, isNewObject, EditObject as Model.Student);
+			}
 		}
 
 		private void Button_Click_Ok(object sender, RoutedEventArgs e)
@@ -111,6 +124,16 @@ namespace SchoolSchedule.View.Edit
 					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
 					return;
 				}
+			}
+			if(EditType.Name==typeof(Model.Student).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageStudent).CheckInputRules();
+				if (!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;
+				}
+				EditObject = ((mainFrame.Content as EditPage.EditPageStudent).DataContext as EditStudentViewModel).CurrentStudent;
 			}
 
 			DialogResult=true;

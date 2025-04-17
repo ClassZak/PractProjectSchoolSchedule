@@ -385,7 +385,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding InsertCommand}" CommandParameter="{x:Type Model:Subject}"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Subject}"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedSubjects}"/>
 								<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}"/>
 							</StackPanel>
@@ -406,8 +406,8 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding InsertCommand}" CommandParameter="{x:Type Model:Group}"/>
-								<Button Margin="0,5,0,0" Content="Изменить"  Command="{Binding EditCommand}" CommandParameter="{Binding SelectedGroups}"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Group}"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedGroups}"/>
 								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedGroups}"/>
 							</StackPanel>
 						</Grid>
@@ -430,9 +430,9 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить"/>
-								<Button Margin="0,5,0,0" Content="Изменить"/>
-								<Button Margin="0,5,0,0" Content="Удалить"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Student}"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedStudents}"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedGroups}"/>
 							</StackPanel>
 						</Grid>
 					</Grid>

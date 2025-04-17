@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Contexts;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -161,13 +163,13 @@ namespace SchoolSchedule.ViewModel
 		#region Команды
 		#region Команда добавления
 		// Тип аргумента: Type
-		private RelayCommand _insertCommand;
-		public RelayCommand InsertCommand
+		private RelayCommand _addCommand;
+		public RelayCommand AddCommand
 		{
 			get
 			{
-				return _insertCommand ??
-				(_insertCommand = new RelayCommand(
+				return _addCommand ??
+				(_addCommand = new RelayCommand(
 					async param => await Task.Run(async () =>
 					{
 						try
@@ -218,6 +220,40 @@ namespace SchoolSchedule.ViewModel
 									_updateData.Execute(typeof(Model.Subject));
 								}
 							}
+							if (targetType.Name == typeof(Model.Student).Name)
+							{
+								EditWindow addingWindow = null;
+
+								App.Current.Dispatcher.Invoke(() =>
+								{
+									addingWindow = new EditWindow(typeof(Model.Student), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+									addingWindow.Owner = MainWindow;
+									addingWindow.ShowDialog();
+								});
+
+								if (addingWindow.DialogResult)
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										dataBase.Student.Add(addingWindow.EditObject as Model.Student);
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(typeof(Model.Student));
+								}
+							}
+						}
+						catch (DbEntityValidationException e)
+						{
+							StringBuilder stringBuilder = new StringBuilder();
+							foreach (var eve in e.EntityValidationErrors)
+							{
+								stringBuilder.AppendLine($"Entity of type \"{eve.Entry.Entity.GetType().Name}\" in state \"{eve.Entry.State}\" has the following validation errors:");
+								foreach (var ve in eve.ValidationErrors)
+								{
+									stringBuilder.AppendLine($"- Property: \"{ve.PropertyName}\", Error: \"{ve.ErrorMessage}\"");
+								}
+							}
+							string ex=stringBuilder.ToString();
 						}
 						catch (Exception ex)
 						{
@@ -424,6 +460,46 @@ namespace SchoolSchedule.ViewModel
 										_updateData.Execute(typeof(Model.Student));
 										_updateData.Execute(typeof(Model.Teacher));
 										_updateData.Execute(typeof(Model.Schedule));
+									}
+								}
+								if(ReferenceEquals(param, SelectedStudents))
+								{
+									List<Model.DTO.DTOStudent> selectedObjectsList = new List<Model.DTO.DTOStudent>();
+									foreach (var el in selectedObjects)
+										selectedObjectsList.Add(el as Model.DTO.DTOStudent);
+
+									if (selectedObjectsList.Count != 1)
+									{
+										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+										return;
+									}
+
+									var selectedObject = selectedObjectsList[0];
+									EditWindow addingWindow = null;
+
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new EditWindow(typeof(Model.Student), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow.Owner = MainWindow;
+										addingWindow.ShowDialog();
+									});
+									if (addingWindow.DialogResult)
+									{
+										var newObject = (addingWindow.EditObject as Model.Student);
+										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+										{
+											var forUpdate = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+											if (forUpdate == null)
+												throw new Exception("Не удалось найти объект для удаления");
+											forUpdate.Surname = newObject.Surname;
+											forUpdate.Name = newObject.Name;
+											forUpdate.Patronymic = newObject.Patronymic;
+											forUpdate.IdGroup = newObject.IdGroup;
+											forUpdate.Email = newObject.Email;
+
+											await dataBase.SaveChangesAsync();
+										}
+										_updateData.Execute(typeof(Model.Student));
 									}
 								}
 							}

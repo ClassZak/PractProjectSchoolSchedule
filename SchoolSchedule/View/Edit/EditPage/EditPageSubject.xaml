@@ -6,8 +6,7 @@
       xmlns:local="clr-namespace:SchoolSchedule.View.Edit.EditPage"
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
       mc:Ignorable="d" 
-      d:DesignHeight="135" d:DesignWidth="320"
-      Title="EditPageSubject">
+      d:DesignHeight="135" d:DesignWidth="320">
 	<Page.DataContext>
 		<Model:Subject/>
 	</Page.DataContext>

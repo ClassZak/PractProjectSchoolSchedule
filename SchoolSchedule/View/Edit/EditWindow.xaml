@@ -8,7 +8,7 @@
         FontFamily="Arial"
         ResizeMode="NoResize"
         Icon="/Resources/scheduleicon.ico"
-        Title="Редактирование" Height="240" Width="360" WindowStartupLocation="CenterOwner">
+        Title="Редактирование" Height="340" Width="400" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
 		<!--Control colors.-->
 		<Color x:Key="WindowColor">#FFE8EDF9</Color>
