@@ -250,6 +250,35 @@ namespace SchoolSchedule.ViewModel
 									addingWindow.Owner = MainWindow;
 									addingWindow.ShowDialog();
 								});
+
+								if(addingWindow.DialogResult)
+								{
+									var newTeacher = addingWindow.EditObject as Model.Teacher;
+									List<Model.TeacherPhone> phones=new List<Model.TeacherPhone>(newTeacher.TeacherPhone);
+									List<Model.Group> groups=new List<Model.Group>(newTeacher.Group);
+									List<Model.Subject> subjects=new List<Model.Subject>(newTeacher.Subject);
+
+									newTeacher.Subject.Clear();
+									newTeacher.Group.Clear();
+									newTeacher.TeacherPhone.Clear();
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										dataBase.Teacher.Add(addingWindow.EditObject as Model.Teacher);
+
+										var forEdit = await dataBase.Teacher.FirstOrDefaultAsync();
+										if (forEdit == null)
+											throw new Exception("Не удалось добавить предметы и классы для учителей");
+										foreach (var el in subjects)
+											forEdit.Subject.Add(await dataBase.Subject.FindAsync(el.Id));
+										foreach (var el in groups)
+											forEdit.Group.Add(await dataBase.Group.FindAsync(el.Id));
+										foreach (var el in phones)
+											dataBase.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher=el.IdTeacher,PhoneNumber=el.PhoneNumber });
+
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
 							}
 							if (targetType.Name == typeof(Model.Lesson).Name)
 							{

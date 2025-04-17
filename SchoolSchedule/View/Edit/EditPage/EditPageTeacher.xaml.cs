@@ -72,5 +72,14 @@ namespace SchoolSchedule.View.Edit.EditPage
 		{
 			return forbiddenCharsRegex.IsMatch(input);
 		}
+
+
+		public KeyValuePair<bool, string> CheckInputRules()
+		{
+			if (string.IsNullOrWhiteSpace(ValueRef.Name))
+				return new KeyValuePair<bool, string>(false, "Введите не пустое значение для названия предмета");
+
+			return new KeyValuePair<bool, string>(true, null);
+		}
 	}
 }

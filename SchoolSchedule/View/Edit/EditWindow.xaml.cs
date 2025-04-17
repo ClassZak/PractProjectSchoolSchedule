@@ -188,6 +188,25 @@ namespace SchoolSchedule.View.Edit
 				}
 				EditObject = ((mainFrame.Content as EditPage.EditPageStudent).DataContext as EditStudentViewModel).CurrentStudent;
 			}
+			if (EditType.Name == typeof(Model.Teacher).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageTeacher).CheckInputRules();
+				if (!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;
+				}
+				var newTeacher = ((mainFrame.Content as EditPage.EditPageTeacher).DataContext as EditTeacherViewModel).CurrentTeacher;
+				var viewModel = ((mainFrame.Content as EditPage.EditPageTeacher).DataContext as EditTeacherViewModel);
+				foreach (var el in viewModel.ChoosenSubjects)
+					newTeacher.Subject.Add(el);
+				foreach (var el in viewModel.ChoosenGroups)
+					newTeacher.Group.Add(el);
+				foreach (var el in viewModel.TeacherPhones)
+					newTeacher.TeacherPhone.Add(el.ModelRef);
+
+				EditObject = newTeacher;
+			}
 			if(EditType.Name==typeof (Model.TeacherPhone).Name)
 			{
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageTeacherPhone).CheckInputRules();

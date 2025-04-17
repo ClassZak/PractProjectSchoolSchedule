@@ -58,14 +58,14 @@
 						<RowDefinition Height="20"/>
 					</Grid.RowDefinitions>
 					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-						<ListView View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenSubjects}" ItemsSource="{Binding NotChoosenSubjects}" Margin="0,10"/>
+						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenSubjects}" ItemsSource="{Binding NotChoosenSubjects}" Margin="0,10"/>
 					</ScrollViewer>
 					<StackPanel Grid.Column="1" VerticalAlignment="Center" >
 						<Button Content=">>" Margin="2"			Command="{Binding SendToChoosenCommand}" CommandParameter="{x:Type Model:Subject}"/>
 						<Button Content="&lt;&lt;" Margin="2"	Command="{Binding SendToNotChoosenCommand}" CommandParameter="{x:Type Model:Subject}"/>
 					</StackPanel>
 					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Column="2">
-						<ListView View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenSubjects}" ItemsSource="{Binding ChoosenSubjects}" Margin="0,10"/>
+						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenSubjects}" ItemsSource="{Binding ChoosenSubjects}" Margin="0,10"/>
 					</ScrollViewer>
 				</Grid>
 			</TabItem>
