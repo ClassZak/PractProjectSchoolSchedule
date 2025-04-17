@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:SchoolSchedule.View.Edit.EditPage"
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
       mc:Ignorable="d" 
-      d:DesignHeight="150" d:DesignWidth="320"
+      d:DesignHeight="350" d:DesignWidth="470"
+	  xmlns:View="clr-namespace:SchoolSchedule.View"
 	  xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit">
 	<Page.DataContext>
 		<EditViewModel:EditTeacherViewModel/>
@@ -16,22 +17,81 @@
 			<ColumnDefinition/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-		<StackPanel Margin="20,0,20,0">
+		<StackPanel Margin="10,0,5,0">
 			<TextBlock Text="Фамилия"/>
 			<TextBox Text="{Binding CurrentTeacher.Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
 			<TextBlock Text="Имя"/>
-			<TextBox Text="{Binding CurrentTeacher}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding CurrentTeacher.Name}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
 			<TextBlock Text="Отчество"/>
 			<TextBox Text="{Binding CurrentTeacher.Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+
+			<Grid Margin="0,20,0,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<TextBlock Text="Телефонные номера"/>
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="80"/>
+					</Grid.ColumnDefinitions>
+					<ListView ItemsSource="{Binding TeacherPhones}" View:ListViewBehavior.SelectedItems="{Binding SelectedTeacherPhones, Mode=TwoWay}"/>
+					<StackPanel Grid.Column="1" Margin="5">
+						<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddPhoneCommamd}"/>
+						<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditPhoneCommand}" CommandParameter="{Binding SelectedTeacherPhones}"/>
+						<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeletePhoneCommand}" CommandParameter="{Binding SelectedTeacherPhones}"/>
+					</StackPanel>
+				</Grid>
+			</Grid>
 		</StackPanel>
-		<StackPanel Grid.Column="1" Margin="10,0,10,0">
-			<TextBlock Text="Электронная почта"/>
-			<TextBox Text="{Binding CurrentStudent.Email}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
-			<TextBlock Text="Класс"/>
-			<ComboBox Text="Класс" ItemsSource="{Binding Groups}" 
-				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentStudent.IdGroup}"
-			/>
-		</StackPanel>
+		<TabControl Grid.Column="1">
+			<TabItem Header="Предметы">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="30"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition Height="20"/>
+					</Grid.RowDefinitions>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+						<ListView View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenSubjects}" ItemsSource="{Binding NotChoosenSubjects}" Margin="0,10"/>
+					</ScrollViewer>
+					<StackPanel Grid.Column="1" VerticalAlignment="Center" >
+						<Button Content=">>" Margin="2"			Command="{Binding SendToChoosenCommand}" CommandParameter="{x:Type Model:Subject}"/>
+						<Button Content="&lt;&lt;" Margin="2"	Command="{Binding SendToNotChoosenCommand}" CommandParameter="{x:Type Model:Subject}"/>
+					</StackPanel>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Column="2">
+						<ListView View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenSubjects}" ItemsSource="{Binding ChoosenSubjects}" Margin="0,10"/>
+					</ScrollViewer>
+				</Grid>
+			</TabItem>
+			<TabItem Header="Классное руководство">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="30"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition Height="20"/>
+					</Grid.RowDefinitions>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenGroups}" ItemsSource="{Binding NotChoosenGroups}" Margin="0,10"/>
+					</ScrollViewer>
+					<StackPanel Grid.Column="1" VerticalAlignment="Center" >
+						<Button Content=">>" Margin="2"			Command="{Binding SendToChoosenCommand}" CommandParameter="{x:Type Model:Group}"/>
+						<Button Content="&lt;&lt;" Margin="2"	Command="{Binding SendToNotChoosenCommand}" CommandParameter="{x:Type Model:Group}"/>
+					</StackPanel>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Column="2">
+						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenGroups}" ItemsSource="{Binding ChoosenGroups}" Margin="0,10" Grid.Column="2"/>
+					</ScrollViewer>
+				</Grid>
+			</TabItem>
+		</TabControl>
 	</Grid>
 </Page>

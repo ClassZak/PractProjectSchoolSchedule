@@ -72,7 +72,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Edit\EditPage\EditPageLesson.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Edit\EditPage\EditPageStudent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Edit\EditPage\EditPageTeacherPhone.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -103,6 +111,7 @@
     <Compile Include="Model\DTO\DTOTeacher.cs" />
     <Compile Include="Model\DTO\ADTO.cs" />
     <Compile Include="Model\DTO\DTOStudent.cs" />
+    <Compile Include="Model\DTO\DTOTeacherPhone.cs" />
     <Compile Include="Model\Group.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
@@ -148,6 +157,7 @@
     <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Comands\RelayCommand.cs" />
+    <Compile Include="ViewModel\Edit\EditLessonViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditStudentViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditTeacherViewModel.cs" />
     <Compile Include="ViewModel\Table\TemplateTable.cs" />
@@ -160,8 +170,14 @@
     <Compile Include="View\Edit\EditPage\EditPageGroup.xaml.cs">
       <DependentUpon>EditPageGroup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Edit\EditPage\EditPageLesson.xaml.cs">
+      <DependentUpon>EditPageLesson.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Edit\EditPage\EditPageStudent.xaml.cs">
       <DependentUpon>EditPageStudent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Edit\EditPage\EditPageTeacherPhone.xaml.cs">
+      <DependentUpon>EditPageTeacherPhone.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Edit\EditPage\EditPageTeacher.xaml.cs">
       <DependentUpon>EditPageTeacher.xaml</DependentUpon>
@@ -173,6 +189,7 @@
     <Compile Include="View\Edit\EditWindow.xaml.cs">
       <DependentUpon>EditWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ListViewBehavior.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -9,8 +9,6 @@ using System.Windows.Controls;
 
 namespace SchoolSchedule.View
 {
-
-
 	public static class DataGridBehavior
 	{
 		public static readonly DependencyProperty SelectedItemsProperty =

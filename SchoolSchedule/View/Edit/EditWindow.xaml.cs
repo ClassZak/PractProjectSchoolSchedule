@@ -103,6 +103,32 @@ namespace SchoolSchedule.View.Edit
 
 				mainFrame.Content = new EditPage.EditPageStudent(_students, _groups, isNewObject, EditObject as Model.Student);
 			}
+			if(EditType.Name==typeof(Model.Teacher).Name)
+			{
+				if(isNewObject)				
+				{
+					newObjectLabel.Text = "Новый учитель";
+					EditObject = new Model.Teacher();
+				}
+				else
+					newObjectLabel.Text = $"Изменение данных учителя \"{EditObject as Model.Teacher}\"";
+
+				Width = 590;
+				Height = 500;
+				mainFrame.Content = new EditPage.EditPageTeacher(_teachers,_groups,_subjects,_teacherPhones,isNewObject,EditObject as Model.Teacher);
+			}
+			if (EditType.Name == typeof(Model.TeacherPhone).Name)
+			{
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новый телефонный номер";
+					EditObject = new Model.TeacherPhone();
+				}
+				else
+					newObjectLabel.Text = $"Редактирование номера";
+
+				mainFrame.Content = new EditPage.EditPageTeacherPhone(EditObject as Model.TeacherPhone,_teacherPhones);
+			}
 		}
 
 		private void Button_Click_Ok(object sender, RoutedEventArgs e)
@@ -134,6 +160,15 @@ namespace SchoolSchedule.View.Edit
 					return;
 				}
 				EditObject = ((mainFrame.Content as EditPage.EditPageStudent).DataContext as EditStudentViewModel).CurrentStudent;
+			}
+			if(EditType.Name==typeof (Model.TeacherPhone).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageTeacherPhone).CheckInputRules();
+				if(!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;					
+				}
 			}
 
 			DialogResult=true;

@@ -383,13 +383,11 @@
 								<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
 						</DataGrid>
-						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
-							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Subject}"/>
-								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedSubjects}"/>
-								<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}"/>
-							</StackPanel>
-						</Grid>
+						<StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Subject}"/>
+							<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedSubjects}"/>
+							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}"/>
+						</StackPanel>
 					</Grid>
 				</TabItem>
 				<TabItem Header="Классы">
@@ -456,7 +454,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Teacher}"/>
 								<Button Margin="0,5,0,0" Content="Изменить"/>
 								<Button Margin="0,5,0,0" Content="Удалить"/>
 							</StackPanel>
