@@ -25,11 +25,11 @@ namespace SchoolSchedule.ViewModel
 		public MainWindow MainWindow { get; set; }
 		public ObservableCollection<Object> SelectedSubjects { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Object> SelectedGroups { get; set; } = new ObservableCollection<Object>();
-		public ObservableCollection<Object> SelectedStudents { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Model.DTO.DTOStudent> SelectedStudents { get; set; } = new ObservableCollection<Model.DTO.DTOStudent>();
 		public ObservableCollection<Object> SelectedTeachers { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Model.DTO.DTOLesson> SelectedLessons{ get; set; } = new ObservableCollection<Model.DTO.DTOLesson>();
-		public ObservableCollection<Object> SelectedSchedules { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Model.DTO.DTOSchedule> SelectedSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOSchedule>();
 		public MainViewModel()
 		{
 			_groups = new List<Model.Group>(new List<Model.Group>());
@@ -271,6 +271,26 @@ namespace SchoolSchedule.ViewModel
 									_updateData.Execute(null);
 								}
 							}
+							if (targetType.Name == typeof(Model.Schedule).Name)
+							{
+								EditWindow addingWindow = null;
+
+								App.Current.Dispatcher.Invoke(() =>
+								{
+									addingWindow = new EditWindow(typeof(Model.Schedule), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+									addingWindow.Owner = MainWindow;
+									addingWindow.ShowDialog();
+								});
+								if (addingWindow.DialogResult)
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										dataBase.Schedule.Add(addingWindow.EditObject as Model.Schedule);
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
+							}
 						}
 						catch (Exception ex)
 						{
@@ -399,7 +419,7 @@ namespace SchoolSchedule.ViewModel
 							if (param != null)
 							{
 								var selectedObjects = param as IList;
-								if (ReferenceEquals(param, SelectedSubjects))
+								if(ReferenceEquals(param, SelectedSubjects))
 								{
 									List<Model.DTO.DTOSubject> selectedObjectsList = new List<Model.DTO.DTOSubject>();
 									foreach (var el in selectedObjects)
@@ -428,7 +448,7 @@ namespace SchoolSchedule.ViewModel
 										{
 											var forUpdate = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
 											forUpdate.Name= newObject.Name;
 
 											await dataBase.SaveChangesAsync();
@@ -464,7 +484,7 @@ namespace SchoolSchedule.ViewModel
 										{
 											var forUpdate = await dataBase.Group.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
 											forUpdate.Name = newObject.Name;
 											forUpdate.Year = newObject.Year;
 
@@ -501,7 +521,7 @@ namespace SchoolSchedule.ViewModel
 										{
 											var forUpdate = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
 											forUpdate.Surname = newObject.Surname;
 											forUpdate.Name = newObject.Name;
 											forUpdate.Patronymic = newObject.Patronymic;
@@ -536,10 +556,45 @@ namespace SchoolSchedule.ViewModel
 										{
 											var forUpdate = await dataBase.Lesson.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
 											forUpdate.IdSubject = selectedObject.ModelRef.IdSubject;
 											forUpdate.IdGroup= selectedObject.ModelRef.IdGroup;
 											forUpdate.Number= selectedObject.ModelRef.Number;
+
+											await dataBase.SaveChangesAsync();
+										}
+										_updateData.Execute(null);
+									}
+								}
+								if(ReferenceEquals(param,SelectedSchedules))
+								{
+									if(SelectedSchedules.Count != 1)
+									{
+										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+										return;										
+									}
+									var selectedObject = SelectedSchedules[0];
+
+									EditWindow addingWindow = null;
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new EditWindow(typeof(Model.Schedule),selectedObject.ModelRef,_groups,_lessons,_schedules,_students, _subjects,_teachers,_teacherPhones);
+										addingWindow.Owner=MainWindow;
+										addingWindow.ShowDialog();
+									});
+									if(addingWindow.DialogResult)
+									{
+										var newObject= (addingWindow.EditObject as Model.Schedule);
+										using (var dataBase = new Model.SchoolScheduleEntities())
+										{
+											var forUpdate = await dataBase.Schedule.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+											if (forUpdate == null)
+												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+											forUpdate.IdLesson=selectedObject.ModelRef.IdLesson;
+											forUpdate.IdTeacher=selectedObject.ModelRef.IdTeacher;
+											forUpdate.StartTime=selectedObject.ModelRef.StartTime;
+											forUpdate.EndTime=selectedObject.ModelRef.EndTime;
+											forUpdate.Date=selectedObject.ModelRef.Date;
 
 											await dataBase.SaveChangesAsync();
 										}
@@ -550,7 +605,7 @@ namespace SchoolSchedule.ViewModel
 						}
 						catch (Exception ex)
 						{
-							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка редактирования данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 							_updateData.Execute(null);
 						}
 					}
@@ -579,7 +634,7 @@ namespace SchoolSchedule.ViewModel
 									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
 										var teachers = await dataBase.Teacher.ToListAsync();
-										var lessons= await dataBase.Lesson.ToListAsync();
+										var lessons = await dataBase.Lesson.ToListAsync();
 										foreach (var el in SelectedSubjects)
 										{
 											var elRef = (el as Model.DTO.DTOSubject);
@@ -587,11 +642,11 @@ namespace SchoolSchedule.ViewModel
 											var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, elRef.ModelRef.Id);
 
 											if (teachersUsesSubject.Count() != 0 || lessonsUsesSubject.Count() != 0)
-												throw new Exception($"Удалите все объекты, ссылающиеся на предмет \"{elRef.Name}\"");
+												throw new Exception($"Удалите всех уроков и учителей, ссылающихся на предмет \"{elRef.Name}\"");
 
 											var forDelete = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
 											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Subject.Remove(forDelete);
 										}
 
@@ -614,12 +669,12 @@ namespace SchoolSchedule.ViewModel
 											var lessonsUses = FindLessonsUsesGroup(ref lessons, elRef.ModelRef.Id);
 											var studentsUsees = FindStudentsUsesGroup(ref students, elRef.ModelRef.Id);
 
-											if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count()!=0)
-												throw new Exception($"Удалите все объекты, ссылающиеся на класс \"{elRef.ModelRef}\"");
+											if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count() != 0)
+												throw new Exception($"Удалите записи всех уроков, учителей и всех студентов, ссылающихся на класс \"{elRef.ModelRef}\"");
 
 											var forDelete = await dataBase.Group.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
 											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Group.Remove(forDelete);
 										}
 
@@ -627,9 +682,9 @@ namespace SchoolSchedule.ViewModel
 									}
 									_updateData.Execute(null);
 								}
-								if(ReferenceEquals(param,SelectedStudents))
+								if (ReferenceEquals(param, SelectedStudents))
 								{
-									MessageBoxResult messageBoxResult=
+									MessageBoxResult messageBoxResult =
 									MessageBox.Show("Вы уверены начать отчисление учеников?", "Отчисление", MessageBoxButton.YesNo, MessageBoxImage.Question);
 									if (messageBoxResult != MessageBoxResult.Yes)
 										return;
@@ -638,11 +693,9 @@ namespace SchoolSchedule.ViewModel
 									{
 										foreach (var el in SelectedStudents)
 										{
-											var elRef = (el as Model.DTO.DTOStudent);
-
-											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
+											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == el.ModelRef.Id);
 											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления");
+												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Student.Remove(forDelete);
 										}
 
@@ -650,22 +703,37 @@ namespace SchoolSchedule.ViewModel
 									}
 									_updateData.Execute(null);
 								}
-								if(ReferenceEquals(param,SelectedLessons))
+								if (ReferenceEquals(param, SelectedLessons))
 								{
 									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
 										var schedules = await dataBase.Schedule.ToListAsync();
 										foreach (var el in SelectedLessons)
 										{
-											var elRef = (el as Model.DTO.DTOLesson);
-											var schedulesUseesLesson= FindSchedulesUsesLesson(ref schedules,elRef.Id);
+											var schedulesUseesLesson = FindSchedulesUsesLesson(ref schedules, el.Id);
 											if (schedulesUseesLesson.Any())
-												throw new Exception($"Удалите все объекты расписания, в которых проводится занятие по предмету \"{elRef.Subject}\" с классом \"{elRef.Group}\"");
+												throw new Exception($"Удалите все объекты расписания, в которых проводится занятие по предмету \"{el.Subject}\" с классом \"{el.Group}\"");
 
-											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
+											var forDelete = await dataBase.Lesson.FirstOrDefaultAsync(x => x.Id == el.Id);
 											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления");
-											dataBase.Student.Remove(forDelete);
+												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+											dataBase.Lesson.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
+								if (ReferenceEquals(param, SelectedSchedules))
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										foreach (var el in SelectedSchedules)
+										{
+											var forDelete = await dataBase.Schedule.FirstOrDefaultAsync(x => x.Id == el.Id);
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+											dataBase.Schedule.Remove(forDelete);
 										}
 
 										await dataBase.SaveChangesAsync();
@@ -676,7 +744,7 @@ namespace SchoolSchedule.ViewModel
 						}
 						catch (Exception ex)
 						{
-							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка удаления данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 							_updateData.Execute(null);
 						}
 					}

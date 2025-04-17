@@ -24,8 +24,26 @@ namespace SchoolSchedule.View
 		public MainWindow()
 		{
 			InitializeComponent();
+			// Для публикации
 			//this.DataContext = new MainViewModel();
 			//(this.DataContext as MainViewModel).MainWindow=this;
 		}
-    }
+
+		//private void Date_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+		//{
+		//	if (e.PropertyType == typeof(DateTime) || e.PropertyType == typeof(DateTime?))
+		//	{
+		//		var column = new DataGridTextColumn
+		//		{
+		//			Header = e.Column.Header,
+		//			Binding = new Binding(e.PropertyName)
+		//			{
+		//				StringFormat = "dd.MM.yyyy"
+		//			}
+		//		};
+		//		e.Column = column;
+		//	}
+		//}
+
+	}
 }

@@ -19,7 +19,7 @@ namespace SchoolSchedule.Model
         public int IdTeacher { get; set; }
         public System.TimeSpan StartTime { get; set; }
         public System.TimeSpan EndTime { get; set; }
-        public System.DateTime Date { get; set; }
+        public System.DateTime Date { get; set; } = DateTime.Now;
     
         public virtual Lesson Lesson { get; set; }
         public virtual Teacher Teacher { get; set; }

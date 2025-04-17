@@ -13,7 +13,7 @@ namespace SchoolSchedule.ViewModel.Edit
 		public List<Group> Groups { get; set; }
 		public List<Model.Subject> Subjects{ get; set; }
 		public EditLessonViewModel() { }
-		public EditLessonViewModel(Lesson lesson, List<Group> groups, List<Subject> subjects)
+		public EditLessonViewModel(Lesson lesson, List<Group> groups, List<Subject> subjects) : this()
 		{
 			CurrentLesson = lesson;
 			Groups = new List<Group>(groups);

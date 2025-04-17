@@ -72,6 +72,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Edit\EditPage\EditPageSchedule.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Edit\EditPage\EditPageLesson.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -100,6 +104,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Additional\TimeSpanToStringConverter.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -158,6 +163,7 @@
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Comands\RelayCommand.cs" />
     <Compile Include="ViewModel\Edit\EditLessonViewModel.cs" />
+    <Compile Include="ViewModel\Edit\EditScheduleViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditStudentViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditTeacherViewModel.cs" />
     <Compile Include="ViewModel\Table\TemplateTable.cs" />
@@ -169,6 +175,9 @@
     <Compile Include="ViewModel\Table\SubjectTable.cs" />
     <Compile Include="View\Edit\EditPage\EditPageGroup.xaml.cs">
       <DependentUpon>EditPageGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Edit\EditPage\EditPageSchedule.xaml.cs">
+      <DependentUpon>EditPageSchedule.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Edit\EditPage\EditPageLesson.xaml.cs">
       <DependentUpon>EditPageLesson.xaml</DependentUpon>
