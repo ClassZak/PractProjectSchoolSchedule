@@ -80,6 +80,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Edit\EditPage\EditPageTeacher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Edit\EditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -145,6 +149,7 @@
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Comands\RelayCommand.cs" />
     <Compile Include="ViewModel\Edit\EditStudentViewModel.cs" />
+    <Compile Include="ViewModel\Edit\EditTeacherViewModel.cs" />
     <Compile Include="ViewModel\Table\TemplateTable.cs" />
     <Compile Include="View\DataGridBehavior.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -157,6 +162,9 @@
     </Compile>
     <Compile Include="View\Edit\EditPage\EditPageStudent.xaml.cs">
       <DependentUpon>EditPageStudent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Edit\EditPage\EditPageTeacher.xaml.cs">
+      <DependentUpon>EditPageTeacher.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Edit\EditPage\IEditPage.cs" />
     <Compile Include="View\Edit\EditPage\EditPageSubject.xaml.cs">

@@ -17,12 +17,12 @@ namespace SchoolSchedule.ViewModel.Edit
 		public EditStudentViewModel() { }	
 
 		public Student CurrentStudent { get; set; }
-		public ObservableCollection<Group> Groups { get; set; }
+		public List<Group> Groups { get; set; }
 
 		public EditStudentViewModel(Student student, List<Group> groups)
 		{
 			CurrentStudent = student;
-			Groups = new ObservableCollection<Group>(groups);
+			Groups = new List<Group>(groups);
 		}
 	}
 }

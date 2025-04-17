@@ -241,19 +241,17 @@ namespace SchoolSchedule.ViewModel
 									_updateData.Execute(typeof(Model.Student));
 								}
 							}
-						}
-						catch (DbEntityValidationException e)
-						{
-							StringBuilder stringBuilder = new StringBuilder();
-							foreach (var eve in e.EntityValidationErrors)
+							if(targetType.Name==typeof(Model.Teacher).Name)
 							{
-								stringBuilder.AppendLine($"Entity of type \"{eve.Entry.Entity.GetType().Name}\" in state \"{eve.Entry.State}\" has the following validation errors:");
-								foreach (var ve in eve.ValidationErrors)
+								EditWindow addingWindow = null;
+
+								App.Current.Dispatcher.Invoke(() =>
 								{
-									stringBuilder.AppendLine($"- Property: \"{ve.PropertyName}\", Error: \"{ve.ErrorMessage}\"");
-								}
+									addingWindow = new EditWindow(typeof(Model.Teacher), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+									addingWindow.Owner = MainWindow;
+									addingWindow.ShowDialog();
+								});
 							}
-							string ex=stringBuilder.ToString();
 						}
 						catch (Exception ex)
 						{

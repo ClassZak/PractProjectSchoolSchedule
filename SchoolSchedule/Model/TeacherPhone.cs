@@ -19,5 +19,10 @@ namespace SchoolSchedule.Model
         public string PhoneNumber { get; set; }
     
         public virtual Teacher Teacher { get; set; }
-    }
+
+		public override string ToString()
+		{
+			return PhoneNumber;
+		}
+	}
 }

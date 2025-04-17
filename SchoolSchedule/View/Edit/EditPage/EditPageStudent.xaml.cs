@@ -28,12 +28,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 		public bool ObjectIsNew{  get; set; }
 		
 		public List<Student> StudentsForCheck { get; set; } = new List<Student>();
-		public ObservableCollection<Model.Group> GroupsForChouse{ get; set; } = new ObservableCollection<Model.Group>();
 		public Student ValueRef{ get ; set ; }
-		public EditPageStudent()
+		protected EditPageStudent()
 		{
 			InitializeComponent();
-			DataContext = ValueRef ;
+			DataContext = ValueRef;
 		}
 
 
@@ -65,12 +64,6 @@ namespace SchoolSchedule.View.Edit.EditPage
 			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
 			e.Handled = !regex.IsMatch(e.Text);
 		}
-		private void EmailTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
-			e.Handled = !regex.IsMatch(e.Text);
-		}
-
 
 		private static readonly Regex forbiddenCharsRegex = new Regex
 		(
