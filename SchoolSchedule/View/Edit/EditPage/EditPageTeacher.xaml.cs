@@ -76,8 +76,12 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool, string> CheckInputRules()
 		{
+			if (string.IsNullOrWhiteSpace(ValueRef.Surname))
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "фамилию нового" : "новую фамилию") + " учителя");
 			if (string.IsNullOrWhiteSpace(ValueRef.Name))
-				return new KeyValuePair<bool, string>(false, "Введите не пустое значение для названия предмета");
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "имя нового" : "новое имя") + " учителя");
+			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "отчество нового" : "новое отчество") + " учителя");
 
 			return new KeyValuePair<bool, string>(true, null);
 		}
