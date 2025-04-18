@@ -77,6 +77,14 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
+			var lesson = ((this.Content as EditPage.EditPageLesson).DataContext as EditLessonViewModel).CurrentLesson;
+			if (lesson.IdGroup == 0)
+				return new KeyValuePair<bool, string>(false, "Выбрете класс для урока");
+			if (lesson.IdSubject== 0)
+				return new KeyValuePair<bool, string>(false, "Выбрете предмет для урока");
+			if (lesson.Number<1 && lesson.Number>8)
+				return new KeyValuePair<bool, string>(false, "Выбрете номер урока урока от 1 до 8");
+			
 			return new KeyValuePair<bool,string>(true,null);
 		}
 	}

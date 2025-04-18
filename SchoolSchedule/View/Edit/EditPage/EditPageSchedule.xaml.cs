@@ -146,6 +146,16 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
+			var obj=(this.DataContext as EditScheduleViewModel).CurrentSchedule;
+			if (obj.IdLesson == 0)
+				return new KeyValuePair<bool, string>(false, "Выберете урок для расписания");
+			if (obj.IdTeacher== 0)
+				return new KeyValuePair<bool, string>(false, "Выберете преподавателя для расписания");
+			if(obj.StartTime == null ||  obj.EndTime == null || obj.Date==null)
+				return new KeyValuePair<bool, string>(false, "Настройте время начала и конеца урока, а также дату проведения занятий");
+			if(obj.StartTime>obj.EndTime)
+				return new KeyValuePair<bool, string>(false, "Настройте правильно время начала и конеца урока. Занятие не может начаться позже его завершения");
+				
 			return new KeyValuePair<bool,string>(true,null);
 		}
 	}

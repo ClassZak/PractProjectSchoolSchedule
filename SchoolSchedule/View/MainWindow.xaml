@@ -499,7 +499,13 @@
 								<DataGridTextColumn Header="Отчество учителя"	Binding="{Binding TeacherPatronymic}"/>
 								<DataGridTextColumn Header="Время начала"		Binding="{Binding StartTime}"/>
 								<DataGridTextColumn Header="Время завершения"	Binding="{Binding EndTime}"/>
-								<DataGridTextColumn Header="Дата проведения"	Binding="{Binding Date}"/>
+								<DataGridTemplateColumn Header="Дата проведения">
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Date, StringFormat=dd/MM/yyyy}"/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">

@@ -101,6 +101,8 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Изменение данных ученика \"{(EditObject as Model.Student).Surname} {(EditObject as Model.Student).Name} {(EditObject as Model.Student).Patronymic}\"";
 
+				Width = 590;
+				Height = 500;
 				mainFrame.Content = new EditPage.EditPageStudent(_students, _groups, isNewObject, EditObject as Model.Student);
 			}
 			if(EditType.Name==typeof(Model.Teacher).Name)
