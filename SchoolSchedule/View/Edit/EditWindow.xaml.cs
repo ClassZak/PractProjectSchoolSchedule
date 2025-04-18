@@ -198,6 +198,9 @@ namespace SchoolSchedule.View.Edit
 				}
 				var newTeacher = ((mainFrame.Content as EditPage.EditPageTeacher).DataContext as EditTeacherViewModel).CurrentTeacher;
 				var viewModel = ((mainFrame.Content as EditPage.EditPageTeacher).DataContext as EditTeacherViewModel);
+				newTeacher.Subject.Clear();
+				newTeacher.Group.Clear();
+				newTeacher.TeacherPhone.Clear();
 				foreach (var el in viewModel.ChoosenSubjects)
 					newTeacher.Subject.Add(el);
 				foreach (var el in viewModel.ChoosenGroups)

@@ -64,9 +64,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 			// Разрешаем только цифры, пробелы и дефисы после "+7"
 			if (currentText.Length >= 2 && !Regex.IsMatch(e.Text, @"^[\d \-]*$"))
-			{
 				e.Handled = true;
-			}
 		}
 
 		private void PhonePreviewKeyDown(object sender, KeyEventArgs e)
@@ -76,18 +74,14 @@ namespace SchoolSchedule.View.Edit.EditPage
 			// Блокировка удаления первых двух символов
 			if ((e.Key == Key.Back && textBox.SelectionStart <= 2) ||
 				(e.Key == Key.Delete && textBox.SelectionStart < 2))
-			{
 				e.Handled = true;
-			}
 
 			// Проверка вставляемого текста
 			if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
 			{
 				string clipboardText = Clipboard.GetText();
 				if (!clipboardText.StartsWith("+7") || !Regex.IsMatch(clipboardText.Substring(2), @"^[\d \-]*$"))
-				{
 					e.Handled = true;
-				}
 			}
 		}
 
@@ -97,9 +91,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			string rawDigits = Regex.Replace(textBox.Text.Substring(2), @"[^\d]", "");
 
 			if (rawDigits.Length == 10)
-			{
 				textBox.Text = $"+7 {rawDigits.Substring(0, 3)} {rawDigits.Substring(3, 3)}-{rawDigits.Substring(6, 2)}-{rawDigits.Substring(8, 2)}";
-			}
 		}
 		#endregion
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -116,7 +108,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
-			
+			if (string.IsNullOrWhiteSpace(ValueRef.PhoneNumber) || ValueRef.PhoneNumber==string.Empty)
+				return new KeyValuePair<bool, string>(false, "Введите номер телефона!");
+			if(!Regex.IsMatch(ValueRef.PhoneNumber,@"^\+7 \d{3} \d{3}-\d{2}-\d{2}$"))
+				return new KeyValuePair<bool, string>(false, "Неверный формат номера телефона!\nПравильно: +7 123 456-78-90");
+
 				
 			return new KeyValuePair<bool,string>(true,null);
 		}

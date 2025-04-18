@@ -89,7 +89,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			if(ValueRef.Email != null)
 				if(string.IsNullOrWhiteSpace(ValueRef.Email))
 					if(HasInvalidEmailChars(ValueRef.Email))
-						return new KeyValuePair<bool, string>(false, $"Неверный формат электронной почты");
+						return new KeyValuePair<bool, string>(false, $"Неверный формат электронной почты!");
 						
 
 			return new KeyValuePair<bool,string>(true,null);

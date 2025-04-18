@@ -240,7 +240,7 @@ namespace SchoolSchedule.ViewModel
 									_updateData.Execute(typeof(Model.Student));
 								}
 							}
-							if(targetType.Name==typeof(Model.Teacher).Name)
+							if (targetType.Name == typeof(Model.Teacher).Name)
 							{
 								EditWindow addingWindow = null;
 
@@ -448,15 +448,15 @@ namespace SchoolSchedule.ViewModel
 							if (param != null)
 							{
 								var selectedObjects = param as IList;
-								if(ReferenceEquals(param, SelectedSubjects))
+								if (ReferenceEquals(param, SelectedSubjects))
 								{
 									List<Model.DTO.DTOSubject> selectedObjectsList = new List<Model.DTO.DTOSubject>();
 									foreach (var el in selectedObjects)
 										selectedObjectsList.Add(el as Model.DTO.DTOSubject);
 
-									if(selectedObjectsList.Count!=1)
+									if (selectedObjectsList.Count != 1)
 									{
-										MessageBox.Show("Выбирете один объект для изменения","Ошибка выбора объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
+										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 										return;
 									}
 
@@ -465,12 +465,12 @@ namespace SchoolSchedule.ViewModel
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Subject), selectedObject.ModelRef,_groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Subject), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
 
-									if(addingWindow.DialogResult)
+									if (addingWindow.DialogResult)
 									{
 										var newObject = (addingWindow.EditObject as Model.Subject);
 										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
@@ -478,14 +478,14 @@ namespace SchoolSchedule.ViewModel
 											var forUpdate = await dataBase.Subject.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
 												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-											forUpdate.Name= newObject.Name;
+											forUpdate.Name = newObject.Name;
 
 											await dataBase.SaveChangesAsync();
 										}
 										_updateData.Execute(null);
 									}
 								}
-								if(ReferenceEquals(param,SelectedGroups))
+								if (ReferenceEquals(param, SelectedGroups))
 								{
 									List<Model.DTO.DTOGroup> selectedObjectsList = new List<Model.DTO.DTOGroup>();
 									foreach (var el in selectedObjects)
@@ -502,11 +502,11 @@ namespace SchoolSchedule.ViewModel
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Group), selectedObject.ModelRef,_groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Group), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
-									if(addingWindow.DialogResult)
+									if (addingWindow.DialogResult)
 									{
 										var newObject = (addingWindow.EditObject as Model.Group);
 										using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
@@ -522,7 +522,7 @@ namespace SchoolSchedule.ViewModel
 										_updateData.Execute(null);
 									}
 								}
-								if(ReferenceEquals(param, SelectedStudents))
+								if (ReferenceEquals(param, SelectedStudents))
 								{
 									List<Model.DTO.DTOStudent> selectedObjectsList = new List<Model.DTO.DTOStudent>();
 									foreach (var el in selectedObjects)
@@ -562,9 +562,9 @@ namespace SchoolSchedule.ViewModel
 										_updateData.Execute(null);
 									}
 								}
-								if(ReferenceEquals(param,SelectedLessons))
+								if (ReferenceEquals(param, SelectedLessons))
 								{
-									if(SelectedLessons.Count != 1)
+									if (SelectedLessons.Count != 1)
 									{
 										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 										return;
@@ -587,43 +587,95 @@ namespace SchoolSchedule.ViewModel
 											if (forUpdate == null)
 												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
 											forUpdate.IdSubject = selectedObject.ModelRef.IdSubject;
-											forUpdate.IdGroup= selectedObject.ModelRef.IdGroup;
-											forUpdate.Number= selectedObject.ModelRef.Number;
+											forUpdate.IdGroup = selectedObject.ModelRef.IdGroup;
+											forUpdate.Number = selectedObject.ModelRef.Number;
 
 											await dataBase.SaveChangesAsync();
 										}
 										_updateData.Execute(null);
 									}
 								}
-								if(ReferenceEquals(param,SelectedSchedules))
+								if (ReferenceEquals(param, SelectedSchedules))
 								{
-									if(SelectedSchedules.Count != 1)
+									if (SelectedSchedules.Count != 1)
 									{
 										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
-										return;										
+										return;
 									}
 									var selectedObject = SelectedSchedules[0];
 
 									EditWindow addingWindow = null;
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Schedule),selectedObject.ModelRef,_groups,_lessons,_schedules,_students, _subjects,_teachers,_teacherPhones);
-										addingWindow.Owner=MainWindow;
+										addingWindow = new EditWindow(typeof(Model.Schedule), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
-									if(addingWindow.DialogResult)
+									if (addingWindow.DialogResult)
 									{
-										var newObject= (addingWindow.EditObject as Model.Schedule);
+										var newObject = (addingWindow.EditObject as Model.Schedule);
 										using (var dataBase = new Model.SchoolScheduleEntities())
 										{
 											var forUpdate = await dataBase.Schedule.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
 											if (forUpdate == null)
 												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-											forUpdate.IdLesson=selectedObject.ModelRef.IdLesson;
-											forUpdate.IdTeacher=selectedObject.ModelRef.IdTeacher;
-											forUpdate.StartTime=selectedObject.ModelRef.StartTime;
-											forUpdate.EndTime=selectedObject.ModelRef.EndTime;
-											forUpdate.Date=selectedObject.ModelRef.Date;
+											forUpdate.IdLesson = selectedObject.ModelRef.IdLesson;
+											forUpdate.IdTeacher = selectedObject.ModelRef.IdTeacher;
+											forUpdate.StartTime = selectedObject.ModelRef.StartTime;
+											forUpdate.EndTime = selectedObject.ModelRef.EndTime;
+											forUpdate.Date = selectedObject.ModelRef.Date;
+
+											await dataBase.SaveChangesAsync();
+										}
+										_updateData.Execute(null);
+									}
+								}
+								if (ReferenceEquals(param, SelectedTeachers))
+								{
+									if(SelectedTeachers.Count!=1)
+									{
+										MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+										return;
+									}
+									var selectedObject = SelectedTeachers[0];
+
+									EditWindow addingWindow = null;
+									App.Current.Dispatcher.Invoke(() =>
+									{
+										addingWindow = new EditWindow(typeof(Model.Teacher), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow.Owner = MainWindow;
+										addingWindow.ShowDialog();
+									});
+									if (addingWindow.DialogResult)
+									{
+										var newTeacher = addingWindow.EditObject as Model.Teacher;
+										List<Model.TeacherPhone> phones = new List<Model.TeacherPhone>(newTeacher.TeacherPhone);
+										List<Model.Group> groups = new List<Model.Group>(newTeacher.Group);
+										List<Model.Subject> subjects = new List<Model.Subject>(newTeacher.Subject);
+
+										newTeacher.Subject.Clear();
+										newTeacher.Group.Clear();
+										newTeacher.TeacherPhone.Clear();
+										using (var dataBase = new Model.SchoolScheduleEntities())
+										{
+											var forUpdate = await dataBase.Teacher.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+											if (forUpdate == null)
+												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+
+											forUpdate.TeacherPhone.Clear();
+											forUpdate.Subject.Clear();
+											forUpdate.Group.Clear();
+
+											forUpdate.Surname = newTeacher.Surname;
+											forUpdate.Name = newTeacher.Name;
+											forUpdate.Patronymic = newTeacher.Patronymic;
+
+											foreach (var el in subjects)
+												forUpdate.Subject.Add(await dataBase.Subject.FindAsync(el.Id));
+											foreach (var el in groups)
+												forUpdate.Group.Add(await dataBase.Group.FindAsync(el.Id));
+											foreach (var el in phones)
+												dataBase.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
 
 											await dataBase.SaveChangesAsync();
 										}
