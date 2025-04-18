@@ -40,14 +40,68 @@ namespace SchoolSchedule.View.Edit.EditPage
 			DataContext = ValueRef;
 		}
 
-		
-		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		#region События для номера телефона
+		private void PhonePreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
-			// Разрешить byte
 			var textBox = (TextBox)sender;
-			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
-			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+			string currentText = textBox.Text;
+			int caretIndex = textBox.CaretIndex;
+			string newText = currentText.Insert(caretIndex, e.Text);
+
+			// Блокировка, если первый символ не '+'
+			if (currentText.Length == 0 && e.Text != "+")
+			{
+				e.Handled = true;
+				return;
+			}
+
+			// Блокировка, если второй символ не '7'
+			if (currentText.Length == 1 && (currentText + e.Text) != "+7")
+			{
+				e.Handled = true;
+				return;
+			}
+
+			// Разрешаем только цифры, пробелы и дефисы после "+7"
+			if (currentText.Length >= 2 && !Regex.IsMatch(e.Text, @"^[\d \-]*$"))
+			{
+				e.Handled = true;
+			}
 		}
+
+		private void PhonePreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			var textBox = (TextBox)sender;
+
+			// Блокировка удаления первых двух символов
+			if ((e.Key == Key.Back && textBox.SelectionStart <= 2) ||
+				(e.Key == Key.Delete && textBox.SelectionStart < 2))
+			{
+				e.Handled = true;
+			}
+
+			// Проверка вставляемого текста
+			if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+			{
+				string clipboardText = Clipboard.GetText();
+				if (!clipboardText.StartsWith("+7") || !Regex.IsMatch(clipboardText.Substring(2), @"^[\d \-]*$"))
+				{
+					e.Handled = true;
+				}
+			}
+		}
+
+		private void PhoneLostFocus(object sender, RoutedEventArgs e)
+		{
+			var textBox = (TextBox)sender;
+			string rawDigits = Regex.Replace(textBox.Text.Substring(2), @"[^\d]", "");
+
+			if (rawDigits.Length == 10)
+			{
+				textBox.Text = $"+7 {rawDigits.Substring(0, 3)} {rawDigits.Substring(3, 3)}-{rawDigits.Substring(6, 2)}-{rawDigits.Substring(8, 2)}";
+			}
+		}
+		#endregion
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			// Разрешить только русские буквы, пробелы и дефис

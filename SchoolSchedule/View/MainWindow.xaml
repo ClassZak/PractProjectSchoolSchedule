@@ -456,7 +456,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Teacher}"/>
 								<Button Margin="0,5,0,0" Content="Изменить"/>
-								<Button Margin="0,5,0,0" Content="Удалить" />
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedTeachers}"/>
 							</StackPanel>
 						</Grid>
 					</Grid>

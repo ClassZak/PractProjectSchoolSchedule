@@ -13,7 +13,12 @@
 	<Grid>
 		<StackPanel>
 			<TextBlock Text="Телефонный номер"/>
-			<TextBox Text="{Binding PhoneNumber}"/>
+			<TextBox
+				Text="{Binding PhoneNumber}"
+				PreviewTextInput="PhonePreviewTextInput" 
+				PreviewKeyDown="PhonePreviewKeyDown"
+				LostFocus="PhoneLostFocus"
+			/>
 		</StackPanel>
 	</Grid>
 </Page>

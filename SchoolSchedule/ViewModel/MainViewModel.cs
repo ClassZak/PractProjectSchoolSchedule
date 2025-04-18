@@ -26,7 +26,7 @@ namespace SchoolSchedule.ViewModel
 		public ObservableCollection<Object> SelectedSubjects { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Object> SelectedGroups { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Model.DTO.DTOStudent> SelectedStudents { get; set; } = new ObservableCollection<Model.DTO.DTOStudent>();
-		public ObservableCollection<Object> SelectedTeachers { get; set; } = new ObservableCollection<Object>();
+		public ObservableCollection<Model.DTO.DTOTeacher> SelectedTeachers { get; set; } = new ObservableCollection<Model.DTO.DTOTeacher>();
 		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
 		public ObservableCollection<Model.DTO.DTOLesson> SelectedLessons{ get; set; } = new ObservableCollection<Model.DTO.DTOLesson>();
 		public ObservableCollection<Model.DTO.DTOSchedule> SelectedSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOSchedule>();
@@ -263,9 +263,9 @@ namespace SchoolSchedule.ViewModel
 									newTeacher.TeacherPhone.Clear();
 									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 									{
-										dataBase.Teacher.Add(addingWindow.EditObject as Model.Teacher);
+										var forEdit = dataBase.Teacher.Add(addingWindow.EditObject as Model.Teacher);
+										await dataBase.SaveChangesAsync();
 
-										var forEdit = await dataBase.Teacher.FirstOrDefaultAsync();
 										if (forEdit == null)
 											throw new Exception("Не удалось добавить предметы и классы для учителей");
 										foreach (var el in subjects)
@@ -769,6 +769,32 @@ namespace SchoolSchedule.ViewModel
 									}
 									_updateData.Execute(null);
 								}
+								if (ReferenceEquals(param, SelectedTeachers))
+								{
+									using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+									{
+										var schedules = await dataBase.Schedule.ToListAsync();
+										var phones = await dataBase.TeacherPhone.ToListAsync();
+										foreach (var el in SelectedTeachers)
+										{
+											var forDelete = await dataBase.Teacher.FirstOrDefaultAsync(x => x.Id == el.Id);
+											var schedulesUsesTeacher = FindSchedulesUsesTeacher(ref schedules, forDelete.Id);
+											var phonesUsesTeacher = FindTeacherPhonesUsesTeacher(ref phones, forDelete.Id);
+											if(schedulesUsesTeacher.Any())
+												throw new Exception($"Удалите все объекты расписания, в которых записан преподаватель {el.ModelRef}");
+											if (forDelete == null)
+												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+
+											foreach (var p in phonesUsesTeacher)
+												dataBase.TeacherPhone.Remove(p);
+
+											dataBase.Teacher.Remove(forDelete);
+										}
+
+										await dataBase.SaveChangesAsync();
+									}
+									_updateData.Execute(null);
+								}
 							}
 						}
 						catch (Exception ex)
@@ -811,6 +837,16 @@ namespace SchoolSchedule.ViewModel
 		IEnumerable<Model.Schedule> FindSchedulesUsesLesson(ref List<Model.Schedule> list, int id)
 		{
 			return list.Where(s => s.IdLesson == id);
+		}
+		#endregion
+		#region Для удаления учителя
+		IEnumerable<Model.Schedule> FindSchedulesUsesTeacher(ref List<Model.Schedule> list, int id)
+		{
+			return list.Where(s => s.IdTeacher == id);
+		}
+		IEnumerable<Model.TeacherPhone> FindTeacherPhonesUsesTeacher(ref List<Model.TeacherPhone> list, int id)
+		{
+			return list.Where(p => p.IdTeacher == id);
 		}
 		#endregion
 		#endregion

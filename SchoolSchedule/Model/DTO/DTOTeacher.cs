@@ -66,7 +66,7 @@ namespace SchoolSchedule.Model.DTO
 			stringBuilder.Clear();
 			foreach(var el in ModelRef.Group)
 			{
-				stringBuilder.Append(el.Name);
+				stringBuilder.Append(el.Year+el.Name);
 				if (!ReferenceEquals(el, ModelRef.Group.ToList().Last()))
 					stringBuilder.Append(", ");
 			}
