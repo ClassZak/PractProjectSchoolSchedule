@@ -21,11 +21,13 @@
 			<ComboBox Text="Класс" ItemsSource="{Binding Lessons}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding CurrentSchedule.IdLesson}"
+				ToolTip="Шаблоное занятие"
 			/>
 			<TextBlock Text="Учитель"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Teachers}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding CurrentSchedule.IdTeacher}"
+				ToolTip="Преподаватель на занятии"
 			/>
 			<TextBlock Text="Начало"/>
 			<TextBox 
@@ -35,6 +37,7 @@
 				KeyDown="TimeBox_KeyDown"
 				LostFocus="TimeBox_LostFocus"
 				PreviewTextInput="TimeTextBox_PreviewTextInput"
+				ToolTip="Начало урока"
 			/>
 
 			<TextBlock Text="Окончание" Margin="0,10,0,0"/>
@@ -45,10 +48,11 @@
 				KeyDown="TimeBox_KeyDown"
 				LostFocus="TimeBox_LostFocus"
 				PreviewTextInput="TimeTextBox_PreviewTextInput"
+				ToolTip="Окончание урока"
 			/>
 
 			<TextBlock Text="Дата:" Margin="0,10,0,0"/>
-			<DatePicker SelectedDate="{Binding CurrentSchedule.Date}"/>
+			<DatePicker SelectedDate="{Binding CurrentSchedule.Date}" ToolTip="Дата проведения"/>
 		</StackPanel>
 	</Grid>
 </Page>

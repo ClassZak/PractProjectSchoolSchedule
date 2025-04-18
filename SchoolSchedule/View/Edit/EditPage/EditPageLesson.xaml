@@ -18,18 +18,20 @@
 		</Grid.ColumnDefinitions>
 		<StackPanel Margin="20,0,20,0">
 			<TextBlock Text="Номер урока"/>
-			<TextBox Text="{Binding CurrentLesson.Number}" PreviewTextInput="NumberTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding CurrentLesson.Number}" PreviewTextInput="NumberTextBox_PreviewTextInput" ToolTip="Номер урока по счёту в расписании"/>
 		</StackPanel>
 		<StackPanel Grid.Column="1" Margin="10,0,10,0">
 			<TextBlock Text="Класс"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding CurrentLesson.IdGroup}"
+				ToolTip="С кем проводится урок"
 			/>
 			<TextBlock Text="Предмет"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Subjects}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding CurrentLesson.IdSubject}"
+				ToolTip="Предмет урока (школьны предмет)"
 			/>
 		</StackPanel>
 	</Grid>

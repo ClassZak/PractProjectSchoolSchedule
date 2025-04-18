@@ -25,8 +25,8 @@ namespace SchoolSchedule.View
 		{
 			InitializeComponent();
 			// Для публикации
-			//this.DataContext = new MainViewModel();
-			//(this.DataContext as MainViewModel).MainWindow=this;
+			this.DataContext = new MainViewModel();
+			(this.DataContext as MainViewModel).MainWindow = this;
 		}
 
 		//private void Date_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)

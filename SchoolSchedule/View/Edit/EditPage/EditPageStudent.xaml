@@ -26,7 +26,7 @@
 		</StackPanel>
 		<StackPanel Grid.Column="1" Margin="10,0,10,0">
 			<TextBlock Text="Электронная почта"/>
-			<TextBox Text="{Binding CurrentStudent.Email}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding CurrentStudent.Email}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Электронная почта, если есть"/>
 			<TextBlock Text="Класс"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"

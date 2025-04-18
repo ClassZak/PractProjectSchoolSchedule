@@ -13,7 +13,7 @@
 	<Grid>
 		<StackPanel>
 			<TextBlock Text="Название"/>
-			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Название нового предмета в базе данных"/>
 		</StackPanel>
 	</Grid>
 </Page>

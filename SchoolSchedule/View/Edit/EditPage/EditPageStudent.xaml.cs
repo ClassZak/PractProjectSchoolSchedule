@@ -78,11 +78,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
 			if (string.IsNullOrWhiteSpace(ValueRef.Surname))
-				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "фамилию нового" : "новую фамилию") + " ученика");
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " фамилию нового" : " новую фамилию") + " ученика");
 			if (string.IsNullOrWhiteSpace(ValueRef.Name))
-				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "имя нового" : "новое имя") + " ученика");
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " имя нового" : " новое имя") + " ученика");
 			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
-				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "отчество нового" : "новое отчество") + " ученика");
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " отчество нового" : " новое отчество") + " ученика");
 			if(!ObjectIsNew)
 			if(StudentsForCheck.Where(el=>el.Name==ValueRef.Name && el.Surname==ValueRef.Surname && el.Patronymic==ValueRef.Patronymic).Any())
 				return new KeyValuePair<bool, string>(false, $"Ученик \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
