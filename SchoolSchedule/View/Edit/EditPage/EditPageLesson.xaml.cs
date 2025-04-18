@@ -84,6 +84,9 @@ namespace SchoolSchedule.View.Edit.EditPage
 				return new KeyValuePair<bool, string>(false, "Выбрете предмет для урока");
 			if (lesson.Number<1 && lesson.Number>8)
 				return new KeyValuePair<bool, string>(false, "Выбрете номер урока урока от 1 до 8");
+			if(LessonsForCheck.Any(x=>x.Number==lesson.Number && x.IdGroup==lesson.IdGroup && x.IdSubject==lesson.IdSubject))
+				return new KeyValuePair<bool, string>(false, $"Введите другие данные для урока. Подобная запись уже есть в базе данных");
+				
 			
 			return new KeyValuePair<bool,string>(true,null);
 		}

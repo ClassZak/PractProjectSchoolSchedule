@@ -60,7 +60,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			if (string.IsNullOrWhiteSpace(ValueRef.Name))
 				return new KeyValuePair<bool, string>(false, "Введите не пустое значение для названия предмета");
 			if(SubjectsForCheck.Where(el=>el.Name==ValueRef.Name).Any())
-				return new KeyValuePair<bool, string>(false, $"Предмет \"{ValueRef.Name}\" уже существует");
+				return new KeyValuePair<bool, string>(false, $"Предмет \"{ValueRef.Name}\" уже присутствует в базе данных");
 				
 			return new KeyValuePair<bool,string>(true,null);
 		}

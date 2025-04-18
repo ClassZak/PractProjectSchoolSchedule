@@ -82,6 +82,8 @@ namespace SchoolSchedule.View.Edit.EditPage
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "имя нового" : "новое имя") + " учителя");
 			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? "отчество нового" : "новое отчество") + " учителя");
+			if (TeachersForCheck.Where(el => el.Name == ValueRef.Name && el.Surname == ValueRef.Surname && el.Patronymic == ValueRef.Patronymic).Any())
+				return new KeyValuePair<bool, string>(false, $"Учитель \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
 
 			return new KeyValuePair<bool, string>(true, null);
 		}

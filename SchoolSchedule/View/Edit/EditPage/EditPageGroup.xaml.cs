@@ -54,7 +54,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			if (ValueRef.Year<1 || ValueRef.Year>11)
 				return new KeyValuePair<bool, string>(false, "Введите номер года обучения от 1 до 11 включительно");
 			if (GroupsForCheck.Where(el => el.Name == ValueRef.Name && el.Year==ValueRef.Year).Any())
-				return new KeyValuePair<bool, string>(false, $"Класс \"{ValueRef.Year}{ValueRef.Name}\" уже существует");
+				return new KeyValuePair<bool, string>(false, $"Класс \"{ValueRef.Year}{ValueRef.Name}\" уже присутствует в базе данных");
 
 			return new KeyValuePair<bool, string>(true, null);
 		

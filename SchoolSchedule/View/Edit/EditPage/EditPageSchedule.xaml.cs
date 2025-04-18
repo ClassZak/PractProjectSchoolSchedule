@@ -155,6 +155,9 @@ namespace SchoolSchedule.View.Edit.EditPage
 				return new KeyValuePair<bool, string>(false, "Настройте время начала и конеца урока, а также дату проведения занятий");
 			if(obj.StartTime>obj.EndTime)
 				return new KeyValuePair<bool, string>(false, "Настройте правильно время начала и конеца урока. Занятие не может начаться позже его завершения");
+			if(SchedulesForCheck.Any(x=>x.IdLesson==obj.IdLesson && x.IdTeacher==obj.IdTeacher && x.Date==obj.Date && x.StartTime==obj.StartTime && x.EndTime==obj.EndTime))
+				return new KeyValuePair<bool,string>(true, "Введите другие данные для составления расписаания. Подобная запись уже есть в базе данных");
+				
 				
 			return new KeyValuePair<bool,string>(true,null);
 		}
