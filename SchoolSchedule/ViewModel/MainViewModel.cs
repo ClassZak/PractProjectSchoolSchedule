@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Contexts;
@@ -106,6 +108,17 @@ namespace SchoolSchedule.ViewModel
 			// Для того, чтобы не было ошибки в xaml
 			catch (System.InvalidOperationException)
 			{ }
+			catch (DbUpdateException ex)
+			{
+				// Распаковываем вложенные исключения
+				Exception innerException = ex.InnerException;
+				while (innerException.InnerException != null)
+				{
+					innerException = innerException.InnerException;
+				}
+
+				MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+			}
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -139,6 +152,18 @@ namespace SchoolSchedule.ViewModel
 				}
 
 				return true;
+			}
+			catch (DbUpdateException ex)
+			{
+				// Распаковываем вложенные исключения
+				Exception innerException = ex.InnerException;
+				while (innerException.InnerException != null)
+				{
+					innerException = innerException.InnerException;
+				}
+
+				MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return false;
 			}
 			catch (Exception ex)
 			{
@@ -321,6 +346,17 @@ namespace SchoolSchedule.ViewModel
 								}
 							}
 						}
+						catch (DbUpdateException ex)
+						{
+							// Распаковываем вложенные исключения
+							Exception innerException = ex.InnerException;
+							while (innerException.InnerException != null)
+							{
+								innerException = innerException.InnerException;
+							}
+
+							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
 						catch (Exception ex)
 						{
 							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -423,6 +459,17 @@ namespace SchoolSchedule.ViewModel
 										App.Current.Dispatcher.Invoke(() => { _scheduleTable.Entries.Add(new DTOSchedule(el)); });
 								}
 							}
+						}
+						catch (DbUpdateException ex)
+						{
+							// Распаковываем вложенные исключения
+							Exception innerException = ex.InnerException;
+							while (innerException.InnerException != null)
+							{
+								innerException = innerException.InnerException;
+							}
+
+							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
 						catch (Exception ex)
 						{
@@ -684,6 +731,17 @@ namespace SchoolSchedule.ViewModel
 								}
 							}
 						}
+						catch (DbUpdateException ex)
+						{
+							// Распаковываем вложенные исключения
+							Exception innerException = ex.InnerException;
+							while (innerException.InnerException != null)
+							{
+								innerException = innerException.InnerException;
+							}
+
+							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
 						catch (Exception ex)
 						{
 							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка редактирования данных", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -848,6 +906,17 @@ namespace SchoolSchedule.ViewModel
 									_updateData.Execute(null);
 								}
 							}
+						}
+						catch (DbUpdateException ex)
+						{
+							// Распаковываем вложенные исключения
+							Exception innerException = ex.InnerException;
+							while (innerException.InnerException != null)
+							{
+								innerException = innerException.InnerException;
+							}
+
+							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
 						catch (Exception ex)
 						{
