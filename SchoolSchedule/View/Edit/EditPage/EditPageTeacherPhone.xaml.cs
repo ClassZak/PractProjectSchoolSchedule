@@ -88,6 +88,8 @@ namespace SchoolSchedule.View.Edit.EditPage
 		private void PhoneLostFocus(object sender, RoutedEventArgs e)
 		{
 			var textBox = (TextBox)sender;
+			if (textBox.Text.Length < 2)
+				textBox.Text = "+7 ";
 			string rawDigits = Regex.Replace(textBox.Text.Substring(2), @"[^\d]", "");
 
 			if (rawDigits.Length == 10)
