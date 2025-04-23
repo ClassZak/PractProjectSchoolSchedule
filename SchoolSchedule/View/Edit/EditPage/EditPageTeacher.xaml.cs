@@ -24,6 +24,8 @@ namespace SchoolSchedule.View.Edit.EditPage
 	/// </summary>
 	public partial class EditPageTeacher : Page
 	{
+		public Window OwnerWindow { get; set; }
+		
 		public bool ObjectIsNew { get; set; }
 		public List<Model.Teacher> TeachersForCheck { get; set; } = new List<Model.Teacher>();
 		public Model.Teacher ValueRef { get; set; }
@@ -34,8 +36,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 			InitializeComponent();
 			DataContext = ValueRef;
 		}
-		public EditPageTeacher(List<Model.Teacher> teachers,List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones, bool objectIsNew,Model.Teacher teacher) : this()
+		public EditPageTeacher(List<Model.Teacher> teachers,List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones, bool objectIsNew,Model.Teacher teacher,Window window) : this()
 		{
+			OwnerWindow = window;	
+
+			TeachersForCheck = teachers;
 			ObjectIsNew = objectIsNew;
 
 			if (ObjectIsNew)
@@ -43,8 +48,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 			else
 				ValueRef = teacher;
 
-			_editTeacherViewModel = new EditTeacherViewModel(ValueRef,groups,subjects,teacherPhones);
+			_editTeacherViewModel = new EditTeacherViewModel(ValueRef,groups,subjects,teacherPhones, OwnerWindow);
 			DataContext = _editTeacherViewModel;
+			foreach(var el in teacherPhones)
+				if(el.IdTeacher==teacher.Id)
+					_editTeacherViewModel.TeacherPhones.Add(new Model.DTO.DTOTeacherPhone(el));
 		}
 
 
@@ -82,7 +90,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " имя нового" : " новое имя") + " учителя");
 			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " отчество нового " : " новое отчество ") + "учителя");
-			if (TeachersForCheck.Where(el => el.Name == ValueRef.Name && el.Surname == ValueRef.Surname && el.Patronymic == ValueRef.Patronymic).Any())
+			if (ObjectIsNew && TeachersForCheck.Where(el => el.Name == ValueRef.Name && el.Surname == ValueRef.Surname && el.Patronymic == ValueRef.Patronymic).Any())
 				return new KeyValuePair<bool, string>(false, $"Учитель \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
 
 			return new KeyValuePair<bool, string>(true, null);

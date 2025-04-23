@@ -41,14 +41,21 @@ namespace SchoolSchedule.ViewModel
 			_subjects = new List<Model.Subject>(new List<Model.Subject>());
 			_teachers = new List<Model.Teacher>(new List<Model.Teacher>());
 			_teacherPhones = new List<Model.TeacherPhone>(new List<Model.TeacherPhone>());
+
+#if DEBUG
 			LoadData();
+#else
+			LoadDataAsync();
+#endif
 		}
+
 		private void LoadData()
 		{
 			try
 			{
 				using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
 				{
+					dataBase.Database.Connection.Open();
 
 					App.Current.Dispatcher.Invoke(() =>
 					{
@@ -113,75 +120,44 @@ namespace SchoolSchedule.ViewModel
 				// Распаковываем вложенные исключения
 				Exception innerException = ex.InnerException;
 				while (innerException.InnerException != null)
-				{
 					innerException = innerException.InnerException;
-				}
 
-				MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				Task.Run(() =>
+				{
+					MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				});
+			}
+			catch (System.Data.Entity.Core.EntityException ex)
+			{
+				string message = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+				Task.Run(() =>{MessageBox.Show("Ошибка чтения записей из базы данных:\n"+message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);});
+			}
+			catch (SqlException ex) when (ex.Number == 2)
+			{
+				Task.Run(() =>{MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);});
+			}
+			catch (SqlException ex) when (ex.Number == 53 || ex.Number == -1) // Ошибки подключения
+			{
+				Task.Run(() =>{MessageBox.Show(ex.Message, "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);});
+			}
+			catch (SqlException ex)
+			{
+				Console.WriteLine($"SQL-ошибка (код {ex.Number}): {ex.Message}");
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				Task.Run(() =>{MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);});
 			}
 		}
+
+		
+		// Использовать в конструкторе при релизе
 		private async void LoadDataAsync()
 		{
 			await Task.Run(() =>
 			{
 				LoadData();
 			});
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <returns>true - успех</returns>
-		protected async Task<bool> UpdateList<T>(IList<T> collection) where T : class
-		{
-			try
-			{
-				using (var dataBase = new Model.SchoolScheduleEntities())
-				{
-					List<T> elements = await dataBase.Set<T>().ToListAsync();
-
-					App.Current.Dispatcher.Invoke(() => { collection.Clear(); });
-					foreach (var el in elements)
-						App.Current.Dispatcher.Invoke(() => { collection.Add(el); });
-				}
-
-				return true;
-			}
-			catch (DbUpdateException ex)
-			{
-				// Распаковываем вложенные исключения
-				Exception innerException = ex.InnerException;
-				while (innerException.InnerException != null)
-				{
-					innerException = innerException.InnerException;
-				}
-
-				MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-				return false;
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка чтения базы данных при обновлении содержимого таблиц", MessageBoxButton.OK, MessageBoxImage.Stop);
-				return false;
-			}
-		}
-		protected FieldInfo FindTargetField(Type targetType)
-		{
-			FieldInfo field = null;
-			foreach (var type in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-				if (IsObservableCollection(type.FieldType, out Type elementType) && elementType == targetType)
-				{
-					field = type;
-					break;
-				}
-
-			return field;
 		}
 
 		#region Команды
@@ -207,8 +183,10 @@ namespace SchoolSchedule.ViewModel
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new EditWindow(typeof(Model.Group), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
-									addingWindow.Owner = MainWindow;
+									addingWindow = new EditWindow(typeof(Model.Group), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow)
+									{
+										Owner = MainWindow
+									};
 									addingWindow.ShowDialog();
 								});
 
@@ -229,8 +207,10 @@ namespace SchoolSchedule.ViewModel
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new EditWindow(typeof(Model.Subject), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
-									addingWindow.Owner = MainWindow;
+									addingWindow = new EditWindow(typeof(Model.Subject), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow)
+									{
+										Owner = MainWindow
+									};
 									addingWindow.ShowDialog();
 								});
 
@@ -250,8 +230,10 @@ namespace SchoolSchedule.ViewModel
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new EditWindow(typeof(Model.Student), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
-									addingWindow.Owner = MainWindow;
+									addingWindow = new EditWindow(typeof(Model.Student), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow)
+									{
+										Owner = MainWindow
+									};
 									addingWindow.ShowDialog();
 								});
 
@@ -271,8 +253,10 @@ namespace SchoolSchedule.ViewModel
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new EditWindow(typeof(Model.Teacher), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
-									addingWindow.Owner = MainWindow;
+									addingWindow = new EditWindow(typeof(Model.Teacher), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow)
+									{
+										Owner = MainWindow
+									};
 									addingWindow.ShowDialog();
 								});
 
@@ -311,7 +295,7 @@ namespace SchoolSchedule.ViewModel
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new EditWindow(typeof(Model.Lesson), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+									addingWindow = new EditWindow(typeof(Model.Lesson), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow);
 									addingWindow.Owner = MainWindow;
 									addingWindow.ShowDialog();
 								});
@@ -331,7 +315,7 @@ namespace SchoolSchedule.ViewModel
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
-									addingWindow = new EditWindow(typeof(Model.Schedule), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+									addingWindow = new EditWindow(typeof(Model.Schedule), null, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow);
 									addingWindow.Owner = MainWindow;
 									addingWindow.ShowDialog();
 								});
@@ -357,6 +341,18 @@ namespace SchoolSchedule.ViewModel
 
 							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
+						catch (SqlException ex) when (ex.Number == 2)
+						{
+							MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex) when (ex.Number == 53 || ex.Number == -1) // Ошибки подключения
+						{
+							MessageBox.Show(ex.Message, "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex)
+						{
+							Console.WriteLine($"SQL-ошибка (код {ex.Number}): {ex.Message}");
+						}
 						catch (Exception ex)
 						{
 							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -377,104 +373,10 @@ namespace SchoolSchedule.ViewModel
 				return _updateData ??
 				(_updateData = new RelayCommand
 				(
-					async param => await Task.Run(async () =>
+					async param => await Task.Run(() =>
 					{
-						if (!(param is Type targetType))
-						{
-							LoadDataAsync();
-							return;
-						}
-						try
-						{
-							using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-							{
-								if (targetType.Name == typeof(Model.Group).Name)
-								{
-									_groups.Clear();
-									App.Current.Dispatcher.Invoke(() => { _groupTable.Clear(); });
-									var list = await dataBase.Group.ToListAsync();
-									foreach (var el in list)
-										_groups.Add(el);
-									foreach (var el in list)
-										App.Current.Dispatcher.Invoke(() => { _groupTable.Entries.Add(new DTOGroup(el)); });
-
-									_updateData.Execute(typeof(Model.Schedule));
-									_updateData.Execute(typeof(Model.Teacher));
-									_updateData.Execute(typeof(Model.Student));
-								}
-								if (targetType.Name == typeof(Model.Student).Name)
-								{
-									_students.Clear();
-									var list = await dataBase.Student.ToListAsync();
-									foreach (var el in list)
-										_students.Add(el);
-
-									_studentTable.Clear();
-									foreach (var el in _students)
-										App.Current.Dispatcher.Invoke(() => { _studentTable.Entries.Add(new DTOStudent(el)); });
-								}
-								if (targetType.Name == typeof(Model.Subject).Name)
-								{
-									_subjects.Clear();
-									App.Current.Dispatcher.Invoke(() => { _subjectTable.Clear(); });
-									var list = await dataBase.Subject.ToListAsync();
-									foreach (var el in list)
-										_subjects.Add(el);
-									foreach (var el in list)
-										App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
-
-									_updateData.Execute(typeof(Model.Lesson));
-									_updateData.Execute(typeof(Model.Teacher));
-								}
-								if (targetType.Name == typeof(Model.Lesson).Name)
-								{
-									_lessons.Clear();
-									App.Current.Dispatcher.Invoke(() => { _lessonTable.Clear(); });
-									var list = await dataBase.Lesson.ToListAsync();
-									foreach (var el in list)
-										_lessons.Add(el);
-									foreach (var el in list)
-										App.Current.Dispatcher.Invoke(() => { _lessonTable.Entries.Add(new DTOLesson(el)); });
-
-									_updateData.Execute(typeof(Model.Schedule));
-								}
-								if(targetType.Name==typeof(Model.Teacher).Name || targetType.Name == typeof(Model.TeacherPhone).Name)
-								{
-									_teachers.Clear();
-									App.Current.Dispatcher.Invoke(() => { _teacherTable.Clear(); });
-									var list=await dataBase.Teacher.ToListAsync();
-									foreach (var el in list)
-										_teachers.Add(el);
-									foreach (var el in list)
-										App.Current.Dispatcher.Invoke(() => { _teacherTable.Entries.Add(new DTOTeacher(el)); });
-								}
-								if (targetType.Name == typeof(Model.Schedule).Name)
-								{
-									_schedules.Clear();
-									App.Current.Dispatcher.Invoke(() => { _scheduleTable.Clear(); });
-									var list = await dataBase.Schedule.ToListAsync();
-									foreach (var el in list)
-										_schedules.Add(el);
-									foreach (var el in list)
-										App.Current.Dispatcher.Invoke(() => { _scheduleTable.Entries.Add(new DTOSchedule(el)); });
-								}
-							}
-						}
-						catch (DbUpdateException ex)
-						{
-							// Распаковываем вложенные исключения
-							Exception innerException = ex.InnerException;
-							while (innerException.InnerException != null)
-							{
-								innerException = innerException.InnerException;
-							}
-
-							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-						}
+						LoadData();
+						return Task.CompletedTask;
 					}
 				)));
 			}
@@ -512,8 +414,10 @@ namespace SchoolSchedule.ViewModel
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Subject), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
-										addingWindow.Owner = MainWindow;
+										addingWindow = new EditWindow(typeof(Model.Subject), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow)
+										{
+											Owner = MainWindow
+										};
 										addingWindow.ShowDialog();
 									});
 
@@ -549,8 +453,10 @@ namespace SchoolSchedule.ViewModel
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Group), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
-										addingWindow.Owner = MainWindow;
+										addingWindow = new EditWindow(typeof(Model.Group), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow)
+										{
+											Owner = MainWindow
+										};
 										addingWindow.ShowDialog();
 									});
 									if (addingWindow.DialogResult)
@@ -586,7 +492,7 @@ namespace SchoolSchedule.ViewModel
 
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Student), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Student), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
@@ -621,7 +527,7 @@ namespace SchoolSchedule.ViewModel
 									EditWindow addingWindow = null;
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Lesson), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Lesson), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
@@ -654,7 +560,7 @@ namespace SchoolSchedule.ViewModel
 									EditWindow addingWindow = null;
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Schedule), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Schedule), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
@@ -689,7 +595,7 @@ namespace SchoolSchedule.ViewModel
 									EditWindow addingWindow = null;
 									App.Current.Dispatcher.Invoke(() =>
 									{
-										addingWindow = new EditWindow(typeof(Model.Teacher), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones);
+										addingWindow = new EditWindow(typeof(Model.Teacher), selectedObject.ModelRef, _groups, _lessons, _schedules, _students, _subjects, _teachers, _teacherPhones, MainWindow);
 										addingWindow.Owner = MainWindow;
 										addingWindow.ShowDialog();
 									});
@@ -705,24 +611,51 @@ namespace SchoolSchedule.ViewModel
 										newTeacher.TeacherPhone.Clear();
 										using (var dataBase = new Model.SchoolScheduleEntities())
 										{
-											var forUpdate = await dataBase.Teacher.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+											var forUpdate = await dataBase.Teacher
+												.Include(t => t.TeacherPhone) // Добавляем Include для загрузки связанных телефонов
+												.FirstOrDefaultAsync(x => x.Id == selectedObject.ModelRef.Id);
+
 											if (forUpdate == null)
-												throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+												throw new Exception("Объект не найден");
 
-											forUpdate.TeacherPhone.Clear();
-											forUpdate.Subject.Clear();
-											forUpdate.Group.Clear();
-
+											// Обновляем скалярные свойства
 											forUpdate.Surname = newTeacher.Surname;
 											forUpdate.Name = newTeacher.Name;
 											forUpdate.Patronymic = newTeacher.Patronymic;
 
-											foreach (var el in subjects)
-												forUpdate.Subject.Add(await dataBase.Subject.FindAsync(el.Id));
-											foreach (var el in groups)
-												forUpdate.Group.Add(await dataBase.Group.FindAsync(el.Id));
+											// Удаляем старые телефоны
+											foreach (var phone in forUpdate.TeacherPhone.ToList())
+											{
+												if(phone.IdTeacher==forUpdate.Id)
+													dataBase.TeacherPhone.Remove(phone);
+											}
+
+											// Добавляем новые телефоны
 											foreach (var el in phones)
-												dataBase.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
+											{
+												dataBase.TeacherPhone.Add(new Model.TeacherPhone
+												{
+													IdTeacher = forUpdate.Id,
+													PhoneNumber = el.PhoneNumber
+												});
+											}
+
+											// Обновляем Subject и Group (many-to-many)
+											forUpdate.Subject.Clear();
+											foreach (var el in subjects)
+											{
+												var subject = await dataBase.Subject.FindAsync(el.Id);
+												if (subject != null)
+													forUpdate.Subject.Add(subject);
+											}
+
+											forUpdate.Group.Clear();
+											foreach (var el in groups)
+											{
+												var group = await dataBase.Group.FindAsync(el.Id);
+												if (group != null)
+													forUpdate.Group.Add(group);
+											}
 
 											await dataBase.SaveChangesAsync();
 										}
@@ -741,6 +674,18 @@ namespace SchoolSchedule.ViewModel
 							}
 
 							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex) when (ex.Number == 2)
+						{
+							MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex) when (ex.Number == 53 || ex.Number == -1) // Ошибки подключения
+						{
+							MessageBox.Show(ex.Message, "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex)
+						{
+							Console.WriteLine($"SQL-ошибка (код {ex.Number}): {ex.Message}");
 						}
 						catch (Exception ex)
 						{
@@ -811,9 +756,7 @@ namespace SchoolSchedule.ViewModel
 											if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count() != 0)
 												throw new Exception($"Удалите записи всех уроков, учителей и всех студентов, ссылающихся на класс \"{elRef.ModelRef}\"");
 
-											var forDelete = await dataBase.Group.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id);
-											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+											var forDelete = await dataBase.Group.FirstOrDefaultAsync(x => x.Id == elRef.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Group.Remove(forDelete);
 										}
 
@@ -832,9 +775,7 @@ namespace SchoolSchedule.ViewModel
 									{
 										foreach (var el in SelectedStudents)
 										{
-											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == el.ModelRef.Id);
-											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+											var forDelete = await dataBase.Student.FirstOrDefaultAsync(x => x.Id == el.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Student.Remove(forDelete);
 										}
 
@@ -853,9 +794,7 @@ namespace SchoolSchedule.ViewModel
 											if (schedulesUseesLesson.Any())
 												throw new Exception($"Удалите все объекты расписания, в которых проводится занятие по предмету \"{el.Subject}\" с классом \"{el.Group}\"");
 
-											var forDelete = await dataBase.Lesson.FirstOrDefaultAsync(x => x.Id == el.Id);
-											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+											var forDelete = await dataBase.Lesson.FirstOrDefaultAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Lesson.Remove(forDelete);
 										}
 
@@ -869,9 +808,7 @@ namespace SchoolSchedule.ViewModel
 									{
 										foreach (var el in SelectedSchedules)
 										{
-											var forDelete = await dataBase.Schedule.FirstOrDefaultAsync(x => x.Id == el.Id);
-											if (forDelete == null)
-												throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+											var forDelete = await dataBase.Schedule.FirstOrDefaultAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 											dataBase.Schedule.Remove(forDelete);
 										}
 
@@ -918,6 +855,18 @@ namespace SchoolSchedule.ViewModel
 
 							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
+						catch (SqlException ex) when (ex.Number == 2)
+						{
+							MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex) when (ex.Number == 53 || ex.Number == -1) // Ошибки подключения
+						{
+							MessageBox.Show(ex.Message, "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						}
+						catch (SqlException ex)
+						{
+							Console.WriteLine($"SQL-ошибка (код {ex.Number}): {ex.Message}");
+						}
 						catch (Exception ex)
 						{
 							MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка удаления данных", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -929,7 +878,7 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#endregion
-		#region Проверки на использование объекта
+		#region Поиск связанных объектов
 		#region Для удаления предмета
 		IEnumerable<Model.Teacher> FindTeachersUsesSubject(ref List<Model.Teacher> list, int id) 
 		{

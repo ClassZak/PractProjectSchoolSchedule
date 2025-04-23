@@ -14,6 +14,8 @@ namespace SchoolSchedule.ViewModel.Edit
 {
 	public class EditTeacherViewModel : ABaseViewModel
 	{
+		public Window OwnerWindow{  get; set; }
+		
 		public EditTeacherViewModel()
 		{
 		}
@@ -37,10 +39,10 @@ namespace SchoolSchedule.ViewModel.Edit
 
 		private ObservableCollection<Model.DTO.DTOTeacherPhone> _dtoTeacherPhones=new ObservableCollection<Model.DTO.DTOTeacherPhone>();
 		public ObservableCollection<Model.DTO.DTOTeacherPhone> TeacherPhones { get => _dtoTeacherPhones; set => SetPropertyChanged(ref _dtoTeacherPhones, value); } 
-		public List<Model.TeacherPhone> _teacherPhones { get; set; } = new List<Model.TeacherPhone>();
+		List<Model.TeacherPhone> _teacherPhones { get; set; } = new List<Model.TeacherPhone>();
 		public ObservableCollection<Model.DTO.DTOTeacherPhone> SelectedTeacherPhones { get; set; } = new ObservableCollection<Model.DTO.DTOTeacherPhone>();
 
-		public EditTeacherViewModel(Model.Teacher teacher, List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones) : this()
+		public EditTeacherViewModel(Model.Teacher teacher, List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones,Window window) : this()
 		{
 			CurrentTeacher = teacher;
 			NotChoosenGroups = new ObservableCollection<Model.Group>(groups);
@@ -50,7 +52,17 @@ namespace SchoolSchedule.ViewModel.Edit
 			else
 				_teacherPhones = new List<Model.TeacherPhone>(teacherPhones);
 
-
+			foreach(var el in teacher.Subject)
+			{
+				NotChoosenSubjects.Remove(el);
+				ChoosenSubjects.Add(el);
+			}
+			foreach(var el in teacher.Group)
+			{
+				NotChoosenGroups.Remove(el);
+				ChoosenGroups.Add(el);
+			}
+			OwnerWindow = window;
 		}
 
 		#region Выбор классов и предметов
@@ -169,7 +181,7 @@ namespace SchoolSchedule.ViewModel.Edit
 					foreach(var dTO in dTOList)
 						teacherPhones.Add(dTO.ModelRef);
 
-					addingWindow = new EditWindow(typeof(Model.TeacherPhone), null, null, null, null, null, null, null, _teacherPhones);
+					addingWindow = new EditWindow(typeof(Model.TeacherPhone), null, null, null, null, null, null, null, _teacherPhones, OwnerWindow);
 					addingWindow.ShowDialog();
 
 					if(addingWindow.DialogResult)
@@ -204,7 +216,7 @@ namespace SchoolSchedule.ViewModel.Edit
 
 
 					var editObject = new TeacherPhone { Id = selectedObject.ModelRef.Id, IdTeacher = selectedObject.ModelRef.IdTeacher, PhoneNumber = selectedObject.ModelRef.PhoneNumber };
-					addingWindow = new EditWindow(typeof(Model.TeacherPhone), editObject, null, null, null, null, null, null, _teacherPhones);
+					addingWindow = new EditWindow(typeof(Model.TeacherPhone), editObject, null, null, null, null, null, null, _teacherPhones,OwnerWindow);
 					addingWindow.ShowDialog();
 
 					if(addingWindow.DialogResult)

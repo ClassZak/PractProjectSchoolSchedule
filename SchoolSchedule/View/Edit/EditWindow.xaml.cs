@@ -39,9 +39,12 @@ namespace SchoolSchedule.View.Edit
 			List<Model.Student> students,
 			List<Model.Subject> subjects,
 			List<Model.Teacher> teachers,
-			List<Model.TeacherPhone> teacherPhones
+			List<Model.TeacherPhone> teacherPhones,
+			Window ownerWindow
 		) : this()
 		{
+			Owner=ownerWindow;	
+
 			EditType = editType;
 			EditObject = editObject;
 
@@ -117,7 +120,7 @@ namespace SchoolSchedule.View.Edit
 
 				Width = 590;
 				Height = 500;
-				mainFrame.Content = new EditPage.EditPageTeacher(_teachers,_groups,_subjects,_teacherPhones,isNewObject,EditObject as Model.Teacher);
+				mainFrame.Content = new EditPage.EditPageTeacher(_teachers,_groups,_subjects,_teacherPhones,isNewObject,EditObject as Model.Teacher,this);
 			}
 			if (EditType.Name == typeof(Model.TeacherPhone).Name)
 			{

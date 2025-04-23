@@ -11,7 +11,7 @@
 		xmlns:DTOModel="clr-namespace:SchoolSchedule.Model.DTO"
 		mc:Ignorable="d"
 		Icon="/Resources/scheduleicon.ico"
-		Title="Школьное расписание" Height="400" Width="680"
+		Title="Школьное расписание" Height="440" Width="680"
 		MinWidth="500"
 		MinHeight="350" FontFamily="Arial" WindowStartupLocation="CenterScreen"
 		>
@@ -33,6 +33,7 @@
 		<Grid Margin="6" Grid.Row="1">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
+				<RowDefinition Height="30"/>
 				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
 			<TabControl>
@@ -184,12 +185,13 @@
 			</TabControl>
 
 
-			<Grid Grid.Row="1" Margin="0,5,0,5">
+			<Grid Grid.Row="2" Margin="0,5,0,5">
 				<Grid>
 					<Button 
 						Content="Загрузить все данные из сервера"
 						Command="{Binding UpdateDataAsync}"
 						CommandParameter="{x:Null}"
+						ToolTip="Получить все данные"
 					/>
 				</Grid>
 			</Grid>
