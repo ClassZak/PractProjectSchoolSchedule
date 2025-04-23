@@ -49,7 +49,7 @@
 							</DataGrid.Columns>
 						</DataGrid>
 						<StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="5">
-							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Subject}" ToolTip="Добавить новый объект"/>
+							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand2}" CommandParameter="{x:Type Model:Subject}" ToolTip="Добавить новый объект"/>
 							<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Редактировать выбранный объект"/>
 							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Удалить выбранные объекты"/>
 						</StackPanel>
@@ -185,16 +185,20 @@
 			</TabControl>
 
 
-			<Grid Grid.Row="2" Margin="0,5,0,5">
-				<Grid>
-					<Button 
-						Content="Загрузить все данные из сервера"
-						Command="{Binding UpdateDataAsync}"
-						CommandParameter="{x:Null}"
-						ToolTip="Получить все данные"
-					/>
-				</Grid>
+			<Grid Name="TaskStatusGrid" Grid.Row="1"  Visibility="Collapsed">
+				<TextBox />
 			</Grid>
+
+			<Button 
+				Grid.Row="2" 
+				Margin="5"
+				Content="Загрузить все данные из сервера"
+				Command="{Binding UpdateCommand2}"
+				CommandParameter="{x:Null}"
+				ToolTip="Получить все данные"
+			/>
+
+
 		</Grid>
 	</Grid>
 </Window>

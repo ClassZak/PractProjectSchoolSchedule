@@ -173,6 +173,8 @@
     <Compile Include="ViewModel\Edit\EditStudentViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditTeacherViewModel.cs" />
     <Compile Include="ViewModel\Table\TemplateTable.cs" />
+    <Compile Include="ViewModel\TaskModel\TaskStatus.cs" />
+    <Compile Include="ViewModel\TaskModel\TaskViewModel.cs" />
     <Compile Include="View\DataGridBehavior.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Table\ATable.cs" />

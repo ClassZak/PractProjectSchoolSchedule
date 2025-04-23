@@ -1,8 +1,10 @@
-﻿using SchoolSchedule.Model.DTO;
+﻿using SchoolSchedule.Model;
+using SchoolSchedule.Model.DTO;
 using SchoolSchedule.View;
 using SchoolSchedule.View.Edit;
 using SchoolSchedule.ViewModel.Comands;
 using SchoolSchedule.ViewModel.Table;
+using SchoolSchedule.ViewModel.TaskModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,9 +18,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SchoolSchedule.ViewModel
 {
@@ -49,6 +53,175 @@ namespace SchoolSchedule.ViewModel
 #endif
 		}
 
+		#region Управление задачами
+		private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+		private bool _isBusy;
+		public bool IsBusy
+		{
+			get => _isBusy;
+			private set
+			{
+				_isBusy = value;
+				OnPropertyChanged();
+				CommandManager.InvalidateRequerySuggested();
+			}
+		}
+
+		TaskViewModel _taskViewModel=new TaskViewModel();
+		public string TaskName{ get => _taskViewModel.TaskName;set {  } }
+		#region Запуск команд
+		private async Task ExecuteCommandAsync(string commandName, Func<Task> commandLogic)
+		{
+			// Пытаемся захватить семафор без ожидания
+			if (!await _semaphore.WaitAsync(TimeSpan.Zero))
+			{
+				ShowBusyMessage();
+				return;
+			}
+
+			var taskInfo = new SchoolSchedule.ViewModel.TaskModel.TaskViewModel (commandName,ETaskStatus.Unknown);
+
+			try
+			{
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					TaskName = commandName;
+				});
+
+				_taskViewModel.SetTaskStatus(ETaskStatus.InProgress);
+				await commandLogic();
+				_taskViewModel.SetTaskStatus(ETaskStatus.Completed);
+			}
+			catch (Exception ex)
+			{
+				_taskViewModel.SetTaskStatus(ETaskStatus.Failed);
+				_taskViewModel.ErrorMessage = $"Ошибка в задаче '{commandName}': {ex.Message}";
+				HandleException(ex);
+			}
+			finally
+			{
+				_semaphore.Release();
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					_taskViewModel.SetTaskStatus(ETaskStatus.Completed);
+				});
+			}
+		}
+		#region CRUD команды
+		private async Task SaveEntityAsync(SchoolScheduleEntities db, object entity, Type targetType)
+		{
+			switch (entity)
+			{
+				case Model.Group group:
+					db.Group.Add(group);
+					break;
+				case Model.Subject subject:
+					db.Subject.Add(subject);
+					break;
+					// ... другие типы
+			}
+			await db.SaveChangesAsync();
+		}
+		#region Команда добавления
+		private RelayCommand _addCommand2;
+		public RelayCommand AddCommand2
+		{
+			get
+			{
+				return _addCommand2 ?? new RelayCommand(
+				async param => await ExecuteCommandAsync("Добавление новых записей",async () =>
+				{
+					if (!(param is Type targetType))
+						throw new ArgumentException("Выбран неверный тип аргумента");
+
+					// Общая логика для всех типов
+					var result = await ShowEditWindowAsync(targetType, null);
+					if (result.DialogResult)
+					{
+						using (var dataBase=new Model.SchoolScheduleEntities())
+						{
+							await SaveEntityAsync(dataBase, result.EditObject, targetType);
+						}
+						_updateData.Execute(targetType);
+					}
+				}));
+			}
+		}
+		private RelayCommand _updateCommand2;
+		public RelayCommand UpdateCommand2
+		{
+			get
+			{
+				return _updateCommand2 ?? new RelayCommand(
+				async param => await ExecuteCommandAsync("Загрузка данных", async () =>
+				{
+					await LoadDataAsync();
+				}));
+			}
+		}
+		#endregion
+		#endregion
+		#endregion
+		#region Общие методы
+		private void ShowBusyMessage()
+		{
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				MessageBox.Show
+				(
+					"Задача не может быть запущена. Дождитесь завершения текущей операции",
+					"Операция заблокирована",
+					MessageBoxButton.OK,
+					MessageBoxImage.Warning
+				);
+			});
+		}
+		private async Task<EditWindow> ShowEditWindowAsync(Type targetType, object entity)
+		{
+			EditWindow window = null;
+			await Application.Current.Dispatcher.InvokeAsync(() =>
+			{
+				window = new EditWindow(targetType, entity, _groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones,MainWindow);
+				window.ShowDialog();
+			});
+			return window;
+		}
+		private void HandleException(Exception ex)
+		{
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				if (ex is DbUpdateException)
+				{
+					// Распаковываем вложенные исключения
+					Exception innerException = ex.InnerException;
+					while (innerException.InnerException != null)
+						innerException = innerException.InnerException;
+
+					MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+				}
+				else if (ex is SqlException)
+				{
+					SqlException sqlException = ex as SqlException;
+					if (sqlException != null)
+					{
+						if (sqlException.Number == 2)
+							MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						else
+						if (sqlException.Number == 53 || sqlException.Number == -1)
+							MessageBox.Show(ex.Message, "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+						else
+							MessageBox.Show($"SQL-ошибка (код {sqlException.Number}): {sqlException.Message}", "Ошибка базы данных");
+					}
+				}
+				else
+				{
+					MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+					//_updateData.Execute(null);
+				}
+			});
+		}
+		#endregion
+		#endregion
 		private void LoadData()
 		{
 			try
@@ -152,7 +325,7 @@ namespace SchoolSchedule.ViewModel
 
 		
 		// Использовать в конструкторе при релизе
-		private async void LoadDataAsync()
+		private async Task LoadDataAsync()
 		{
 			await Task.Run(() =>
 			{
@@ -203,7 +376,7 @@ namespace SchoolSchedule.ViewModel
 							}
 							if (targetType.Name == typeof(Model.Subject).Name)
 							{
-                                EditWindow addingWindow = null;
+								EditWindow addingWindow = null;
 
 								App.Current.Dispatcher.Invoke(() =>
 								{
@@ -335,9 +508,7 @@ namespace SchoolSchedule.ViewModel
 							// Распаковываем вложенные исключения
 							Exception innerException = ex.InnerException;
 							while (innerException.InnerException != null)
-							{
 								innerException = innerException.InnerException;
-							}
 
 							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
@@ -618,19 +789,16 @@ namespace SchoolSchedule.ViewModel
 											if (forUpdate == null)
 												throw new Exception("Объект не найден");
 
-											// Обновляем скалярные свойства
 											forUpdate.Surname = newTeacher.Surname;
 											forUpdate.Name = newTeacher.Name;
 											forUpdate.Patronymic = newTeacher.Patronymic;
 
-											// Удаляем старые телефоны
 											foreach (var phone in forUpdate.TeacherPhone.ToList())
 											{
 												if(phone.IdTeacher==forUpdate.Id)
 													dataBase.TeacherPhone.Remove(phone);
 											}
 
-											// Добавляем новые телефоны
 											foreach (var el in phones)
 											{
 												dataBase.TeacherPhone.Add(new Model.TeacherPhone
@@ -669,9 +837,7 @@ namespace SchoolSchedule.ViewModel
 							// Распаковываем вложенные исключения
 							Exception innerException = ex.InnerException;
 							while (innerException.InnerException != null)
-							{
 								innerException = innerException.InnerException;
-							}
 
 							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
@@ -849,9 +1015,7 @@ namespace SchoolSchedule.ViewModel
 							// Распаковываем вложенные исключения
 							Exception innerException = ex.InnerException;
 							while (innerException.InnerException != null)
-							{
 								innerException = innerException.InnerException;
-							}
 
 							MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
 						}
@@ -997,5 +1161,5 @@ namespace SchoolSchedule.ViewModel
 		public ObservableCollection<DTOSchedule> DTOSchedule
 		{ get { return _scheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOSchedule)); _scheduleTable.Entries = value; } }
 
- 	}
+	}
 }
