@@ -49,7 +49,7 @@
 							</DataGrid.Columns>
 						</DataGrid>
 						<StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="5">
-							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand2}" CommandParameter="{x:Type Model:Subject}" ToolTip="Добавить новый объект"/>
+							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Subject}" ToolTip="Добавить новый объект"/>
 							<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Редактировать выбранный объект"/>
 							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Удалить выбранные объекты"/>
 						</StackPanel>
@@ -69,7 +69,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Group}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Group}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedGroups}" ToolTip="Редактировать выбранный объект"/>
 								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedGroups}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
@@ -93,7 +93,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Student}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Student}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedStudents}" ToolTip="Редактировать выбранный объект"/>
 								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedStudents}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
@@ -119,7 +119,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Teacher}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Teacher}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Редактировать выбранный объект"/>
 								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
@@ -141,7 +141,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Lesson}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Lesson}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedLessons}" ToolTip="Редактировать выбранный объект"/>
 								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedLessons}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
@@ -175,7 +175,7 @@
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
-								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding AddCommand}" CommandParameter="{x:Type Model:Schedule}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Schedule}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Редактировать выбранный объект"/>
 								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>

@@ -108,7 +108,7 @@ namespace SchoolSchedule.ViewModel
 			}
 		}
 		#region CRUD команды
-		private async Task SaveEntityAsync(SchoolScheduleEntities db, object entity, Type targetType)
+		private async Task CreateEntityAsync(SchoolScheduleEntities db, object entity, Type targetType)
 		{
 			switch (entity)
 			{
@@ -118,13 +118,46 @@ namespace SchoolSchedule.ViewModel
 				case Model.Subject subject:
 					db.Subject.Add(subject);
 					break;
-					// ... другие типы
+				case Model.Student student:
+					db.Student.Add(student);
+					break;
+				case Model.Teacher teacher:
+					List<Model.TeacherPhone> phones = new List<Model.TeacherPhone>(teacher.TeacherPhone);
+					List<Model.Group> groups = new List<Model.Group>(teacher.Group);
+					List<Model.Subject> subjects = new List<Model.Subject>(teacher.Subject);
+
+					teacher.Subject.Clear();
+					teacher.Group.Clear();
+					teacher.TeacherPhone.Clear();
+					using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
+					{
+						var forEdit = dataBase.Teacher.Add(teacher);
+						await dataBase.SaveChangesAsync();
+
+						if (forEdit == null)
+							throw new Exception("Не удалось добавить предметы и классы для учителей");
+						foreach (var el in subjects)
+							forEdit.Subject.Add(await dataBase.Subject.FindAsync(el.Id));
+						foreach (var el in groups)
+							forEdit.Group.Add(await dataBase.Group.FindAsync(el.Id));
+						foreach (var el in phones)
+							dataBase.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
+
+						await dataBase.SaveChangesAsync();
+					}
+					break;
+				case Model.Lesson lesson:
+					db.Lesson.Add(lesson);
+					break;
+				case Model.Schedule schedule:
+					db.Schedule.Add(schedule);
+					break;
 			}
 			await db.SaveChangesAsync();
 		}
 		#region Команда добавления
 		private RelayCommand _addCommand2;
-		public RelayCommand AddCommand2
+		public RelayCommand CreateCommand
 		{
 			get
 			{
@@ -134,13 +167,12 @@ namespace SchoolSchedule.ViewModel
 					if (!(param is Type targetType))
 						throw new ArgumentException("Выбран неверный тип аргумента");
 
-					// Общая логика для всех типов
 					var result = await ShowEditWindowAsync(targetType, null);
 					if (result.DialogResult)
 					{
 						using (var dataBase=new Model.SchoolScheduleEntities())
 						{
-							await SaveEntityAsync(dataBase, result.EditObject, targetType);
+							await CreateEntityAsync(dataBase, result.EditObject, targetType);
 						}
 						_updateData.Execute(targetType);
 					}
@@ -1000,6 +1032,15 @@ namespace SchoolSchedule.ViewModel
 
 											foreach (var p in phonesUsesTeacher)
 												dataBase.TeacherPhone.Remove(p);
+
+											var teacherGroup = new List<Model.Group>(forDelete.Group);
+											foreach (var group in teacherGroup)
+												forDelete.Group.Remove(group);
+											await dataBase.SaveChangesAsync();
+											var teacherSubject = new List<Model.Subject>(forDelete.Subject);
+											foreach (var subject in teacherSubject)
+												forDelete.Subject.Remove(subject);
+											await dataBase.SaveChangesAsync();
 
 											dataBase.Teacher.Remove(forDelete);
 										}

@@ -64,6 +64,10 @@ namespace SchoolSchedule.View.Edit.EditPage
 			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
 			e.Handled = !regex.IsMatch(e.Text);
 		}
+		private void Email_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			e.Handled=HasInvalidEmailChars(e.Text);
+		}
 
 		private static readonly Regex forbiddenCharsRegex = new Regex
 		(
@@ -74,6 +78,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 		{
 			return forbiddenCharsRegex.IsMatch(input);
 		}
+		private static readonly Regex EmailRegex = new Regex
+		(
+			@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+			RegexOptions.IgnoreCase | RegexOptions.Compiled
+		);
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
@@ -83,12 +92,14 @@ namespace SchoolSchedule.View.Edit.EditPage
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " имя нового" : " новое имя") + " ученика");
 			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " отчество нового" : " новое отчество") + " ученика");
+			if (ValueRef.IdGroup==0)
+				return new KeyValuePair<bool, string>(false, "Выберете класс для ученика");
 			if(!ObjectIsNew)
 			if(StudentsForCheck.Where(el=>el.Name==ValueRef.Name && el.Surname==ValueRef.Surname && el.Patronymic==ValueRef.Patronymic).Any())
 				return new KeyValuePair<bool, string>(false, $"Ученик \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
 			if(ValueRef.Email != null)
-				if(string.IsNullOrWhiteSpace(ValueRef.Email))
-					if(HasInvalidEmailChars(ValueRef.Email))
+				if(!string.IsNullOrWhiteSpace(ValueRef.Email))
+					if(HasInvalidEmailChars(ValueRef.Email) || !EmailRegex.IsMatch(ValueRef.Email))
 						return new KeyValuePair<bool, string>(false, $"Неверный формат электронной почты!");
 						
 
