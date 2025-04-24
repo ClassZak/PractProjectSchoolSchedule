@@ -51,7 +51,7 @@
 						<StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Subject}" ToolTip="Добавить новый объект"/>
 							<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Редактировать выбранный объект"/>
-							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Удалить выбранные объекты"/>
+							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Удалить выбранные объекты"/>
 						</StackPanel>
 					</Grid>
 				</TabItem>
@@ -71,7 +71,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Group}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedGroups}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedGroups}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedGroups}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -95,7 +95,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Student}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedStudents}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedStudents}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedStudents}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -121,7 +121,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Teacher}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -143,7 +143,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Lesson}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedLessons}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedLessons}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedLessons}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -177,7 +177,7 @@
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Schedule}" ToolTip="Добавить новый объект"/>
 								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -185,8 +185,11 @@
 			</TabControl>
 
 
-			<Grid Name="TaskStatusGrid" Grid.Row="1"  Visibility="Collapsed">
-				<TextBox />
+			<Grid Name="TaskStatusGrid" Grid.Row="1"  Visibility="Visible">
+				<StackPanel Orientation="Horizontal">
+					<TextBox Text="{Binding TaskName}"/>
+					<TextBox Text="{Binding TaskStatus}"/>
+				</StackPanel>
 			</Grid>
 
 			<Button 

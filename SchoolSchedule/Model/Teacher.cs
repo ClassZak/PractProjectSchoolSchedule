@@ -36,10 +36,5 @@ namespace SchoolSchedule.Model
         public virtual ICollection<Group> Group { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subject> Subject { get; set; }
-
-		public override string ToString()
-		{
-            return $"{Surname} {Name} {Patronymic}";
-		}
 	}
 }

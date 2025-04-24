@@ -29,10 +29,5 @@ namespace SchoolSchedule.Model
         public virtual Subject Subject { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Schedule> Schedule { get; set; }
-
-		public override string ToString()
-		{
-			return $"Урок по предмету \"{Subject?.Name}\" у {Group} класса под номером \"{Number}\"";
-		}
 	}
 }

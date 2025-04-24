@@ -129,6 +129,13 @@
     <Compile Include="Model\Lesson.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\ModifiedParts\Group.cs" />
+    <Compile Include="Model\ModifiedParts\Lesson.cs" />
+    <Compile Include="Model\ModifiedParts\Schedule.cs" />
+    <Compile Include="Model\ModifiedParts\Student.cs" />
+    <Compile Include="Model\ModifiedParts\Subject.cs" />
+    <Compile Include="Model\ModifiedParts\Teacher.cs" />
+    <Compile Include="Model\ModifiedParts\TeacherPhone.cs" />
     <Compile Include="Model\Schedule.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>

@@ -162,7 +162,7 @@ namespace SchoolSchedule.View.Edit
 				mainFrame.Content=new EditPage.EditPageSchedule(_schedules,_lessons,_teachers,isNewObject,EditObject as Model.Schedule);
 			}
 		}
-
+		#region Кнопки
 		private void Button_Click_Ok(object sender, RoutedEventArgs e)
 		{
 			if (EditType.Name == typeof(Model.Subject).Name)
@@ -254,5 +254,6 @@ namespace SchoolSchedule.View.Edit
 			DialogResult =false;
 			Close();
 		}
+		#endregion
 	}
 }

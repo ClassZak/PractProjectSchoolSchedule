@@ -77,7 +77,9 @@ namespace SchoolSchedule.ViewModel
 		}
 
 		TaskViewModel _taskViewModel=new TaskViewModel();
-		public string TaskName{ get => _taskViewModel.TaskName;private set {  } }
+		public string TaskName{ get => _taskViewModel.TaskName; set {  } }
+		public string TaskStatus{ get => _taskViewModel.TaskStatus; set {  } }
+		public ETaskStatus ETaskStatus{ get => _taskViewModel.ETaskStatus; set => _taskViewModel.ETaskStatus = value; }
 		#region Запуск команд
 		private async Task ExecuteCommandAsync(string commandName, Func<Task> commandLogic)
 		{
@@ -117,6 +119,7 @@ namespace SchoolSchedule.ViewModel
 			}
 		}
 		#region CRUD функции
+		#region Создание
 		private async Task CreateEntityAsync(SchoolScheduleEntities db, object entity, Type targetType)
 		{
 			switch (entity)
@@ -162,6 +165,8 @@ namespace SchoolSchedule.ViewModel
 			}
 			await db.SaveChangesAsync();
 		}
+		#endregion
+		#region Изменение
 		public async Task UpdateEntityAsync(SchoolScheduleEntities db, object entity,object selectedObject, Type targetType)
 		{
 			switch (entity)
@@ -293,6 +298,116 @@ namespace SchoolSchedule.ViewModel
 			}
 			await db.SaveChangesAsync();
 		}
+		#endregion
+		#region Удаление
+		public async Task DeleteEntitiesAsync(SchoolScheduleEntities db, IList selectedObjects, Type targetType)
+		{
+			if (targetType == typeof(Model.DTO.DTOGroup))
+			{
+				var teachers = await db.Teacher.ToListAsync();
+				var lessons = await db.Lesson.ToListAsync();
+				var students = await db.Student.ToListAsync();
+				foreach (var el in selectedObjects)
+				{
+					var selectedDTO = el as Model.DTO.DTOGroup;
+					var teachersUses = FindTeachersUsesGroup(ref teachers, selectedDTO.ModelRef.Id);
+					var lessonsUses = FindLessonsUsesGroup(ref lessons, selectedDTO.ModelRef.Id);
+					var studentsUsees = FindStudentsUsesGroup(ref students, selectedDTO.ModelRef.Id);
+
+					if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count() != 0)
+						throw new Exception($"Удалите записи всех уроков, учителей и всех студентов, ссылающихся на класс \"{selectedDTO.ModelRef}\"");
+
+					var forDelete = await db.Group.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+					db.Group.Remove(forDelete);
+				}
+			}
+			else if (targetType == typeof(Model.DTO.DTOSubject))
+			{
+				var teachers = await db.Teacher.ToListAsync();
+				var lessons = await db.Lesson.ToListAsync();
+
+				foreach (var el in selectedObjects)
+				{
+					var selectedDTO = el as Model.DTO.DTOSubject;
+					var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, selectedDTO.ModelRef.Id);
+					var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, selectedDTO.ModelRef.Id);
+
+					if (teachersUsesSubject.Count() != 0 || lessonsUsesSubject.Count() != 0)
+						throw new Exception($"Удалите всех уроков и учителей, ссылающихся на предмет \"{selectedDTO.Name}\"");
+
+					var forDelete = await db.Subject.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+					if (forDelete == null)
+						throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+					db.Subject.Remove(forDelete);
+				}
+			}
+			else if (targetType == typeof(Model.DTO.DTOSubject))
+			{
+				foreach (var el in selectedObjects)
+				{
+					var selectedDTO = el as Model.DTO.DTOStudent;
+					var forDelete = await db.Student.FirstOrDefaultAsync() ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+					db.Student.Remove(forDelete);
+				}
+			}
+			else if (targetType == typeof(Model.DTO.DTOTeacher))
+			{
+				var schedules = await db.Schedule.ToListAsync();
+				var phones = await db.TeacherPhone.ToListAsync();
+				foreach (var el in selectedObjects)
+				{
+					var selectedDTO = el as Model.DTO.DTOTeacher;
+					var forDelete = await db.Teacher.FirstOrDefaultAsync(x => x.Id == selectedDTO.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+					var schedulesUsesTeacher = FindSchedulesUsesTeacher(ref schedules, forDelete.Id);
+					var phonesUsesTeacher = FindTeacherPhonesUsesTeacher(ref phones, forDelete.Id);
+					if (schedulesUsesTeacher.Any())
+						throw new Exception($"Удалите все объекты расписания, в которых записан преподаватель {selectedDTO.ModelRef}");
+					if (forDelete == null)
+						throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+
+					foreach (var p in phonesUsesTeacher)
+						db.TeacherPhone.Remove(p);
+
+					var teacherGroup = new List<Model.Group>(forDelete.Group);
+					foreach (var group in teacherGroup)
+						forDelete.Group.Remove(group);
+					await db.SaveChangesAsync();
+					var teacherSubject = new List<Model.Subject>(forDelete.Subject);
+					foreach (var subject in teacherSubject)
+						forDelete.Subject.Remove(subject);
+					await db.SaveChangesAsync();
+
+					db.Teacher.Remove(forDelete);
+				}
+			}
+			else if (targetType == typeof(Model.DTO.DTOLesson))
+			{
+				var schedules = await db.Schedule.ToListAsync();
+				foreach (var el in SelectedLessons)
+				{
+					var selectedDTO = el as Model.DTO.DTOLesson;
+					var schedulesUseesLesson = FindSchedulesUsesLesson(ref schedules, el.Id);
+					if (schedulesUseesLesson.Any())
+						throw new Exception($"Удалите все объекты расписания, в которых проводится занятие по предмету \"{el.Subject}\" с классом \"{el.Group}\"");
+
+					var forDelete = await db.Lesson.FirstOrDefaultAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+					db.Lesson.Remove(forDelete);
+				}
+			}
+			else if (targetType == typeof(Model.DTO.DTOSchedule))
+			{
+				foreach (var el in selectedObjects)
+				{
+					var selectedDTO = el as Model.DTO.DTOSchedule;
+					var forDelete = await db.Schedule.FirstOrDefaultAsync(x => x.Id == selectedDTO.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+					db.Schedule.Remove(forDelete);
+				}
+			}
+
+			await db.SaveChangesAsync();
+		}
+		#endregion
+		#endregion
 		#region CRUD команды
 		#region Команда добавления
 		private RelayCommand _createCommmand;
@@ -313,8 +428,9 @@ namespace SchoolSchedule.ViewModel
 						{
 							await CreateEntityAsync(dataBase, result.EditObject, targetType);
 						}
-						//_updateCommand2.Execute(targetType);
-						_updateData.Execute(targetType);
+
+						Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+						thread.Start();
 					}
 				})));
 			}
@@ -362,9 +478,40 @@ namespace SchoolSchedule.ViewModel
 						{
 							await UpdateEntityAsync(dataBase, result.EditObject, selectedObject, targetType);
 						}
-						//_updateCommand2.Execute(targetType);
-						_updateData.Execute(targetType);
+						Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+						thread.Start();
 					}
+				})));
+			}
+		}
+		#endregion
+		#region Команда удаления
+		private RelayCommand _deleteCommand2;
+		public RelayCommand DeleteCommand2
+		{
+			get
+			{
+				return _deleteCommand2 ?? (_deleteCommand2=new RelayCommand(
+				async param => await ExecuteCommandAsync("Удаление объектов", async()=>
+				{
+					if (param.GetType().GetGenericTypeDefinition() != typeof(ObservableCollection<>))
+						throw new ArgumentException("Выбран неверный тип аргумента");
+
+					Type targetType = param.GetType().GetGenericArguments()[0];
+					var targetCollection = FindTargetPropertyOfSelectedItems(targetType).GetValue(this) as IList;
+
+					if(targetCollection.Count < 1)
+					{
+						MessageBox.Show("Выбрерте хотя бы 1 объект для удаления.", "Ошибка удаления данных", MessageBoxButton.OK, MessageBoxImage.Error);
+						return;
+					}
+
+					using (var dataBase = new SchoolScheduleEntities())
+					{
+						await DeleteEntitiesAsync(dataBase, targetCollection, targetType);
+					}
+					Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+					thread.Start();
 				})));
 			}
 		}
@@ -510,16 +657,39 @@ namespace SchoolSchedule.ViewModel
 						else
 							MessageBox.Show($"SQL-ошибка (код {sqlException.Number}): {sqlException.Message}", "Ошибка базы данных");
 					}
+					ClearTables();
 				}
 				else
 				{
 					MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-					//_updateData.Execute(null);
+					if (ex.Message == "The underlying provider failed on Open.")
+						ClearTables();
 				}
 			});
 		}
 		#endregion
-		#endregion
+		private void ClearTables()
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				_groups.Clear();
+				_lessons.Clear();
+				_schedules.Clear();
+				_students.Clear();
+				_subjects.Clear();
+				_teachers.Clear();
+				_teacherPhones.Clear();
+
+
+				_studentTable.Clear();
+				_groupTable.Clear();
+				_subjectTable.Clear();
+				_teacherTable.Clear();
+				_lessonTable.Clear();
+				_scheduleTable.Clear();
+			});
+
+		}
 		private void LoadData()
 		{
 			try
@@ -528,24 +698,7 @@ namespace SchoolSchedule.ViewModel
 				{
 					dataBase.Database.Connection.Open();
 
-					App.Current.Dispatcher.Invoke(() =>
-					{
-						_groups.Clear();
-						_lessons.Clear();
-						_schedules.Clear();
-						_students.Clear();
-						_subjects.Clear();
-						_teachers.Clear();
-						_teacherPhones.Clear();
-
-
-						_studentTable.Clear();
-						_groupTable.Clear();
-						_subjectTable.Clear();
-						_teacherTable.Clear();
-						_lessonTable.Clear();
-						_scheduleTable.Clear();
-					});
+					ClearTables();
 
 					foreach (var el in dataBase.Group.ToList())
 						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });

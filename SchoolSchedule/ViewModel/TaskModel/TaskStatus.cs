@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchoolSchedule.ViewModel.TaskModel
 {
-	internal enum ETaskStatus
+	public enum ETaskStatus
 	{
 		Unknown=-1,
 		Completed,
