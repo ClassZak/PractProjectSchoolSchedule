@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace SchoolSchedule.ViewModel.TaskModel
 {
@@ -27,7 +28,16 @@ namespace SchoolSchedule.ViewModel.TaskModel
 			if (taskStatus != ETaskStatus.Failed)
 				ErrorMessage = string.Empty;
 		}
-		public string TaskStatus{ get { return TASK_STATUS_DICIONARY[_taskStatus]; } }
+		public string TaskStatus
+		{ 
+			get { return TASK_STATUS_DICIONARY[_taskStatus]; } 
+			set 
+			{
+				for (int i = 1; i < TASK_STATUS_DICIONARY.Count; ++i)
+					if (value == TASK_STATUS_DICIONARY.ElementAt(i).Value)
+						_taskStatus = TASK_STATUS_DICIONARY.ElementAt(i).Key;
+			} 
+		}
 
 
 

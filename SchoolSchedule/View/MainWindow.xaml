@@ -26,7 +26,7 @@
 		<Menu Grid.RowSpan="1">
 			<MenuItem Header="Файл">
 				<MenuItem Header="Загрузить">
-					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateDataAsync}"/>
+					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand2}"/>
 				</MenuItem>
 			</MenuItem>
 		</Menu>
