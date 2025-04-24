@@ -476,6 +476,7 @@ namespace SchoolSchedule.ViewModel
 			{
 				return _createCommmand ?? (_createCommmand = new RelayCommand(
 				async param => await ExecuteCommandAsync("Добавление новых записей",async () =>
+				await Task.Run(async ()=>
 				{
 					if (!(param is Type targetType))
 						throw new ArgumentException("Выбран неверный тип аргумента");
@@ -488,7 +489,7 @@ namespace SchoolSchedule.ViewModel
 						Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
 						thread.Start();
 					}
-				})));
+				}))));
 			}
 		}
 		#endregion
@@ -513,8 +514,10 @@ namespace SchoolSchedule.ViewModel
 			get
 			{
 				return _editCommamd2 ?? (_editCommamd2=new RelayCommand(
-				async param => await ExecuteCommandAsync("Редактирование данных", async ()=> 
+				async param => await ExecuteCommandAsync("Редактирование данных", async ()=>
+				await Task.Run(async ()=>
 				{
+
 					if(param.GetType().GetGenericTypeDefinition()!=typeof(ObservableCollection<>))
 						throw new ArgumentException("Выбран неверный тип аргумента");
 
@@ -534,7 +537,7 @@ namespace SchoolSchedule.ViewModel
 						Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
 						thread.Start();
 					}
-				})));
+				}))));
 			}
 		}
 		#endregion
@@ -546,6 +549,7 @@ namespace SchoolSchedule.ViewModel
 			{
 				return _deleteCommand2 ?? (_deleteCommand2=new RelayCommand(
 				async param => await ExecuteCommandAsync("Удаление объектов", async()=>
+				await Task.Run(async ()=>
 				{
 					if (param.GetType().GetGenericTypeDefinition() != typeof(ObservableCollection<>))
 						throw new ArgumentException("Выбран неверный тип аргумента");
@@ -562,7 +566,7 @@ namespace SchoolSchedule.ViewModel
 					await DeleteEntitiesAsync(targetCollection, targetType);
 					Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
 					thread.Start();
-				})));
+				}))));
 			}
 		}
 		#endregion
