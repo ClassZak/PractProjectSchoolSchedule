@@ -17,36 +17,19 @@ CREATE TABLE [Group](
 ALTER TABLE [Group] ADD CONSTRAINT
 GroupNameConstraint CHECK (LOWER([Name])>='а' AND LOWER([Name])<='е')
 GO
---CREATE TRIGGER GroupUpperCaseNameInsertTrigger
---ON [Group]
---INSTEAD OF INSERT
---AS
---BEGIN
---	SET NOCOUNT ON;
---	
---	INSERT INTO [Group]
---		([Year],[Name])
---		SELECT [Year],UPPER([Name])
---		FROM inserted;
---END;
---GO
---CREATE TRIGGER GroupUpperCaseNameUpdateTrigger
---ON [Group]
---INSTEAD OF UPDATE
---AS
---BEGIN
---	SET NOCOUNT ON;
---	
---	UPDATE [Group]
---	SET
---		[Name]=UPPER(inserted.[Name]),
---		[Year]=inserted.[Year]
---	FROM
---		[Group]
---	INNER JOIN
---		inserted ON [Group].Id=inserted.Id
---END;
---GO
+
+CREATE TRIGGER GroupUpperCaseNameTrigger
+ON [Group]
+AFTER INSERT, UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	UPDATE [Group]
+	SET
+		[Name]=UPPER([Name])
+END;
+GO
 
 
 CREATE TABLE Student(

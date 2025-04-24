@@ -2,6 +2,7 @@
 using SchoolSchedule.Model.DTO;
 using SchoolSchedule.View;
 using SchoolSchedule.View.Edit;
+using SchoolSchedule.ViewModel.Attributes;
 using SchoolSchedule.ViewModel.Comands;
 using SchoolSchedule.ViewModel.Table;
 using SchoolSchedule.ViewModel.TaskModel;
@@ -17,6 +18,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Contexts;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,12 +31,19 @@ namespace SchoolSchedule.ViewModel
 	public class MainViewModel : ABaseViewModel
 	{
 		public MainWindow MainWindow { get; set; }
-		public ObservableCollection<Object> SelectedSubjects { get; set; } = new ObservableCollection<Object>();
-		public ObservableCollection<Object> SelectedGroups { get; set; } = new ObservableCollection<Object>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
+		public ObservableCollection<Model.DTO.DTOSubject> SelectedSubjects { get; set; } = new ObservableCollection<Model.DTO.DTOSubject>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
+		public ObservableCollection<Model.DTO.DTOGroup> SelectedGroups { get; set; } = new ObservableCollection<Model.DTO.DTOGroup>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOStudent> SelectedStudents { get; set; } = new ObservableCollection<Model.DTO.DTOStudent>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOTeacher> SelectedTeachers { get; set; } = new ObservableCollection<Model.DTO.DTOTeacher>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOLesson> SelectedLessons{ get; set; } = new ObservableCollection<Model.DTO.DTOLesson>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOSchedule> SelectedSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOSchedule>();
 		public MainViewModel()
 		{
@@ -68,7 +77,7 @@ namespace SchoolSchedule.ViewModel
 		}
 
 		TaskViewModel _taskViewModel=new TaskViewModel();
-		public string TaskName{ get => _taskViewModel.TaskName;set {  } }
+		public string TaskName{ get => _taskViewModel.TaskName;private set {  } }
 		#region Запуск команд
 		private async Task ExecuteCommandAsync(string commandName, Func<Task> commandLogic)
 		{
@@ -95,7 +104,7 @@ namespace SchoolSchedule.ViewModel
 			catch (Exception ex)
 			{
 				_taskViewModel.SetTaskStatus(ETaskStatus.Failed);
-				_taskViewModel.ErrorMessage = $"Ошибка в задаче '{commandName}': {ex.Message}";
+				_taskViewModel.ErrorMessage = $"Ошибка при выролнении '{commandName}': {ex.Message}";
 				HandleException(ex);
 			}
 			finally
@@ -107,7 +116,7 @@ namespace SchoolSchedule.ViewModel
 				});
 			}
 		}
-		#region CRUD команды
+		#region CRUD функции
 		private async Task CreateEntityAsync(SchoolScheduleEntities db, object entity, Type targetType)
 		{
 			switch (entity)
@@ -129,22 +138,20 @@ namespace SchoolSchedule.ViewModel
 					teacher.Subject.Clear();
 					teacher.Group.Clear();
 					teacher.TeacherPhone.Clear();
-					using (var dataBase = new SchoolSchedule.Model.SchoolScheduleEntities())
-					{
-						var forEdit = dataBase.Teacher.Add(teacher);
-						await dataBase.SaveChangesAsync();
 
-						if (forEdit == null)
-							throw new Exception("Не удалось добавить предметы и классы для учителей");
-						foreach (var el in subjects)
-							forEdit.Subject.Add(await dataBase.Subject.FindAsync(el.Id));
-						foreach (var el in groups)
-							forEdit.Group.Add(await dataBase.Group.FindAsync(el.Id));
-						foreach (var el in phones)
-							dataBase.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
 
-						await dataBase.SaveChangesAsync();
-					}
+					var forEdit = db.Teacher.Add(teacher);
+					await db.SaveChangesAsync();
+
+					if (forEdit == null)
+						throw new Exception("Не удалось добавить предметы и классы для учителей");
+					foreach (var el in subjects)
+						forEdit.Subject.Add(await db.Subject.FindAsync(el.Id));
+					foreach (var el in groups)
+						forEdit.Group.Add(await db.Group.FindAsync(el.Id));
+					foreach (var el in phones)
+						db.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
+
 					break;
 				case Model.Lesson lesson:
 					db.Lesson.Add(lesson);
@@ -155,13 +162,145 @@ namespace SchoolSchedule.ViewModel
 			}
 			await db.SaveChangesAsync();
 		}
+		public async Task UpdateEntityAsync(SchoolScheduleEntities db, object entity,object selectedObject, Type targetType)
+		{
+			switch (entity)
+			{
+				case Model.Group group:
+					{
+						var selectedDTO = selectedObject as Model.DTO.DTOGroup;
+
+
+						var forUpdate = await db.Group.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id);
+
+						if (forUpdate == null)
+							throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+						forUpdate.Name = group.Name;
+						forUpdate.Year = group.Year;
+						break;
+					}
+				case Model.Subject subject:
+					{
+						var selectedDTO = selectedObject as Model.DTO.DTOSubject;
+
+
+						var forUpdate = await db.Subject.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id);
+						if (forUpdate == null)
+							throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+						forUpdate.Name = subject.Name;
+						break;
+					}
+				case Model.Student student:
+					{
+						var selectedDTO = selectedObject as Model.DTO.DTOStudent;
+
+
+						var forUpdate = await db.Student.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id);
+						if (forUpdate == null)
+							throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+						forUpdate.Surname = student.Surname;
+						forUpdate.Name = student.Name;
+						forUpdate.Patronymic = student.Patronymic;
+						forUpdate.IdGroup = student.IdGroup;
+						forUpdate.Email = student.Email;
+						break;
+					}
+				case Model.Teacher teacher:
+					{
+						var selectedDTO = selectedObject as Model.DTO.DTOTeacher;
+
+
+						List<Model.TeacherPhone> phones = new List<Model.TeacherPhone>(teacher.TeacherPhone);
+						List<Model.Group> groups = new List<Model.Group>(teacher.Group);
+						List<Model.Subject> subjects = new List<Model.Subject>(teacher.Subject);
+
+						teacher.Subject.Clear();
+						teacher.Group.Clear();
+						teacher.TeacherPhone.Clear();
+						
+						var forUpdate = await db.Teacher
+							.Include(t => t.TeacherPhone) // Добавляем Include для загрузки связанных телефонов
+							.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id);
+
+						if (forUpdate == null)
+							throw new Exception("Объект не найден");
+
+						forUpdate.Surname = teacher.Surname;
+						forUpdate.Name = teacher.Name;
+						forUpdate.Patronymic = teacher.Patronymic;
+
+						foreach (var phone in forUpdate.TeacherPhone.ToList())
+						{
+							if (phone.IdTeacher == forUpdate.Id)
+								db.TeacherPhone.Remove(phone);
+						}
+
+						foreach (var el in phones)
+						{
+							db.TeacherPhone.Add(new Model.TeacherPhone
+							{
+								IdTeacher = forUpdate.Id,
+								PhoneNumber = el.PhoneNumber
+							});
+						}
+
+						// Обновляем Subject и Group (many-to-many)
+						forUpdate.Subject.Clear();
+						foreach (var el in subjects)
+						{
+							var subject = await db.Subject.FindAsync(el.Id);
+							if (subject != null)
+								forUpdate.Subject.Add(subject);
+						}
+
+						forUpdate.Group.Clear();
+						foreach (var el in groups)
+						{
+							var group = await db.Group.FindAsync(el.Id);
+							if (group != null)
+								forUpdate.Group.Add(group);
+						}
+						break;
+					}
+				case Model.Lesson lesson:
+					{
+						var selectedDTO = selectedObject as Model.DTO.DTOLesson;
+
+
+						var forUpdate = await db.Lesson.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id);
+						if (forUpdate == null)
+							throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+						forUpdate.IdSubject = selectedDTO.ModelRef.IdSubject;
+						forUpdate.IdGroup = selectedDTO.ModelRef.IdGroup;
+						forUpdate.Number = selectedDTO.ModelRef.Number;
+						break;
+					}
+				case Model.Schedule schedule:
+					{
+						var selectedDTO = selectedObject as Model.DTO.DTOSchedule;
+
+
+						var forUpdate = await db.Schedule.FirstOrDefaultAsync(x => x.Id == selectedDTO.ModelRef.Id);
+						if (forUpdate == null)
+							throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+						forUpdate.IdLesson = selectedDTO.ModelRef.IdLesson;
+						forUpdate.IdTeacher = selectedDTO.ModelRef.IdTeacher;
+						forUpdate.StartTime = selectedDTO.ModelRef.StartTime;
+						forUpdate.EndTime = selectedDTO.ModelRef.EndTime;
+						forUpdate.Date = selectedDTO.ModelRef.Date;
+						break;
+					}
+			}
+			await db.SaveChangesAsync();
+		}
+		#region CRUD команды
 		#region Команда добавления
-		private RelayCommand _addCommand2;
+		private RelayCommand _createCommmand;
 		public RelayCommand CreateCommand
 		{
 			get
 			{
-				return _addCommand2 ?? new RelayCommand(
+				return _createCommmand ?? (_createCommmand = new RelayCommand(
 				async param => await ExecuteCommandAsync("Добавление новых записей",async () =>
 				{
 					if (!(param is Type targetType))
@@ -174,27 +313,102 @@ namespace SchoolSchedule.ViewModel
 						{
 							await CreateEntityAsync(dataBase, result.EditObject, targetType);
 						}
+						//_updateCommand2.Execute(targetType);
 						_updateData.Execute(targetType);
 					}
-				}));
+				})));
 			}
 		}
+		#endregion
+		#region Команда чтения
 		private RelayCommand _updateCommand2;
 		public RelayCommand UpdateCommand2
 		{
 			get
 			{
-				return _updateCommand2 ?? new RelayCommand(
+				return _updateCommand2 ?? (_updateCommand2= new RelayCommand(
 				async param => await ExecuteCommandAsync("Загрузка данных", async () =>
 				{
 					await LoadDataAsync();
-				}));
+				})));
+			}
+		}
+		#endregion
+		#region Команда редактирования
+		private RelayCommand _editCommamd2;
+		public RelayCommand EditCommad2
+		{
+			get
+			{
+				return _editCommamd2 ?? (_editCommamd2=new RelayCommand(
+				async param => await ExecuteCommandAsync("Редактирование данных", async ()=> 
+				{
+					if(param.GetType().GetGenericTypeDefinition()!=typeof(ObservableCollection<>))
+						throw new ArgumentException("Выбран неверный тип аргумента");
+
+					Type targetType = param.GetType().GetGenericArguments()[0];
+					var targetCollection= FindTargetPropertyOfSelectedItems(targetType).GetValue(this) as IList;
+					if (targetCollection.Count != 1)
+					{
+						MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+						return;
+					}
+
+					var selectedObject = (targetCollection)[0];
+					var result=await ShowEditWindowAsync(targetType, selectedObject);
+					if(result.DialogResult)
+					{
+						using (var dataBase=new Model.SchoolScheduleEntities())
+						{
+							await UpdateEntityAsync(dataBase, result.EditObject, selectedObject, targetType);
+						}
+						//_updateCommand2.Execute(targetType);
+						_updateData.Execute(targetType);
+					}
+				})));
 			}
 		}
 		#endregion
 		#endregion
 		#endregion
+		#endregion
 		#region Общие методы
+		/// <summary>
+		/// Проверка на принадлежность шаблону ObservableCollection<T>, и возвращает T тип из шаблона
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="elementType"></param>
+		/// <returns></returns>
+		protected bool IsObservableCollection(Type type, out Type elementType)
+		{
+			elementType = null;
+
+			if (type.IsGenericType &&
+				type.GetGenericTypeDefinition() == typeof(ObservableCollection<>))
+			{
+				elementType = type.GetGenericArguments()[0];
+				return true;
+			}
+
+			return false;
+		}
+
+		protected PropertyInfo FindTargetPropertyOfSelectedItems(Type targetType)
+		{
+			PropertyInfo property = null;
+			foreach (var propertyInfo in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+				if (IsObservableCollection(propertyInfo.PropertyType, out Type elementType) && elementType == targetType)
+				{
+					if(propertyInfo.GetCustomAttributes().Contains(new CollectionOfSelectedItemsAttribute()))
+					{
+						property = propertyInfo;
+						break;
+					}
+				}
+
+			return property;
+		}
+
 		private void ShowBusyMessage()
 		{
 			Application.Current.Dispatcher.Invoke(() =>
@@ -208,12 +422,64 @@ namespace SchoolSchedule.ViewModel
 				);
 			});
 		}
+		protected object GetModelRefOfADTOObject(object dto, out Type extractedType)
+		{
+			extractedType = null;
+			object sendingEntity= null;
+			
+			string typename = dto.GetType().Name;
+			if (typename == typeof(DTOSubject).Name)
+			{
+				sendingEntity = (dto as DTOSubject).ModelRef;
+				extractedType = typeof(Model.Subject);
+			}
+			else if (typename == typeof(DTOGroup).Name)
+			{
+				sendingEntity = (dto as DTOGroup).ModelRef;
+				extractedType = typeof(Model.Group);
+			}
+			else if (typename == typeof(DTOLesson).Name)
+			{
+				sendingEntity = (dto as DTOLesson).ModelRef;
+				extractedType = typeof(Model.Lesson);
+			}
+			else if (typename == typeof(DTOSchedule).Name)
+			{
+				sendingEntity = (dto as DTOSchedule).ModelRef;
+				extractedType = typeof(Model.Schedule);
+			}
+			else if (typename == typeof(DTOStudent).Name)
+			{
+				sendingEntity = (dto as DTOStudent).ModelRef;
+				extractedType = typeof(Model.Student);
+			}
+			else if (typename == typeof(DTOTeacher).Name)
+			{
+				sendingEntity = (dto as DTOTeacher).ModelRef;
+				extractedType = typeof(Model.Teacher);
+			}
+			else if (typename == typeof(DTOTeacherPhone).Name)
+			{
+				sendingEntity = (dto as DTOTeacherPhone).ModelRef;
+				extractedType = typeof(Model.TeacherPhone);
+			}
+
+			return sendingEntity;
+		}
 		private async Task<EditWindow> ShowEditWindowAsync(Type targetType, object entity)
 		{
 			EditWindow window = null;
+
+			object sendingEntity = entity;
+			if(entity != null)
+			{
+				sendingEntity = GetModelRefOfADTOObject(entity,out Type truthType);
+				targetType = truthType;
+			}
+
 			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{
-				window = new EditWindow(targetType, entity, _groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones,MainWindow);
+				window = new EditWindow(targetType, sendingEntity, _groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones,MainWindow);
 				window.ShowDialog();
 			});
 			return window;
@@ -1125,28 +1391,6 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#endregion
-
-		/// <summary>
-		/// Проверка на принадлежность шаблону ObservableCollection<T>, и возвращает T тип из шаблона
-		/// </summary>
-		/// <param name="type"></param>
-		/// <param name="elementType"></param>
-		/// <returns></returns>
-		protected bool IsObservableCollection(Type type, out Type elementType)
-		{
-			elementType = null;
-
-			if (type.IsGenericType &&
-				type.GetGenericTypeDefinition() == typeof(ObservableCollection<>))
-			{
-				elementType = type.GetGenericArguments()[0];
-				return true;
-			}
-
-			return false;
-		}
-
-
 		private List<Model.Group> _groups;
 		public List<Model.Group> Groups
 		{ get { return _groups; } set { SetPropertyChanged(ref _groups, value); } }

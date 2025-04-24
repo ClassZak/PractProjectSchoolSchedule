@@ -167,6 +167,7 @@
     </Compile>
     <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
+    <Compile Include="ViewModel\Attributes\CollectionOfSelectedItemsAttribute.cs" />
     <Compile Include="ViewModel\Comands\RelayCommand.cs" />
     <Compile Include="ViewModel\Edit\EditLessonViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditScheduleViewModel.cs" />

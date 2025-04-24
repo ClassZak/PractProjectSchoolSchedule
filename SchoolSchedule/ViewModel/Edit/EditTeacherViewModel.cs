@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using SchoolSchedule.ViewModel.Attributes;
 
 namespace SchoolSchedule.ViewModel.Edit
 {
@@ -31,9 +32,13 @@ namespace SchoolSchedule.ViewModel.Edit
 		public ObservableCollection<Model.Subject> NotChoosenSubjects { get; set; } = new ObservableCollection<Model.Subject>();
 
 
+		[CollectionOfSelectedItems]
 		public ObservableCollection<Model.Group> SelectedChoosenGroups { get; set; } = new ObservableCollection<Model.Group>();
+		[CollectionOfSelectedItems]
 		public ObservableCollection<Model.Group> SelectedNotChoosenGroups { get; set; } = new ObservableCollection<Model.Group>();
+		[CollectionOfSelectedItems]
 		public ObservableCollection<Model.Subject> SelectedChoosenSubjects { get; set; } = new ObservableCollection<Model.Subject>();
+		[CollectionOfSelectedItems]
 		public ObservableCollection<Model.Subject> SelectedNotChoosenSubjects { get; set; } = new ObservableCollection<Model.Subject>();
 
 
