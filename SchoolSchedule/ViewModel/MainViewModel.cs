@@ -28,7 +28,7 @@ using System.Windows.Input;
 
 namespace SchoolSchedule.ViewModel
 {
-	public class MainViewModel : ABaseViewModel
+	public partial class MainViewModel : ABaseViewModel
 	{
 		public MainWindow MainWindow { get; set; }
 		[ViewModel.Attributes.CollectionOfSelectedItems]
@@ -149,323 +149,26 @@ namespace SchoolSchedule.ViewModel
 			{
 				TaskName = commandName;
 				ETaskStatus = ETaskStatus.InProgress;
+				OnPropertyChanged(nameof(TaskStatus));
 				ErrorMessage = null;
 
 				await commandLogic();
 
 				ETaskStatus = ETaskStatus.Completed;
+				OnPropertyChanged(nameof(TaskStatus));
 			}
 			catch (Exception ex)
 			{
 				ETaskStatus = ETaskStatus.Failed;
-				ErrorMessage = ex.Message;    // отобразим в UI
-				HandleException(ex);          // ваше всплывающее MessageBox
+				OnPropertyChanged(nameof(TaskStatus));
+				ErrorMessage = ex.Message;	// отобразим в UI
+				HandleException(ex);		// ваше всплывающее MessageBox
 			}
 			finally
 			{
 				_semaphore.Release();
 			}
 		}
-		#region CRUD функции
-		#region Создание
-		private async Task CreateEntityAsync(object entity, Type targetType)
-		{
-			using(var db=new SchoolScheduleEntities())
-			{
-				await EnsureConnectionOpenAsync(db);
-				switch (entity)
-				{
-					case Model.Group group:
-						db.Group.Add(group);
-						break;
-					case Model.Subject subject:
-						db.Subject.Add(subject);
-						break;
-					case Model.Student student:
-						db.Student.Add(student);
-						break;
-					case Model.Teacher teacher:
-						List<Model.TeacherPhone> phones = new List<Model.TeacherPhone>(teacher.TeacherPhone);
-						List<Model.Group> groups = new List<Model.Group>(teacher.Group);
-						List<Model.Subject> subjects = new List<Model.Subject>(teacher.Subject);
-
-						teacher.Subject.Clear();
-						teacher.Group.Clear();
-						teacher.TeacherPhone.Clear();
-
-
-						var forEdit = db.Teacher.Add(teacher);
-						await db.SaveChangesAsync();
-
-						if (forEdit == null)
-							throw new Exception("Не удалось добавить предметы и классы для учителей");
-						foreach (var el in subjects)
-							forEdit.Subject.Add(await db.Subject.FindAsync(el.Id));
-						foreach (var el in groups)
-							forEdit.Group.Add(await db.Group.FindAsync(el.Id));
-						foreach (var el in phones)
-							db.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
-
-						break;
-					case Model.Lesson lesson:
-						db.Lesson.Add(lesson);
-						break;
-					case Model.Schedule schedule:
-						db.Schedule.Add(schedule);
-						break;
-				}
-				await db.SaveChangesAsync();
-			}
-		}
-		#endregion
-		#region Изменение
-		public async Task UpdateEntityAsync(object entity, object selectedObject, Type targetType)
-		{
-			using (var db = new SchoolSchedule.Model.SchoolScheduleEntities())
-			{
-				await EnsureConnectionOpenAsync(db);
-				switch (entity)
-				{
-					case Model.Group group:
-						{
-							var selectedDTO = selectedObject as Model.DTO.DTOGroup;
-
-
-							var forUpdate = await db.Group.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id);
-
-							if (forUpdate == null)
-								throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-							forUpdate.Name = group.Name;
-							forUpdate.Year = group.Year;
-							break;
-						}
-					case Model.Subject subject:
-						{
-							var selectedDTO = selectedObject as Model.DTO.DTOSubject;
-
-
-							var forUpdate = await db.Subject.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id);
-							if (forUpdate == null)
-								throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-							forUpdate.Name = subject.Name;
-							break;
-						}
-					case Model.Student student:
-						{
-							var selectedDTO = selectedObject as Model.DTO.DTOStudent;
-
-
-							var forUpdate = await db.Student.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id);
-							if (forUpdate == null)
-								throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-							forUpdate.Surname = student.Surname;
-							forUpdate.Name = student.Name;
-							forUpdate.Patronymic = student.Patronymic;
-							forUpdate.IdGroup = student.IdGroup;
-							forUpdate.Email = student.Email;
-							break;
-						}
-					case Model.Teacher teacher:
-						{
-							var selectedDTO = selectedObject as Model.DTO.DTOTeacher;
-
-
-							List<Model.TeacherPhone> phones = new List<Model.TeacherPhone>(teacher.TeacherPhone);
-							List<Model.Group> groups = new List<Model.Group>(teacher.Group);
-							List<Model.Subject> subjects = new List<Model.Subject>(teacher.Subject);
-
-							teacher.Subject.Clear();
-							teacher.Group.Clear();
-							teacher.TeacherPhone.Clear();
-
-							var forUpdate = await db.Teacher
-								.Include(t => t.TeacherPhone) // Добавляем Include для загрузки связанных телефонов
-								.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id);
-
-							if (forUpdate == null)
-								throw new Exception("Объект не найден");
-
-							forUpdate.Surname = teacher.Surname;
-							forUpdate.Name = teacher.Name;
-							forUpdate.Patronymic = teacher.Patronymic;
-
-							foreach (var phone in forUpdate.TeacherPhone.ToList())
-							{
-								if (phone.IdTeacher == forUpdate.Id)
-									db.TeacherPhone.Remove(phone);
-							}
-
-							foreach (var el in phones)
-							{
-								db.TeacherPhone.Add(new Model.TeacherPhone
-								{
-									IdTeacher = forUpdate.Id,
-									PhoneNumber = el.PhoneNumber
-								});
-							}
-
-							// Обновляем Subject и Group (many-to-many)
-							forUpdate.Subject.Clear();
-							foreach (var el in subjects)
-							{
-								var subject = await db.Subject.FindAsync(el.Id);
-								if (subject != null)
-									forUpdate.Subject.Add(subject);
-							}
-
-							forUpdate.Group.Clear();
-							foreach (var el in groups)
-							{
-								var group = await db.Group.FindAsync(el.Id);
-								if (group != null)
-									forUpdate.Group.Add(group);
-							}
-							break;
-						}
-					case Model.Lesson lesson:
-						{
-							var selectedDTO = selectedObject as Model.DTO.DTOLesson;
-
-
-							var forUpdate = await db.Lesson.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id);
-							if (forUpdate == null)
-								throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-							forUpdate.IdSubject = selectedDTO.ModelRef.IdSubject;
-							forUpdate.IdGroup = selectedDTO.ModelRef.IdGroup;
-							forUpdate.Number = selectedDTO.ModelRef.Number;
-							break;
-						}
-					case Model.Schedule schedule:
-						{
-							var selectedDTO = selectedObject as Model.DTO.DTOSchedule;
-
-
-							var forUpdate = await db.Schedule.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id);
-							if (forUpdate == null)
-								throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-							forUpdate.IdLesson = selectedDTO.ModelRef.IdLesson;
-							forUpdate.IdTeacher = selectedDTO.ModelRef.IdTeacher;
-							forUpdate.StartTime = selectedDTO.ModelRef.StartTime;
-							forUpdate.EndTime = selectedDTO.ModelRef.EndTime;
-							forUpdate.Date = selectedDTO.ModelRef.Date;
-							break;
-						}
-				}
-				await db.SaveChangesAsync();
-			}
-		}
-		#endregion
-		#region Удаление
-		public async Task DeleteEntitiesAsync(IList selectedObjects, Type targetType)
-		{
-			using (var db=new Model.SchoolScheduleEntities())
-			{
-				await EnsureConnectionOpenAsync(db);
-				if (targetType == typeof(Model.DTO.DTOGroup))
-				{
-					var teachers = await db.Teacher.ToListAsync();
-					var lessons = await db.Lesson.ToListAsync();
-					var students = await db.Student.ToListAsync();
-					foreach (var el in selectedObjects)
-					{
-						var selectedDTO = el as Model.DTO.DTOGroup;
-						var teachersUses = FindTeachersUsesGroup(ref teachers, selectedDTO.ModelRef.Id);
-						var lessonsUses = FindLessonsUsesGroup(ref lessons, selectedDTO.ModelRef.Id);
-						var studentsUsees = FindStudentsUsesGroup(ref students, selectedDTO.ModelRef.Id);
-
-						if (teachersUses.Count() != 0 || lessonsUses.Count() != 0 || studentsUsees.Count() != 0)
-							throw new Exception($"Удалите записи всех уроков, учителей и всех студентов, ссылающихся на класс \"{selectedDTO.ModelRef}\"");
-
-						var forDelete = await db.Group.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
-						db.Group.Remove(forDelete);
-					}
-				}
-				else if (targetType == typeof(Model.DTO.DTOSubject))
-				{
-					var teachers = await db.Teacher.ToListAsync();
-					var lessons = await db.Lesson.ToListAsync();
-
-					foreach (var el in selectedObjects)
-					{
-						var selectedDTO = el as Model.DTO.DTOSubject;
-						var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, selectedDTO.ModelRef.Id);
-						var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, selectedDTO.ModelRef.Id);
-
-						if (teachersUsesSubject.Count() != 0 || lessonsUsesSubject.Count() != 0)
-							throw new Exception($"Удалите всех уроков и учителей, ссылающихся на предмет \"{selectedDTO.Name}\"");
-
-						var forDelete = await db.Subject.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
-						if (forDelete == null)
-							throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
-						db.Subject.Remove(forDelete);
-					}
-				}
-				else if (targetType == typeof(Model.DTO.DTOSubject))
-				{
-					foreach (var el in selectedObjects)
-					{
-						var selectedDTO = el as Model.DTO.DTOStudent;
-						var forDelete = await db.Student.FirstAsync() ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
-						db.Student.Remove(forDelete);
-					}
-				}
-				else if (targetType == typeof(Model.DTO.DTOTeacher))
-				{
-					var schedules = await db.Schedule.ToListAsync();
-					var phones = await db.TeacherPhone.ToListAsync();
-					foreach (var el in selectedObjects)
-					{
-						var selectedDTO = el as Model.DTO.DTOTeacher;
-						var forDelete = await db.Teacher.FirstAsync(x => x.Id == selectedDTO.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
-						var schedulesUsesTeacher = FindSchedulesUsesTeacher(ref schedules, forDelete.Id);
-						var phonesUsesTeacher = FindTeacherPhonesUsesTeacher(ref phones, forDelete.Id);
-						if (schedulesUsesTeacher.Any())
-							throw new Exception($"Удалите все объекты расписания, в которых записан преподаватель {selectedDTO.ModelRef}");
-						if (forDelete == null)
-							throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
-
-						foreach (var p in phonesUsesTeacher)
-							db.TeacherPhone.Remove(p);
-
-						var teacherGroup = new List<Model.Group>(forDelete.Group);
-						foreach (var group in teacherGroup)
-							forDelete.Group.Remove(group);
-						await db.SaveChangesAsync();
-						var teacherSubject = new List<Model.Subject>(forDelete.Subject);
-						foreach (var subject in teacherSubject)
-							forDelete.Subject.Remove(subject);
-						await db.SaveChangesAsync();
-
-						db.Teacher.Remove(forDelete);
-					}
-				}
-				else if (targetType == typeof(Model.DTO.DTOLesson))
-				{
-					var schedules = await db.Schedule.ToListAsync();
-					foreach (var el in SelectedLessons)
-					{
-						var selectedDTO = el as Model.DTO.DTOLesson;
-						var schedulesUseesLesson = FindSchedulesUsesLesson(ref schedules, el.Id);
-						if (schedulesUseesLesson.Any())
-							throw new Exception($"Удалите все объекты расписания, в которых проводится занятие по предмету \"{el.Subject}\" с классом \"{el.Group}\"");
-
-						var forDelete = await db.Lesson.FirstAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
-						db.Lesson.Remove(forDelete);
-					}
-				}
-				else if (targetType == typeof(Model.DTO.DTOSchedule))
-				{
-					foreach (var el in selectedObjects)
-					{
-						var selectedDTO = el as Model.DTO.DTOSchedule;
-						var forDelete = await db.Schedule.FirstAsync(x => x.Id == selectedDTO.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
-						db.Schedule.Remove(forDelete);
-					}
-				}
-				await db.SaveChangesAsync();
-			}
-		}
-		#endregion
 		#endregion
 		#region CRUD команды
 		#region Команда добавления
@@ -475,21 +178,21 @@ namespace SchoolSchedule.ViewModel
 			get
 			{
 				return _createCommmand ?? (_createCommmand = new RelayCommand(
-				async param => await ExecuteCommandAsync("Добавление новых записей",async () =>
-				await Task.Run(async ()=>
+				async param =>
 				{
 					if (!(param is Type targetType))
 						throw new ArgumentException("Выбран неверный тип аргумента");
 
 					var result = await ShowEditWindowAsync(targetType, null);
-					if (result.DialogResult)
-					{
-						await CreateEntityAsync(result.EditObject, targetType);
+					if(result.DialogResult && MessageBox.Show("Вы действительно хотите добавить новый объект?","Добаваление объектов",MessageBoxButton.YesNoCancel,MessageBoxImage.Question)==MessageBoxResult.Yes)
+						await ExecuteCommandAsync("Добавление новых записей", async () => await Task.Run(async () =>
+						{
+							await CreateEntityAsync(result.EditObject, targetType);
 
-						Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
-						thread.Start();
-					}
-				}))));
+							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+							thread.Start();
+						}));
+				}));
 			}
 		}
 		#endregion
@@ -513,31 +216,29 @@ namespace SchoolSchedule.ViewModel
 		{
 			get
 			{
-				return _editCommamd2 ?? (_editCommamd2=new RelayCommand(
-				async param => await ExecuteCommandAsync("Редактирование данных", async ()=>
-				await Task.Run(async ()=>
+				return _editCommamd2 ?? (_editCommamd2 = new RelayCommand(
+				async param =>
 				{
-
-					if(param.GetType().GetGenericTypeDefinition()!=typeof(ObservableCollection<>))
+					if (param.GetType().GetGenericTypeDefinition() != typeof(ObservableCollection<>))
 						throw new ArgumentException("Выбран неверный тип аргумента");
-
 					Type targetType = param.GetType().GetGenericArguments()[0];
-					var targetCollection= FindTargetPropertyOfSelectedItems(targetType).GetValue(this) as IList;
+					var targetCollection = FindTargetPropertyOfSelectedItems(targetType).GetValue(this) as IList;
 					if (targetCollection.Count != 1)
 					{
 						MessageBox.Show("Выбирете один объект для изменения", "Ошибка выбора объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 						return;
 					}
-
 					var selectedObject = (targetCollection)[0];
-					var result=await ShowEditWindowAsync(targetType, selectedObject);
-					if(result.DialogResult)
-					{
-						await UpdateEntityAsync(result.EditObject, selectedObject, targetType);
-						Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
-						thread.Start();
-					}
-				}))));
+					var result = await ShowEditWindowAsync(targetType, selectedObject);
+
+					if (result.DialogResult && MessageBox.Show("Вы действительно хотите сохранить изменения?", "Редактирование данных", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
+						await ExecuteCommandAsync("Редактирование данных", async () => await Task.Run(async () =>
+						{
+							await UpdateEntityAsync(result.EditObject, selectedObject, targetType);
+							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+							thread.Start();
+						})); 
+				}));
 			}
 		}
 		#endregion
@@ -547,9 +248,8 @@ namespace SchoolSchedule.ViewModel
 		{
 			get
 			{
-				return _deleteCommand2 ?? (_deleteCommand2=new RelayCommand(
-				async param => await ExecuteCommandAsync("Удаление объектов", async()=>
-				await Task.Run(async ()=>
+				return _deleteCommand2 ?? (_deleteCommand2 = new RelayCommand(
+				async param => 
 				{
 					if (param.GetType().GetGenericTypeDefinition() != typeof(ObservableCollection<>))
 						throw new ArgumentException("Выбран неверный тип аргумента");
@@ -557,19 +257,21 @@ namespace SchoolSchedule.ViewModel
 					Type targetType = param.GetType().GetGenericArguments()[0];
 					var targetCollection = FindTargetPropertyOfSelectedItems(targetType).GetValue(this) as IList;
 
-					if(targetCollection.Count < 1)
+					if (targetCollection.Count < 1)
 					{
 						MessageBox.Show("Выбрерте хотя бы 1 объект для удаления.", "Ошибка удаления данных", MessageBoxButton.OK, MessageBoxImage.Error);
 						return;
 					}
-
-					await DeleteEntitiesAsync(targetCollection, targetType);
-					Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
-					thread.Start();
-				}))));
+					if(MessageBox.Show("Вы действительно хотите удалить выбранные объекты?", "Удаление объектов", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
+						await ExecuteCommandAsync("Удаление объектов", async () => await Task.Run(async () =>
+						{
+							await DeleteEntitiesAsync(targetCollection, targetType);
+							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+							thread.Start();
+						})); 
+				}));
 			}
 		}
-		#endregion
 		#endregion
 		#endregion
 		#endregion
@@ -933,6 +635,5 @@ namespace SchoolSchedule.ViewModel
 		private TemplateTable<DTOSchedule> _scheduleTable =new TemplateTable<DTOSchedule>();
 		public ObservableCollection<DTOSchedule> DTOSchedule
 		{ get { return _scheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOSchedule)); _scheduleTable.Entries = value; } }
-
 	}
 }

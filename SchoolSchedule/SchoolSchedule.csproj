@@ -180,6 +180,9 @@
     <Compile Include="ViewModel\Edit\EditScheduleViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditStudentViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditTeacherViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModelParts\Operations\CreateOperations.cs" />
+    <Compile Include="ViewModel\MainViewModelParts\Operations\DeleteOperations.cs" />
+    <Compile Include="ViewModel\MainViewModelParts\Operations\UpdateOperations.cs" />
     <Compile Include="ViewModel\Table\TemplateTable.cs" />
     <Compile Include="ViewModel\TaskModel\TaskStatus.cs" />
     <Compile Include="ViewModel\TaskModel\TaskViewModel.cs" />
@@ -272,7 +275,9 @@
     </Content>
     <Resource Include="scheduleicon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModel\MainViewModelParts\Commands\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
