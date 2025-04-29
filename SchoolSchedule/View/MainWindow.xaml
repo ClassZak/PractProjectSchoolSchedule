@@ -33,6 +33,7 @@
 				<MenuItem Header="Загрузить">
 					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand2}"/>
 				</MenuItem>
+				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
 			</MenuItem>
 		</Menu>
 		<Grid Margin="6" Grid.Row="1">
@@ -236,8 +237,6 @@
 					<TextBox IsReadOnly="True" AcceptsReturn="True" Text="{Binding ErrorMessage}" TextWrapping="Wrap" MaxHeight="100" VerticalScrollBarVisibility="Auto"/>
 				</StackPanel>
 			</Grid>
-
-
 			<Button 
 				Grid.Row="2" 
 				Margin="5"
@@ -246,8 +245,6 @@
 				CommandParameter="{x:Null}"
 				ToolTip="Получить все данные" RenderTransformOrigin="0,0"
 			/>
-
-
 		</Grid>
 	</Grid>
 </Window>

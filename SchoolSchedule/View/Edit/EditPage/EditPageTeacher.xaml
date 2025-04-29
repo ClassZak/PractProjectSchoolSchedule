@@ -59,16 +59,30 @@
 						<RowDefinition/>
 						<RowDefinition Height="20"/>
 					</Grid.RowDefinitions>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenSubjects}" ItemsSource="{Binding NotChoosenSubjects}" Margin="0,10" ToolTip="Доступные предметы"/>
-					</ScrollViewer>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<TextBlock Text="Все предметы"/>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+							<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenSubjects}" ItemsSource="{Binding NotChoosenSubjects}" Margin="0,10" ToolTip="Доступные предметы"/>
+						</ScrollViewer>
+					</Grid>
 					<StackPanel Grid.Column="1" VerticalAlignment="Center" >
 						<Button Content=">>" Margin="2"			Command="{Binding SendToChoosenCommand}" CommandParameter="{x:Type Model:Subject}" ToolTip="Переместить"/>
 						<Button Content="&lt;&lt;" Margin="2"	Command="{Binding SendToNotChoosenCommand}" CommandParameter="{x:Type Model:Subject}" ToolTip="Переместить"/>
 					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Column="2">
-						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenSubjects}" ItemsSource="{Binding ChoosenSubjects}" Margin="0,10" ToolTip="Выбранные предметы"/>
-					</ScrollViewer>
+					<Grid Grid.Column="2">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<TextBlock Text="Преподаёт:"/>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+							<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenSubjects}" ItemsSource="{Binding ChoosenSubjects}" Margin="0,10" ToolTip="Выбранные предметы"/>
+						</ScrollViewer>
+					</Grid>
 				</Grid>
 			</TabItem>
 			<TabItem Header="Классное руководство">
@@ -82,16 +96,30 @@
 						<RowDefinition/>
 						<RowDefinition Height="20"/>
 					</Grid.RowDefinitions>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenGroups}" ItemsSource="{Binding NotChoosenGroups}" Margin="0,10" ToolTip="Список классов"/>
-					</ScrollViewer>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<TextBlock Text="Все классы"/>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+							<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedNotChoosenGroups}" ItemsSource="{Binding NotChoosenGroups}" Margin="0,10" ToolTip="Список классов"/>
+						</ScrollViewer>
+					</Grid>
 					<StackPanel Grid.Column="1" VerticalAlignment="Center" >
 						<Button Content=">>" Margin="2"			Command="{Binding SendToChoosenCommand}" CommandParameter="{x:Type Model:Group}" ToolTip="Переместить"/>
 						<Button Content="&lt;&lt;" Margin="2"	Command="{Binding SendToNotChoosenCommand}" CommandParameter="{x:Type Model:Group}" ToolTip="Переместить"/>
 					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Column="2">
-						<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenGroups}" ItemsSource="{Binding ChoosenGroups}" Margin="0,10" Grid.Column="2" ToolTip="выбранные классы"/>
-					</ScrollViewer>
+					<Grid Grid.Column="2">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<TextBlock Text="Руководит:"/>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+							<ListView SelectionMode="Multiple" View:ListViewBehavior.SelectedItems="{Binding SelectedChoosenGroups}" ItemsSource="{Binding ChoosenGroups}" Margin="0,10" Grid.Column="2" ToolTip="выбранные классы"/>
+						</ScrollViewer>
+					</Grid>
 				</Grid>
 			</TabItem>
 		</TabControl>

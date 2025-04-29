@@ -28,5 +28,10 @@ namespace SchoolSchedule.View
 			//this.DataContext = new MainViewModel();
 			(this.DataContext as MainViewModel).MainWindow = this;
 		}
+
+		private void CloseMenu_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
 	}
 }
