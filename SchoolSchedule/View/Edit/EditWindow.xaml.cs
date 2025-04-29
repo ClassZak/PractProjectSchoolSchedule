@@ -118,8 +118,8 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Изменение данных учителя \"{EditObject as Model.Teacher}\"";
 
-				Width = 600;
-				Height = 500;
+				Width = 700;
+				Height = 600;
 				mainFrame.Content = new EditPage.EditPageTeacher(_teachers,_groups,_subjects,_teacherPhones,isNewObject,EditObject as Model.Teacher,this);
 			}
 			if (EditType.Name == typeof(Model.TeacherPhone).Name)
