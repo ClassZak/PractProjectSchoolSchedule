@@ -6,6 +6,8 @@
       xmlns:local="clr-namespace:SchoolSchedule.View.Edit.EditPage"
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
       mc:Ignorable="d" 
+	  	FontFamily="Arial"
+		FontSize="12"
       d:DesignHeight="150" d:DesignWidth="320"
 	  xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit">
 	<Page.DataContext>

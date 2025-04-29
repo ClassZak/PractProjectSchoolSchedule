@@ -7,6 +7,8 @@
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
       mc:Ignorable="d" 
       d:DesignHeight="150" d:DesignWidth="320"
+	  	FontFamily="Arial"
+		FontSize="12"
 	  xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit">
 	<Page.DataContext>
 		<EditViewModel:EditLessonViewModel/>
@@ -25,10 +27,11 @@
 			<ComboBox Text="Класс" ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding CurrentLesson.IdGroup}"
-				ToolTip="С кем проводится урок"
-			/>
+				ToolTip="С кем проводится урок" Background="{x:Null}"
+			>
+			</ComboBox>
 			<TextBlock Text="Предмет"/>
-			<ComboBox Text="Класс" ItemsSource="{Binding Subjects}" 
+			<ComboBox Text="Класс" ItemsSource="{Binding Subjects}"
 				SelectedValuePath="Id"
 				SelectedValue="{Binding CurrentLesson.IdSubject}"
 				ToolTip="Предмет урока (школьны предмет)"

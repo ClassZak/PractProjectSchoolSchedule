@@ -46,7 +46,7 @@ namespace SchoolSchedule.ViewModel.TaskModel
 
 
 
-		public string _errorMessage;
+		public string _errorMessage = null;
 		public string ErrorMessage{ get { return _errorMessage; } set { SetPropertyChanged(ref _errorMessage, value); } }
 
 

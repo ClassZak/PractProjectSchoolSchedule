@@ -110,7 +110,7 @@ namespace SchoolSchedule.ViewModel
 		private async Task DeleteLessons(IList<Model.DTO.DTOLesson> selectedObjects,Model.SchoolScheduleEntities db)
 		{
 			var schedules = db.Schedule.ToListAsync().Result;
-			foreach (var el in SelectedLessons)
+			foreach (var el in selectedObjects)
 			{
 				var schedulesUseesLesson = FindSchedulesUsesLesson(ref schedules, el.Id);
 				if (schedulesUseesLesson.Any())

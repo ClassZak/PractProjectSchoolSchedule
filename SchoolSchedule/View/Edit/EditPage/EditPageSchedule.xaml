@@ -7,6 +7,8 @@
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
       xmlns:Additional="clr-namespace:SchoolSchedule.Additional"
       mc:Ignorable="d" 
+	  	FontFamily="Arial"
+		FontSize="12"
       d:DesignHeight="300" d:DesignWidth="420"
 	  xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit">
 	<Page.DataContext>

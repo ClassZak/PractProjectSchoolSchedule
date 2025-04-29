@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SchoolSchedule.View.Edit"
         mc:Ignorable="d"
-        FontFamily="Arial"
         ResizeMode="NoResize"
         Icon="/Resources/scheduleicon.ico"
+		FontFamily="Arial"
+		FontSize="12"
         Title="Редактирование" Height="340" Width="400" WindowStartupLocation="CenterOwner">
 	<Window.Background>
 		<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -22,7 +23,7 @@
 				<RowDefinition/>
 				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
-			<TextBlock Name="newObjectLabel" Text="Новый объект" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold"/>
+			<TextBlock Name="newObjectLabel" Text="Новый объект" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold"/>
 			<Frame Grid.Row="1" NavigationUIVisibility="Hidden" x:Name="mainFrame" Margin="10">
 			</Frame>
 			<Grid Grid.Row="2">

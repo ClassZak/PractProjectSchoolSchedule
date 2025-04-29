@@ -58,7 +58,7 @@ namespace SchoolSchedule.ViewModel
 #if DEBUG
 			LoadData();
 #else
-			LoadDataAsync();
+			UpdateCommand2.Execute(null);
 #endif
 		}
 
@@ -93,7 +93,7 @@ namespace SchoolSchedule.ViewModel
 		public string TaskStatus
 		{
 			get => _taskViewModel.TaskStatus;
-			 set
+			set
 			{
 				if (_taskViewModel.TaskStatus != value)
 				{
@@ -105,7 +105,7 @@ namespace SchoolSchedule.ViewModel
 		public ETaskStatus ETaskStatus
 		{
 			get => _taskViewModel.ETaskStatus;
-			 set
+			set
 			{
 				if (_taskViewModel.ETaskStatus != value)
 				{
@@ -495,6 +495,7 @@ namespace SchoolSchedule.ViewModel
 			// Для того, чтобы не было ошибки в xaml
 			catch (System.InvalidOperationException)
 			{ }
+			#if DEBUG
 			catch (DbUpdateException ex)
 			{
 				// Распаковываем вложенные исключения
@@ -528,6 +529,7 @@ namespace SchoolSchedule.ViewModel
 			{
 				Task.Run(() =>{MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);});
 			}
+			#endif
 		}
 
 		

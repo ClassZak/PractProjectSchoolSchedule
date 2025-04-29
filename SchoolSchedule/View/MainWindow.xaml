@@ -6,6 +6,7 @@
 		xmlns:hc="https://handyorg.github.io/handycontrol"
 		xmlns:local="clr-namespace:SchoolSchedule"
 		xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
+		xmlns:ViewModelTaskModel="clr-namespace:SchoolSchedule.ViewModel.TaskModel"
 		xmlns:View="clr-namespace:SchoolSchedule.View"
 		xmlns:Model="clr-namespace:SchoolSchedule.Model"
 		xmlns:DTOModel="clr-namespace:SchoolSchedule.Model.DTO"
@@ -13,8 +14,12 @@
 		Icon="/Resources/scheduleicon.ico"
 		Title="Школьное расписание" Height="440" Width="680"
 		MinWidth="500"
-		MinHeight="350" FontFamily="Arial" WindowStartupLocation="CenterScreen"
+		FontFamily="Arial"
+		FontSize="12"
+		MinHeight="350" WindowStartupLocation="CenterScreen"
 		>
+	<Window.Resources>
+	</Window.Resources>
 	<Window.DataContext>
 		<ViewModel:MainViewModel/>
 	</Window.DataContext>
@@ -33,7 +38,7 @@
 		<Grid Margin="6" Grid.Row="1">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
-				<RowDefinition Height="30"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
 			<TabControl>
@@ -186,11 +191,52 @@
 
 
 			<Grid Name="TaskStatusGrid" Grid.Row="1"  Visibility="Visible">
-				<StackPanel Orientation="Horizontal">
-					<TextBox Text="{Binding TaskName}"/>
-					<TextBox Text="{Binding TaskStatus}"/>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<StackPanel MinWidth="100">
+					<TextBlock Text="Задача:"/>
+					<TextBlock Text="{Binding TaskName}"/>
+				</StackPanel>
+				<StackPanel MinWidth="100" Margin="20,0,0,0" Grid.Column="1">
+					<TextBlock Text="Статус:"/>
+					<TextBlock Text="{Binding TaskStatus}" FontWeight="Bold">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock">
+								<Setter Property="Foreground" Value="Black"/>
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.Completed}">
+										<Setter Property="Foreground" Value="OliveDrab"/>
+									</DataTrigger>
+									<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.Failed}">
+										<Setter Property="Foreground" Value="Crimson"/>
+									</DataTrigger>
+									<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.InProgress}">
+										<Setter Property="Foreground" Value="DarkCyan"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
+				</StackPanel>
+				<StackPanel MinWidth="100" Margin="20,0,0,0" Grid.Column="2">
+					<StackPanel.Style>
+						<Style TargetType="StackPanel">
+							<Setter Property="Visibility" Value="Collapsed"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.Failed}">
+									<Setter Property="Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</StackPanel.Style>
+					<TextBlock Text="Ошибка:"/>
+					<TextBox IsReadOnly="True" AcceptsReturn="True" Text="{Binding ErrorMessage}" TextWrapping="Wrap" MaxHeight="100" VerticalScrollBarVisibility="Auto"/>
 				</StackPanel>
 			</Grid>
+
 
 			<Button 
 				Grid.Row="2" 
@@ -198,7 +244,7 @@
 				Content="Загрузить все данные из сервера"
 				Command="{Binding UpdateCommand2}"
 				CommandParameter="{x:Null}"
-				ToolTip="Получить все данные"
+				ToolTip="Получить все данные" RenderTransformOrigin="0,0"
 			/>
 
 
