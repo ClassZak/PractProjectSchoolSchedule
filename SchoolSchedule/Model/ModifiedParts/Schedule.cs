@@ -7,14 +7,12 @@
 		public Schedule(Schedule other) : this()
 		{
 			this.Id= other.Id;
-			//this.IdLesson = other.IdLesson;
-			//this.IdTeacher= other.IdTeacher;
-			//this.StartTime = other.StartTime;
-			//this.EndTime = other.EndTime;
-			//this.Date = other.Date;
-
-			//this.Lesson = other.Lesson;
-			//this.Teacher = other.Teacher;
+			this.IdSubject= other.IdSubject;
+			this.IdGroup= other.IdGroup;
+			this.IdTeacher= other.IdTeacher;
+			this.IdBellSchedule= other.IdBellSchedule;
+			this.DayOfTheWeek= other.DayOfTheWeek;
+			this.ClassRoom= other.ClassRoom;
 		}
 	}
 }

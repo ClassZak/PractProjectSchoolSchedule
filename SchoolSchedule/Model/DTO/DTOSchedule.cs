@@ -11,32 +11,22 @@ namespace SchoolSchedule.Model.DTO
 	{
 		#region Свойства DTOSchedule
 		public int Id { get => ModelRef.Id; set { _prevId = ModelRef.Id; ModelRef.Id = value; } }
-		//public int IdLesson { get => ModelRef.IdLesson; set { _prevIdLesson = ModelRef.IdLesson; ModelRef.IdLesson = value; } }
+		public int IdSubject { get => ModelRef.IdSubject; set { _prevIdSubject = ModelRef.IdSubject; ModelRef.IdSubject = value; } }
+		public int IdGroup { get => ModelRef.IdGroup; set { _prevIdGroup = ModelRef.IdGroup; ModelRef.IdGroup = value; } }
 		public int IdTeacher { get => ModelRef.IdTeacher; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
-		//public TimeSpan StartTime { get => ModelRef.StartTime; set { _prevStartTime = ModelRef.StartTime; ModelRef.StartTime = value; } }
-		//public TimeSpan EndTime { get => ModelRef.EndTime; set { _prevEndTime = ModelRef.EndTime; ModelRef.EndTime = value; } }
-		//public DateTime Date { get => ModelRef.Date; set { _prevDate = ModelRef.Date; ModelRef.Date = value; } }
+		public int IdBellSchedule { get => ModelRef.IdBellSchedule; set { _prevIdBellSchedule = ModelRef.IdBellSchedule; ModelRef.IdBellSchedule = value; } }
+		public int DayOfTheWeek { get => ModelRef.DayOfTheWeek; set { _prevDayOfTheWeek = ModelRef.DayOfTheWeek; ModelRef.DayOfTheWeek = value; } }
+		public int ClassRoom { get => ModelRef.ClassRoom; set { _prevClassRoom = ModelRef.ClassRoom; ModelRef.ClassRoom = value; } }
 
 		#region Поля предыдущих значений
 		int _prevId = 0;
-		int _prevIdLesson = 0;
+		int _prevIdSubject = 0;
+		int _prevIdGroup = 0;
 		int _prevIdTeacher = 0;
-		TimeSpan _prevStartTime=TimeSpan.MinValue;
-		TimeSpan _prevEndTime=TimeSpan.MinValue;
-		DateTime _prevDate=DateTime.MinValue;
+		int _prevIdBellSchedule = 0;
+		int _prevDayOfTheWeek = 0;
+		int _prevClassRoom = 0;
 		#endregion
-		//public int LessonNumber
-		//{
-		//	get => ModelRef.Lesson.Number; set { }
-		//}
-		//public string Subject
-		//{
-		//	get => ModelRef.Lesson.Subject.Name; set { }
-		//}
-		//public string Group
-		//{
-		//	get => $"{ModelRef.Lesson.Group.Year}{ModelRef.Lesson.Group.Name}"; set { }
-		//}
 
 		public string TeacherSurname
 		{
@@ -59,11 +49,12 @@ namespace SchoolSchedule.Model.DTO
 		public DTOSchedule(Model.Schedule other) : base(other)
 		{
 			_prevId = other.Id;
-			//_prevIdLesson=other.IdLesson;
-			//_prevIdTeacher=other.IdTeacher;
-			//_prevStartTime = other.StartTime;
-			//_prevEndTime = other.EndTime;
-			//_prevDate = other.Date;
+			_prevIdSubject=other.IdSubject;
+			_prevIdGroup=other.IdGroup;
+			_prevIdTeacher=other.IdTeacher;
+			_prevIdBellSchedule=other.IdBellSchedule;
+			_prevDayOfTheWeek=other.DayOfTheWeek;
+			_prevClassRoom=other.ClassRoom;
 		}
 		public override bool HasReferenceOfNotExistingObject()
 		{
@@ -73,16 +64,18 @@ namespace SchoolSchedule.Model.DTO
 		{
 			if(_prevId!=0)
 				ModelRef.Id = _prevId;
-			//if(_prevIdLesson!=0)
-			//	ModelRef.IdLesson= _prevIdLesson;
-			//if( _prevIdTeacher!=0)
-			//	ModelRef.IdTeacher= _prevIdTeacher;
-			//if(_prevStartTime != TimeSpan.MinValue)
-			//	ModelRef.StartTime=_prevStartTime;
-			//if(_prevEndTime != TimeSpan.MinValue)
-			//	ModelRef.EndTime =_prevEndTime;
-			//if(_prevDate!=DateTime.MinValue)
-			//	ModelRef.Date = _prevDate;
+			if( _prevIdSubject!=0)
+				ModelRef.IdSubject= _prevIdSubject;
+			if( _prevIdGroup!=0)
+				ModelRef.IdGroup= _prevIdGroup;
+			if( _prevIdTeacher!=0)
+				ModelRef.IdTeacher= _prevIdTeacher;
+			if( _prevIdBellSchedule!=0)
+				ModelRef.IdBellSchedule= _prevIdBellSchedule;
+			if(_prevDayOfTheWeek!=0)
+				ModelRef.DayOfTheWeek= _prevDayOfTheWeek;
+			if( _prevClassRoom!=0)
+				ModelRef.ClassRoom= _prevClassRoom;
 		}
 	}
 }
