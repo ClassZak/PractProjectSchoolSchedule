@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SchoolSchedule.ViewModel.Comands
+namespace SchoolSchedule.ViewModel.Commands
 {
 	public class RelayCommand : ICommand
 	{

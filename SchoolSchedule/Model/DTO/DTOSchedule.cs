@@ -72,35 +72,17 @@ namespace SchoolSchedule.Model.DTO
 		public override void Restore()
 		{
 			if(_prevId!=0)
-			{
 				ModelRef.Id = _prevId;
-				_prevId = 0;
-			}
 			if(_prevIdLesson!=0)
-			{
 				ModelRef.IdLesson= _prevIdLesson;
-				_prevIdLesson = 0;
-			}
 			if( _prevIdTeacher!=0)
-			{
 				ModelRef.IdTeacher= _prevIdTeacher;
-				_prevIdTeacher = 0;
-			}
 			if(_prevStartTime != TimeSpan.MinValue)
-			{
 				ModelRef.StartTime=_prevStartTime;
-				_prevStartTime = TimeSpan.MinValue;
-			}
 			if(_prevEndTime != TimeSpan.MinValue)
-			{
 				ModelRef.EndTime =_prevEndTime;
-				_prevEndTime = TimeSpan.MinValue;
-			}
 			if(_prevDate!=DateTime.MinValue)
-			{
 				ModelRef.Date = _prevDate;
-				_prevDate = DateTime.MinValue;
-			}
 		}
 	}
 }

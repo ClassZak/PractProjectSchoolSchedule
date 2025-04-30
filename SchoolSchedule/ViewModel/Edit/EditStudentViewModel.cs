@@ -1,5 +1,5 @@
 ﻿using SchoolSchedule.Model;
-using SchoolSchedule.ViewModel.Comands;
+using SchoolSchedule.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

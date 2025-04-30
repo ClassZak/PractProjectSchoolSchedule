@@ -3,7 +3,7 @@ using SchoolSchedule.Model.DTO;
 using SchoolSchedule.View;
 using SchoolSchedule.View.Edit;
 using SchoolSchedule.ViewModel.Attributes;
-using SchoolSchedule.ViewModel.Comands;
+using SchoolSchedule.ViewModel.Commands;
 using SchoolSchedule.ViewModel.Table;
 using SchoolSchedule.ViewModel.TaskModel;
 using System;
@@ -147,6 +147,8 @@ namespace SchoolSchedule.ViewModel
 
 			try
 			{
+				SaveTableValues();
+
 				TaskName = commandName;
 				ETaskStatus = ETaskStatus.InProgress;
 				OnPropertyChanged(nameof(TaskStatus));
@@ -162,7 +164,9 @@ namespace SchoolSchedule.ViewModel
 				ETaskStatus = ETaskStatus.Failed;
 				OnPropertyChanged(nameof(TaskStatus));
 				ErrorMessage = ex.Message;	// отобразим в UI
-				HandleException(ex);		// ваше всплывающее MessageBox
+				HandleException(ex);        // ваше всплывающее MessageBox
+
+				CancelTableChanges();
 			}
 			finally
 			{
@@ -444,7 +448,30 @@ namespace SchoolSchedule.ViewModel
 				_lessonTable.Clear();
 				_scheduleTable.Clear();
 			});
-
+		}
+		private void SaveTableValues()
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				_studentTable.SaveChanges();
+				_groupTable.SaveChanges();
+				_subjectTable.SaveChanges();
+				_teacherTable.SaveChanges();
+				_lessonTable.SaveChanges();
+				_scheduleTable.SaveChanges();
+			});
+		}
+		private void CancelTableChanges()
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				_studentTable.CancelChanges();
+				_groupTable.CancelChanges();
+				_subjectTable.CancelChanges();
+				_teacherTable.CancelChanges();
+				_lessonTable.CancelChanges();
+				_scheduleTable.CancelChanges();
+			});		
 		}
 		private void LoadData()
 		{

@@ -16,7 +16,7 @@ namespace SchoolSchedule.ViewModel.Table
 		public virtual void Update(ref SchoolSchedule.Model.SchoolScheduleEntities dataBaseRef)
 		{
 		}
-		public void CancelChanges()
+		public virtual void CancelChanges()
 		{
 			App.Current.Dispatcher.Invoke(() =>
 			{ 

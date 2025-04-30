@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SchoolSchedule.Model.DTO
 {
-	public abstract class ADTO<T>
+	public abstract class ADTO<T> : IDTO
 	where T : class, new()
 	{
 		public T ModelRef { get; set; } = new T();

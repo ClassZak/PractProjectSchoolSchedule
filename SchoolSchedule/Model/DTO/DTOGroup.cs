@@ -40,20 +40,11 @@ namespace SchoolSchedule.Model.DTO
 		public override void Restore()
 		{
 			if(_prevId!=0)
-			{
 				Id=_prevId;
-				_prevId=0;
-			}
 			if(_prevYear!=0)
-			{
 				Year=_prevYear;
-				_prevYear=0;
-			}
 			if (_prevName != null)
-			{
 				Name=_prevName;
-				_prevName=null;
-			}
 		}
 	}
 }

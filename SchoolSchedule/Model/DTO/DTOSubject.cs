@@ -39,15 +39,9 @@ namespace SchoolSchedule.Model.DTO
 		public override void Restore()
 		{
 			if (_prevId != 0)
-			{
 				ModelRef.Id= _prevId;
-				_prevId = 0;
-			}
 			if(_prevName != null)
-			{
 				ModelRef.Name= _prevName;
-				_prevName= null;
-			}
 		}
 	}
 }

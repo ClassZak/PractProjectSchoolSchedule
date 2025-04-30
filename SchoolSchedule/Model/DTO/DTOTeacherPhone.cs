@@ -47,20 +47,11 @@ namespace SchoolSchedule.Model.DTO
 		public override void Restore()
 		{
 			if(_prevId!=0)
-			{
 				ModelRef.Id=_prevId;
-				_prevId=0;
-			}
 			if(_prevIdTeacher!=0)
-			{
 				ModelRef.IdTeacher = _prevIdTeacher;
-				_prevIdTeacher = 0;
-			}
 			if(_prevPhoneNumber!=null)
-			{
 				ModelRef.PhoneNumber = _prevPhoneNumber;
-				_prevPhoneNumber = null;
-			}
 		}
 	}
 }

@@ -85,27 +85,14 @@ namespace SchoolSchedule.Model.DTO
 
 		public override void Restore()
 		{
-
 			if (_prevId != 0)
-			{
 				ModelRef.Id = _prevId;
-				_prevId = 0;
-			}
 			if (_prevSurname != null)
-			{
 				ModelRef.Surname = _prevSurname;
-				_prevSurname = null;
-			}
 			if (_prevName != null)
-			{
 				ModelRef.Name = _prevName;
-				_prevName = null;
-			}
 			if (_prevPatronymic != null)
-			{
 				ModelRef.Patronymic = _prevPatronymic;
-				_prevPatronymic = null;
-			}
 		}
 	}
 }
