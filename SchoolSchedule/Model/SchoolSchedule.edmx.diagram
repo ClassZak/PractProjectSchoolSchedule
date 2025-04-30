@@ -4,16 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="fce328562857490c97ee5399a0ea137d" Name="Diagram1">
-        <EntityTypeShape EntityType="SchoolScheduleModel.BellSchedule" Width="1.5" PointX="3.75" PointY="10.875" IsExpanded="true" />
+      <Diagram DiagramId="65b0cf67795c49cca8e239584edb6fd1" Name="Diagram1">
+        <EntityTypeShape EntityType="SchoolScheduleModel.BellSchedule" Width="1.5" PointX="3.75" PointY="11" IsExpanded="true" />
         <EntityTypeShape EntityType="SchoolScheduleModel.BellScheduleType" Width="1.5" PointX="1.5" PointY="11.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Group" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Group" Width="1.5" PointX="0.75" PointY="7" IsExpanded="true" />
         <EntityTypeShape EntityType="SchoolScheduleModel.LessonSubsitutionSchedule" Width="1.5" PointX="3" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Schedule" Width="1.5" PointX="6" PointY="6.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Student" Width="1.5" PointX="3" PointY="14.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Subject" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Teacher" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.TeacherPhone" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Schedule" Width="1.5" PointX="6" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Student" Width="1.5" PointX="3" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Subject" Width="1.5" PointX="0.75" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Teacher" Width="1.5" PointX="3" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.TeacherPhone" Width="1.5" PointX="5.25" PointY="3.375" IsExpanded="true" />
         <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdBell__571DF1D5" ManuallyRouted="false" />
         <AssociationConnector Association="SchoolScheduleModel.FK_BellSchedule_BellScheduleType" ManuallyRouted="false" />
         <AssociationConnector Association="SchoolScheduleModel.FK__LessonSub__IdGro__5AEE82B9" ManuallyRouted="false" />

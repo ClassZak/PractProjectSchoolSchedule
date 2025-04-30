@@ -3,7 +3,7 @@
 	public partial class TeacherPhone
 	{
 		public TeacherPhone() { }
-		public TeacherPhone(TeacherPhone other) 
+		public TeacherPhone(TeacherPhone other) : this()
 		{
 			this.Id=other.Id;
 			this.PhoneNumber=other.PhoneNumber;

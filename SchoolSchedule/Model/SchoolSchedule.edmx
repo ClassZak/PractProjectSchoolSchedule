@@ -48,6 +48,7 @@
           <Property Name="IdGroup" Type="int" />
           <Property Name="IdTeacher" Type="int" />
           <Property Name="ClassRoom" Type="int" />
+          <Property Name="LessonNumber" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Schedule">
           <Key>
@@ -388,6 +389,7 @@
           <Property Name="IdGroup" Type="Int32" />
           <Property Name="IdTeacher" Type="Int32" />
           <Property Name="ClassRoom" Type="Int32" />
+          <Property Name="LessonNumber" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Group" Relationship="Self.FK__LessonSub__IdGro__5AEE82B9" FromRole="LessonSubsitutionSchedule" ToRole="Group" />
           <NavigationProperty Name="Subject" Relationship="Self.FK__LessonSub__IdSub__59FA5E80" FromRole="LessonSubsitutionSchedule" ToRole="Subject" />
           <NavigationProperty Name="Teacher" Relationship="Self.FK__LessonSub__IdTea__5BE2A6F2" FromRole="LessonSubsitutionSchedule" ToRole="Teacher" />
@@ -683,6 +685,7 @@
                 <ScalarProperty Name="IdGroup" ColumnName="IdGroup" />
                 <ScalarProperty Name="IdTeacher" ColumnName="IdTeacher" />
                 <ScalarProperty Name="ClassRoom" ColumnName="ClassRoom" />
+                <ScalarProperty Name="LessonNumber" ColumnName="LessonNumber" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

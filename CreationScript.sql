@@ -128,12 +128,13 @@ ALTER TABLE Schedule ADD FOREIGN KEY (IdBellSchedule) REFERENCES BellSchedule
 GO
 
 CREATE TABLE LessonSubsitutionSchedule(
-    Id          INT IDENTITY PRIMARY KEY,
-    Date        DATE NOT NULL,
-    IdSubject   INT,
-    IdGroup     INT,
-    IdTeacher   INT,
-    ClassRoom   INT
+    Id          	INT IDENTITY PRIMARY KEY,
+    Date        	DATE NOT NULL,
+    IdSubject   	INT,
+    IdGroup     	INT,
+    IdTeacher   	INT,
+    ClassRoom   	INT,
+	LessonNumber	INT
 )
 GO
 

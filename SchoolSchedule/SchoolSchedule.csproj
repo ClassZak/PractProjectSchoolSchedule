@@ -118,7 +118,10 @@
     <Compile Include="Model\BellScheduleType.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\DTO\DTOBellSchedule.cs" />
+    <Compile Include="Model\DTO\DTOBellScheduleType.cs" />
     <Compile Include="Model\DTO\DTOGroup.cs" />
+    <Compile Include="Model\DTO\DTOLessonSubsitutionSchedule.cs" />
     <Compile Include="Model\DTO\DTOSchedule.cs" />
     <Compile Include="Model\DTO\DTOSubject.cs" />
     <Compile Include="Model\DTO\DTOTeacher.cs" />
@@ -132,7 +135,10 @@
     <Compile Include="Model\LessonSubsitutionSchedule.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\ModifiedParts\BellSchedule.cs" />
+    <Compile Include="Model\ModifiedParts\BellScheduleType.cs" />
     <Compile Include="Model\ModifiedParts\Group.cs" />
+    <Compile Include="Model\ModifiedParts\LessonSubsitutionSchedule.cs" />
     <Compile Include="Model\ModifiedParts\Schedule.cs" />
     <Compile Include="Model\ModifiedParts\Student.cs" />
     <Compile Include="Model\ModifiedParts\Subject.cs" />
