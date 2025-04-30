@@ -15,13 +15,16 @@ namespace SchoolSchedule.Model
     public partial class Schedule
     {
         public int Id { get; set; }
-        public int IdLesson { get; set; }
+        public int IdSubject { get; set; }
+        public int IdGroup { get; set; }
         public int IdTeacher { get; set; }
-        public System.TimeSpan StartTime { get; set; }
-        public System.TimeSpan EndTime { get; set; }
-        public System.DateTime Date { get; set; } = DateTime.Now;
+        public int IdBellSchedule { get; set; }
+        public int DayOfTheWeek { get; set; }
+        public int ClassRoom { get; set; }
     
-        public virtual Lesson Lesson { get; set; }
+        public virtual BellSchedule BellSchedule { get; set; }
+        public virtual Group Group { get; set; }
+        public virtual Subject Subject { get; set; }
         public virtual Teacher Teacher { get; set; }
     }
 }

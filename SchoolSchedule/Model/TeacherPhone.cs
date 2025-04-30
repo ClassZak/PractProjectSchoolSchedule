@@ -19,5 +19,5 @@ namespace SchoolSchedule.Model
         public string PhoneNumber { get; set; }
     
         public virtual Teacher Teacher { get; set; }
-	}
+    }
 }

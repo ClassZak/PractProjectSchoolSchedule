@@ -28,9 +28,6 @@ namespace SchoolSchedule.ViewModel
 					case Model.Teacher teacher:
 						await UpdateTeacher(teacher, selectedObject as Model.DTO.DTOTeacher, db);
 						break;
-					case Model.Lesson lesson:
-						await UpdateLesson(lesson, selectedObject as Model.DTO.DTOLesson, db);
-						break;
 					case Model.Schedule schedule:
 						await UpdateSchedule(schedule, selectedObject as Model.DTO.DTOSchedule, db);
 						break;
@@ -118,25 +115,11 @@ namespace SchoolSchedule.ViewModel
 					forUpdate.Group.Add(group);
 			}
 		}
-		private async Task UpdateLesson(Model.Lesson lesson, Model.DTO.DTOLesson selectedObject, Model.SchoolScheduleEntities db)
-		{
-			var forUpdate = await db.Lesson.FirstAsync(x => x.Id == selectedObject.ModelRef.Id);
-			if (forUpdate == null)
-				throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-			forUpdate.IdSubject = selectedObject.ModelRef.IdSubject;
-			forUpdate.IdGroup = selectedObject.ModelRef.IdGroup;
-			forUpdate.Number = selectedObject.ModelRef.Number;
-		}
 		private async Task UpdateSchedule(Model.Schedule schedule, Model.DTO.DTOSchedule selectedObject, Model.SchoolScheduleEntities db)
 		{
 			var forUpdate = await db.Schedule.FirstAsync(x => x.Id == selectedObject.ModelRef.Id);
 			if (forUpdate == null)
 				throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
-			forUpdate.IdLesson = selectedObject.ModelRef.IdLesson;
-			forUpdate.IdTeacher = selectedObject.ModelRef.IdTeacher;
-			forUpdate.StartTime = selectedObject.ModelRef.StartTime;
-			forUpdate.EndTime = selectedObject.ModelRef.EndTime;
-			forUpdate.Date = selectedObject.ModelRef.Date;
 		}
 	}
 }

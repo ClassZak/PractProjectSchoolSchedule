@@ -82,10 +82,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\Edit\EditPage\EditPageLesson.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\Edit\EditPage\EditPageStudent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -116,8 +112,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\Additional\DayOfTheWeek.cs" />
+    <Compile Include="Model\BellSchedule.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\BellScheduleType.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
     <Compile Include="Model\DTO\DTOGroup.cs" />
-    <Compile Include="Model\DTO\DTOLesson.cs" />
     <Compile Include="Model\DTO\DTOSchedule.cs" />
     <Compile Include="Model\DTO\DTOSubject.cs" />
     <Compile Include="Model\DTO\DTOTeacher.cs" />
@@ -128,11 +129,10 @@
     <Compile Include="Model\Group.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
-    <Compile Include="Model\Lesson.cs">
+    <Compile Include="Model\LessonSubsitutionSchedule.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\ModifiedParts\Group.cs" />
-    <Compile Include="Model\ModifiedParts\Lesson.cs" />
     <Compile Include="Model\ModifiedParts\Schedule.cs" />
     <Compile Include="Model\ModifiedParts\Student.cs" />
     <Compile Include="Model\ModifiedParts\Subject.cs" />
@@ -155,12 +155,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ShowLessonsAtDayForTeacher_Result.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ShowStudentsByGroup_Result.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\Student.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
@@ -196,9 +190,6 @@
     </Compile>
     <Compile Include="View\Edit\EditPage\EditPageSchedule.xaml.cs">
       <DependentUpon>EditPageSchedule.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Edit\EditPage\EditPageLesson.xaml.cs">
-      <DependentUpon>EditPageLesson.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Edit\EditPage\EditPageStudent.xaml.cs">
       <DependentUpon>EditPageStudent.xaml</DependentUpon>
@@ -265,20 +256,22 @@
     <Resource Include="Resources\scheduleicon.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="scheduleicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModel\MainViewModelParts\Commands\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Model\SchoolSchedule.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SchoolSchedule.Context.cs</LastGenOutput>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+      <LastGenOutput>SchoolSchedule.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Model\SchoolSchedule.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>SchoolSchedule.edmx</DependentUpon>
       <LastGenOutput>SchoolSchedule.cs</LastGenOutput>
     </Content>
-    <Resource Include="scheduleicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModel\MainViewModelParts\Commands\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

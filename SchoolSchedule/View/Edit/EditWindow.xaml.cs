@@ -17,7 +17,6 @@ namespace SchoolSchedule.View.Edit
 		public new bool DialogResult { get; set; } = false;
 
 		private List<Model.Group> _groups=new List<Model.Group>();
-		private List<Model.Lesson> _lessons=new List<Model.Lesson>();
 		private List<Model.Schedule> _schedules=new List<Model.Schedule>();
 		private List<Model.Student> _students=new List<Model.Student>();
 		private List<Model.Subject> _subjects = new List<Model.Subject>();
@@ -34,7 +33,6 @@ namespace SchoolSchedule.View.Edit
 			Type editType,
 			object editObject,
 			List<Model.Group> groups,
-			List<Model.Lesson> lessons ,
 			List<Model.Schedule> schedules,
 			List<Model.Student> students,
 			List<Model.Subject> subjects,
@@ -49,7 +47,6 @@ namespace SchoolSchedule.View.Edit
 			EditObject = editObject;
 
 			_groups = groups;
-			_lessons = lessons;
 			_schedules = schedules;
 			_students = students;
 			_subjects = subjects;
@@ -134,18 +131,6 @@ namespace SchoolSchedule.View.Edit
 
 				mainFrame.Content = new EditPage.EditPageTeacherPhone(EditObject as Model.TeacherPhone,_teacherPhones);
 			}
-			if(EditType.Name==typeof(Model.Lesson).Name)
-			{
-				if (isNewObject)
-				{
-					newObjectLabel.Text = "Новый урок";
-					EditObject = new Model.Lesson();
-				}
-				else
-					newObjectLabel.Text = $"Редактирование урока";
-
-				mainFrame.Content=new EditPage.EditPageLesson(_lessons,_groups,_subjects,isNewObject,EditObject as Model.Lesson);
-			}
 			if(EditType.Name==typeof(Model.Schedule).Name)
 			{
 				Width = 590;
@@ -159,7 +144,7 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Редактирование расписания";
 
-				mainFrame.Content=new EditPage.EditPageSchedule(_schedules,_lessons,_teachers,isNewObject,EditObject as Model.Schedule);
+				mainFrame.Content=new EditPage.EditPageSchedule(_schedules,_teachers,isNewObject,EditObject as Model.Schedule);
 			}
 		}
 		#region Кнопки
@@ -223,16 +208,6 @@ namespace SchoolSchedule.View.Edit
 					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 					return;					
 				}
-			}
-			if(EditType.Name==typeof (Model.Lesson).Name)
-			{
-				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageLesson).CheckInputRules();
-				if(!checkResult.Key)
-				{
-					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
-					return;					
-				}
-				EditObject = ((mainFrame.Content as EditPage.EditPageLesson).DataContext as EditLessonViewModel).CurrentLesson;
 			}
 			if(EditType.Name==typeof (Model.Schedule).Name)
 			{

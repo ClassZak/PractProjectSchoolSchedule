@@ -12,22 +12,22 @@ namespace SchoolSchedule.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class Lesson
+    public partial class BellSchedule
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Lesson()
+        public BellSchedule()
         {
             this.Schedule = new HashSet<Schedule>();
         }
     
         public int Id { get; set; }
-        public int IdSubject { get; set; }
-        public int IdGroup { get; set; }
-        public int Number { get; set; }
+        public int IdBellScheduleType { get; set; }
+        public int LessonNumber { get; set; }
+        public System.TimeSpan StartTime { get; set; }
+        public System.TimeSpan EndTime { get; set; }
     
-        public virtual Group Group { get; set; }
-        public virtual Subject Subject { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Schedule> Schedule { get; set; }
-	}
+        public virtual BellScheduleType BellScheduleType { get; set; }
+    }
 }

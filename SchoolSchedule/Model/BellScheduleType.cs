@@ -10,12 +10,20 @@
 namespace SchoolSchedule.Model
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class ShowLessonsAtDayForTeacher_Result
+    public partial class BellScheduleType
     {
-        public string Предмет { get; set; }
-        public int Номер_урока { get; set; }
-        public string Время_начала_урока { get; set; }
-        public string Время_завершения_урока { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public BellScheduleType()
+        {
+            this.BellSchedule = new HashSet<BellSchedule>();
+        }
+    
+        public int Id { get; set; }
+        public string Name { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BellSchedule> BellSchedule { get; set; }
     }
 }

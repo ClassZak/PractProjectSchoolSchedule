@@ -26,9 +26,6 @@ namespace SchoolSchedule.ViewModel
 					case Model.Teacher teacher:
 						await CreateTeacher(teacher, db);
 						break;
-					case Model.Lesson lesson:
-						CreateLesson(lesson, db);
-						break;
 					case Model.Schedule schedule:
 						CreateSchedule(schedule,db);
 						break;
@@ -70,10 +67,6 @@ namespace SchoolSchedule.ViewModel
 				forEdit.Group.Add(await db.Group.FindAsync(el.Id));
 			foreach (var el in phones)
 				db.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
-		}
-		private void CreateLesson(Model.Lesson lesson, SchoolScheduleEntities db)
-		{
-			db.Lesson.Add(lesson);
 		}
 		private void CreateSchedule(Model.Schedule schedule, SchoolScheduleEntities db)
 		{

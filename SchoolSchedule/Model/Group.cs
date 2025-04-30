@@ -17,7 +17,8 @@ namespace SchoolSchedule.Model
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Group()
         {
-            this.Lesson = new HashSet<Lesson>();
+            this.LessonSubsitutionSchedule = new HashSet<LessonSubsitutionSchedule>();
+            this.Schedule = new HashSet<Schedule>();
             this.Student = new HashSet<Student>();
             this.Teacher = new HashSet<Teacher>();
         }
@@ -27,10 +28,12 @@ namespace SchoolSchedule.Model
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Lesson> Lesson { get; set; }
+        public virtual ICollection<LessonSubsitutionSchedule> LessonSubsitutionSchedule { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Schedule> Schedule { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student> Student { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Teacher> Teacher { get; set; }
-	}
+    }
 }

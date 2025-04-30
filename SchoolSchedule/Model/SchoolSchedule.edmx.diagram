@@ -4,20 +4,26 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="bd828eaf9b4d40ab80ae3da82504ecf3" Name="Diagram1">
-        <EntityTypeShape EntityType="SchoolScheduleModel.Group" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Lesson" Width="1.5" PointX="3" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Schedule" Width="1.5" PointX="8.25" PointY="1.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Student" Width="1.5" PointX="3" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Subject" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.Teacher" Width="1.5" PointX="6" PointY="4.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchoolScheduleModel.TeacherPhone" Width="1.5" PointX="8.25" PointY="4.875" IsExpanded="true" />
-        <AssociationConnector Association="SchoolScheduleModel.FK__Lesson__IdGroup__440B1D61" ManuallyRouted="false" />
-        <AssociationConnector Association="SchoolScheduleModel.FK__Student__IdGroup__3A81B327" ManuallyRouted="false" />
-        <AssociationConnector Association="SchoolScheduleModel.FK__Lesson__IdSubjec__4316F928" ManuallyRouted="false" />
-        <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdLess__534D60F1" ManuallyRouted="false" />
-        <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdTeac__5441852A" ManuallyRouted="false" />
-        <AssociationConnector Association="SchoolScheduleModel.FK__TeacherPh__IdTea__4F7CD00D" ManuallyRouted="false" />
+      <Diagram DiagramId="fce328562857490c97ee5399a0ea137d" Name="Diagram1">
+        <EntityTypeShape EntityType="SchoolScheduleModel.BellSchedule" Width="1.5" PointX="3.75" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.BellScheduleType" Width="1.5" PointX="1.5" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Group" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.LessonSubsitutionSchedule" Width="1.5" PointX="3" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Schedule" Width="1.5" PointX="6" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Student" Width="1.5" PointX="3" PointY="14.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Subject" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.Teacher" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchoolScheduleModel.TeacherPhone" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdBell__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK_BellSchedule_BellScheduleType" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__LessonSub__IdGro__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdGrou__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__Student__IdGroup__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__LessonSub__IdSub__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__LessonSub__IdTea__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdSubj__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__Schedule__IdTeac__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="SchoolScheduleModel.FK__TeacherPh__IdTea__4AB81AF0" ManuallyRouted="false" />
         <AssociationConnector Association="SchoolScheduleModel.ClassTeacher" ManuallyRouted="false" />
         <AssociationConnector Association="SchoolScheduleModel.TeacherSubject" ManuallyRouted="false" />
       </Diagram>

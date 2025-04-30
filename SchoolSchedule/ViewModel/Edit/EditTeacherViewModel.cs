@@ -186,7 +186,7 @@ namespace SchoolSchedule.ViewModel.Edit
 					foreach(var dTO in dTOList)
 						teacherPhones.Add(dTO.ModelRef);
 
-					addingWindow = new EditWindow(typeof(Model.TeacherPhone), null, null, null, null, null, null, null, _teacherPhones, OwnerWindow);
+					addingWindow = new EditWindow(typeof(Model.TeacherPhone), null, null, null, null, null, null, _teacherPhones, OwnerWindow);
 					addingWindow.ShowDialog();
 
 					if(addingWindow.DialogResult)
@@ -221,7 +221,7 @@ namespace SchoolSchedule.ViewModel.Edit
 
 
 					var editObject = new TeacherPhone { Id = selectedObject.ModelRef.Id, IdTeacher = selectedObject.ModelRef.IdTeacher, PhoneNumber = selectedObject.ModelRef.PhoneNumber };
-					addingWindow = new EditWindow(typeof(Model.TeacherPhone), editObject, null, null, null, null, null, null, _teacherPhones,OwnerWindow);
+					addingWindow = new EditWindow(typeof(Model.TeacherPhone), editObject, null, null, null, null, null, _teacherPhones,OwnerWindow);
 					addingWindow.ShowDialog();
 
 					if(addingWindow.DialogResult)

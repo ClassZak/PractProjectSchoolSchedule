@@ -37,7 +37,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 
 		private EditScheduleViewModel _viewModel;
-		public EditPageSchedule(List<Model.Schedule> schedule, List<Model.Lesson> lessons,List<Model.Teacher> teachers, bool objectIsNew, Model.Schedule lesson) : this()
+		public EditPageSchedule(List<Model.Schedule> schedule,List<Model.Teacher> teachers, bool objectIsNew, Model.Schedule lesson) : this()
 		{
 			ObjectIsNew= objectIsNew;
 
@@ -46,7 +46,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			else
 				ValueRef = lesson;
 
-			_viewModel = new EditScheduleViewModel(ValueRef,lessons,teachers);
+			_viewModel = new EditScheduleViewModel(ValueRef,teachers);
 			DataContext = _viewModel;
 		}
 
@@ -147,20 +147,6 @@ namespace SchoolSchedule.View.Edit.EditPage
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
 			var obj=(this.DataContext as EditScheduleViewModel).CurrentSchedule;
-			if (obj.IdLesson == 0)
-				return new KeyValuePair<bool, string>(false, "Выберете урок для расписания");
-			if (obj.IdTeacher== 0)
-				return new KeyValuePair<bool, string>(false, "Выберете преподавателя для расписания");
-			if(obj.StartTime == null ||  obj.EndTime == null || obj.Date==null)
-				return new KeyValuePair<bool, string>(false, "Настройте время начала и конеца урока, а также дату проведения занятий");
-			if(obj.StartTime==obj.EndTime)
-				return new KeyValuePair<bool, string>(false, "Настройте правильно время начала и конеца урока. Занятие не может начаться и завершиться в один момент");
-			if(obj.StartTime>obj.EndTime)
-				return new KeyValuePair<bool, string>(false, "Настройте правильно время начала и конеца урока. Занятие не может начаться позже его завершения");
-			if(SchedulesForCheck.Any(x=>x.IdLesson==obj.IdLesson && x.IdTeacher==obj.IdTeacher && x.Date==obj.Date && x.StartTime==obj.StartTime && x.EndTime==obj.EndTime))
-				return new KeyValuePair<bool,string>(true, "Введите другие данные для составления расписаания. Подобная запись уже есть в базе данных");
-				
-				
 			return new KeyValuePair<bool,string>(true,null);
 		}
 	}

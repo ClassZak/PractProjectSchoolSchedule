@@ -42,13 +42,10 @@ namespace SchoolSchedule.ViewModel
 		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
 		[ViewModel.Attributes.CollectionOfSelectedItems]
-		public ObservableCollection<Model.DTO.DTOLesson> SelectedLessons { get; set; } = new ObservableCollection<Model.DTO.DTOLesson>();
-		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOSchedule> SelectedSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOSchedule>();
 		public MainViewModel()
 		{
 			_groups = new List<Model.Group>(new List<Model.Group>());
-			_lessons = new List<Model.Lesson>(new List<Model.Lesson>());
 			_schedules = new List<Model.Schedule>(new List<Model.Schedule>());
 			_students = new List<Model.Student>(new List<Model.Student>());
 			_subjects = new List<Model.Subject>(new List<Model.Subject>());
@@ -345,11 +342,6 @@ namespace SchoolSchedule.ViewModel
 				sendingEntity = (dto as DTOGroup).ModelRef;
 				extractedType = typeof(Model.Group);
 			}
-			else if (typename == typeof(DTOLesson).Name)
-			{
-				sendingEntity = (dto as DTOLesson).ModelRef;
-				extractedType = typeof(Model.Lesson);
-			}
 			else if (typename == typeof(DTOSchedule).Name)
 			{
 				sendingEntity = (dto as DTOSchedule).ModelRef;
@@ -386,7 +378,7 @@ namespace SchoolSchedule.ViewModel
 
 			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{
-				window = new EditWindow(targetType, sendingEntity, _groups,_lessons,_schedules,_students,_subjects,_teachers,_teacherPhones,MainWindow);
+				window = new EditWindow(targetType, sendingEntity, _groups,_schedules,_students,_subjects,_teachers,_teacherPhones,MainWindow);
 				window.ShowDialog();
 			});
 			return window;
@@ -433,7 +425,6 @@ namespace SchoolSchedule.ViewModel
 			App.Current.Dispatcher.Invoke(() =>
 			{
 				_groups.Clear();
-				_lessons.Clear();
 				_schedules.Clear();
 				_students.Clear();
 				_subjects.Clear();
@@ -445,7 +436,6 @@ namespace SchoolSchedule.ViewModel
 				_groupTable.Clear();
 				_subjectTable.Clear();
 				_teacherTable.Clear();
-				_lessonTable.Clear();
 				_scheduleTable.Clear();
 			});
 		}
@@ -457,7 +447,6 @@ namespace SchoolSchedule.ViewModel
 				_groupTable.SaveChanges();
 				_subjectTable.SaveChanges();
 				_teacherTable.SaveChanges();
-				_lessonTable.SaveChanges();
 				_scheduleTable.SaveChanges();
 			});
 		}
@@ -469,7 +458,6 @@ namespace SchoolSchedule.ViewModel
 				_groupTable.CancelChanges();
 				_subjectTable.CancelChanges();
 				_teacherTable.CancelChanges();
-				_lessonTable.CancelChanges();
 				_scheduleTable.CancelChanges();
 			});		
 		}
@@ -485,8 +473,6 @@ namespace SchoolSchedule.ViewModel
 
 					foreach (var el in dataBase.Group.ToList())
 						App.Current.Dispatcher.Invoke(() => { _groups.Add(el); });
-					foreach (var el in dataBase.Lesson.ToList())
-						App.Current.Dispatcher.Invoke(() => { _lessons.Add(el); });
 					foreach (var el in dataBase.Schedule.ToList())
 						App.Current.Dispatcher.Invoke(() => { _schedules.Add(el); });
 					foreach (var el in dataBase.Student.ToList())
@@ -506,8 +492,6 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _subjectTable.Entries.Add(new DTOSubject(el)); });
 					foreach (var el in _teachers)
 						App.Current.Dispatcher.Invoke(() => { _teacherTable.Entries.Add(new DTOTeacher(el)); });
-					foreach (var el in _lessons)
-						App.Current.Dispatcher.Invoke(() => { _lessonTable.Entries.Add(new DTOLesson(el)); });
 					foreach (var el in _schedules)
 						App.Current.Dispatcher.Invoke(() => { _scheduleTable.Entries.Add(new DTOSchedule(el)); });
 
@@ -515,7 +499,6 @@ namespace SchoolSchedule.ViewModel
 					OnPropertyChanged(nameof(DTOStudents));
 					OnPropertyChanged(nameof(DTOSubject));
 					OnPropertyChanged(nameof(DTOTeacher));
-					OnPropertyChanged(nameof(DTOLesson));
 					OnPropertyChanged(nameof(DTOSchedule));
 				}
 			}
@@ -574,31 +557,31 @@ namespace SchoolSchedule.ViewModel
 		{
 			return list.Where(t => t.Subject.ToList().Exists(s => s.Id == id)); 
 		}
-		IEnumerable<Model.Lesson> FindLessonsUsesSubject(ref List<Model.Lesson> list, int id) 
-		{ 
-			return list.Where(l => l.Subject.Id == id); 
-		}
+		//IEnumerable<Model.Lesson> FindLessonsUsesSubject(ref List<Model.Lesson> list, int id) 
+		//{ 
+		//	return list.Where(l => l.Subject.Id == id); 
+		//}
 		#endregion
 		#region Для удаления класса
 		IEnumerable<Model.Teacher> FindTeachersUsesGroup(ref List<Model.Teacher> list, int id) 
 		{
 			return list.Where(t => t.Group.ToList().Exists(g => g.Id == id)); 
 		}
-		IEnumerable<Model.Lesson> FindLessonsUsesGroup(ref List<Model.Lesson> list, int id) 
-		{
-			return list.Where(l => l.IdGroup==id); 
-		}
+		//IEnumerable<Model.Lesson> FindLessonsUsesGroup(ref List<Model.Lesson> list, int id) 
+		//{
+		//	return list.Where(l => l.IdGroup==id); 
+		//}
 		IEnumerable<Model.Student> FindStudentsUsesGroup(ref List<Model.Student> list, int id) 
 		{
 			return list.Where(s => s.IdGroup==id);
 		}
 		#endregion
-		#region Для удаления урока
-		IEnumerable<Model.Schedule> FindSchedulesUsesLesson(ref List<Model.Schedule> list, int id)
-		{
-			return list.Where(s => s.IdLesson == id);
-		}
-		#endregion
+		//#region Для удаления урока
+		//IEnumerable<Model.Schedule> FindSchedulesUsesLesson(ref List<Model.Schedule> list, int id)
+		//{
+		//	return list.Where(s => s.IdLesson == id);
+		//}
+		//#endregion
 		#region Для удаления учителя
 		IEnumerable<Model.Schedule> FindSchedulesUsesTeacher(ref List<Model.Schedule> list, int id)
 		{
@@ -613,10 +596,6 @@ namespace SchoolSchedule.ViewModel
 		private List<Model.Group> _groups;
 		public List<Model.Group> Groups
 		{ get { return _groups; } set { SetPropertyChanged(ref _groups, value); } }
-
-		private List<Model.Lesson> _lessons;
-		public List<Model.Lesson> Lessons
-		{ get { return _lessons; } set { SetPropertyChanged(ref _lessons, value); } }
 
 		private List<Model.Schedule> _schedules;
 		public List<Model.Schedule> Schedules
@@ -656,11 +635,6 @@ namespace SchoolSchedule.ViewModel
 		private TemplateTable<DTOTeacher> _teacherTable =new TemplateTable<DTOTeacher>();
 		public ObservableCollection<DTOTeacher> DTOTeacher
 		{get { return _teacherTable.Entries; } set { OnPropertyChanged(nameof(DTOTeacher)); _teacherTable.Entries=value; }}
-
-		private TemplateTable<DTOLesson> _lessonTable =new TemplateTable<DTOLesson>();
-		public ObservableCollection<DTOLesson> DTOLesson
-		{get { return _lessonTable.Entries; } set { OnPropertyChanged(nameof(DTOLesson)); _lessonTable.Entries=value; }}
-
 		private TemplateTable<DTOSchedule> _scheduleTable =new TemplateTable<DTOSchedule>();
 		public ObservableCollection<DTOSchedule> DTOSchedule
 		{ get { return _scheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOSchedule)); _scheduleTable.Entries = value; } }

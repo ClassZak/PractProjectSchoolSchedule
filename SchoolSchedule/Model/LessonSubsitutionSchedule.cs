@@ -10,11 +10,19 @@
 namespace SchoolSchedule.Model
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class ShowStudentsByGroup_Result
+    public partial class LessonSubsitutionSchedule
     {
-        public string Имя { get; set; }
-        public string Фамилия { get; set; }
-        public string Отчество { get; set; }
+        public int Id { get; set; }
+        public System.DateTime Date { get; set; }
+        public Nullable<int> IdSubject { get; set; }
+        public Nullable<int> IdGroup { get; set; }
+        public Nullable<int> IdTeacher { get; set; }
+        public Nullable<int> ClassRoom { get; set; }
+    
+        public virtual Group Group { get; set; }
+        public virtual Subject Subject { get; set; }
+        public virtual Teacher Teacher { get; set; }
     }
 }
