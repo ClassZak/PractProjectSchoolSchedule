@@ -115,6 +115,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\Additional\DayOfTheWeek.cs" />
     <Compile Include="Model\DTO\DTOGroup.cs" />
     <Compile Include="Model\DTO\DTOLesson.cs" />
     <Compile Include="Model\DTO\DTOSchedule.cs" />

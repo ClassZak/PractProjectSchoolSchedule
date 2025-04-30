@@ -10,32 +10,21 @@ namespace SchoolSchedule.Model.DTO
 	public class DTOSchedule : ADTO<Model.Schedule>
 	{
 		#region Свойства DTOSchedule
-		public int Id
-		{ 
-			get=>ModelRef.Id; set => ModelRef.Id = value; 
-		}
-		public int IdLesson
-		{
-			get => ModelRef.IdLesson; set => ModelRef.IdLesson = value;
-		}
-		public int IdTeacher
-		{
-			get => ModelRef.IdTeacher; set => ModelRef.IdTeacher = value;
-		}
-		public TimeSpan StartTime
-		{
-			get => ModelRef.StartTime; set => ModelRef.StartTime = value;
-		}
-		public TimeSpan EndTime
-		{
-			get => ModelRef.EndTime; set => ModelRef.EndTime = value;
-		}
-		public DateTime Date
-		{
-			get => ModelRef.Date; set => ModelRef.Date = value;
-		}
+		public int Id { get => ModelRef.Id; set { _prevId = ModelRef.Id; ModelRef.Id = value; } }
+		public int IdLesson { get => ModelRef.IdLesson; set { _prevIdLesson = ModelRef.IdLesson; ModelRef.IdLesson = value; } }
+		public int IdTeacher { get => ModelRef.IdTeacher; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
+		public TimeSpan StartTime { get => ModelRef.StartTime; set { _prevStartTime = ModelRef.StartTime; ModelRef.StartTime = value; } }
+		public TimeSpan EndTime { get => ModelRef.EndTime; set { _prevEndTime = ModelRef.EndTime; ModelRef.EndTime = value; } }
+		public DateTime Date { get => ModelRef.Date; set { _prevDate = ModelRef.Date; ModelRef.Date = value; } }
 
-
+		#region Поля предыдущих значений
+		int _prevId = 0;
+		int _prevIdLesson = 0;
+		int _prevIdTeacher = 0;
+		TimeSpan _prevStartTime=TimeSpan.MinValue;
+		TimeSpan _prevEndTime=TimeSpan.MinValue;
+		DateTime _prevDate=DateTime.MinValue;
+		#endregion
 		public int LessonNumber
 		{
 			get => ModelRef.Lesson.Number; set { }
@@ -67,10 +56,51 @@ namespace SchoolSchedule.Model.DTO
 		{
 			DTOId=++_lastDTOId;
 		}
-		public DTOSchedule(Model.Schedule schedule) : base(schedule){}
+		public DTOSchedule(Model.Schedule other) : base(other)
+		{
+			_prevId = other.Id;
+			_prevIdLesson=other.IdLesson;
+			_prevIdTeacher=other.IdTeacher;
+			_prevStartTime = other.StartTime;
+			_prevEndTime = other.EndTime;
+			_prevDate = other.Date;
+		}
 		public override bool HasReferenceOfNotExistingObject()
 		{
 			return ModelRef.IdTeacher == 0 || ModelRef.IdLesson==0;
+		}
+		public override void Restore()
+		{
+			if(_prevId!=0)
+			{
+				ModelRef.Id = _prevId;
+				_prevId = 0;
+			}
+			if(_prevIdLesson!=0)
+			{
+				ModelRef.IdLesson= _prevIdLesson;
+				_prevIdLesson = 0;
+			}
+			if( _prevIdTeacher!=0)
+			{
+				ModelRef.IdTeacher= _prevIdTeacher;
+				_prevIdTeacher = 0;
+			}
+			if(_prevStartTime != TimeSpan.MinValue)
+			{
+				ModelRef.StartTime=_prevStartTime;
+				_prevStartTime = TimeSpan.MinValue;
+			}
+			if(_prevEndTime != TimeSpan.MinValue)
+			{
+				ModelRef.EndTime =_prevEndTime;
+				_prevEndTime = TimeSpan.MinValue;
+			}
+			if(_prevDate!=DateTime.MinValue)
+			{
+				ModelRef.Date = _prevDate;
+				_prevDate = DateTime.MinValue;
+			}
 		}
 	}
 }

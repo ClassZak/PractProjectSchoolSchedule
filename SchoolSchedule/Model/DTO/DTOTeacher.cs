@@ -9,24 +9,18 @@ namespace SchoolSchedule.Model.DTO
 	public class DTOTeacher : ADTO<Model.Teacher>
 	{
 		#region Свойства DTOTeacher
-		public int Id
-		{
-			get=>ModelRef.Id; set=>ModelRef.Id = value;	
-		}
-		public string Surname
-		{
-			get => ModelRef.Surname; set => ModelRef.Surname= value;
-		}
-		public string Name
-		{
-			get => ModelRef.Name; set => ModelRef.Name = value;
-		}
-		public string Patronymic
-		{
-			get => ModelRef.Patronymic; set => ModelRef.Patronymic = value;
-		}
-
-
+		#region Свойства Teacher
+		public int Id { get => ModelRef.Id; set { ModelRef.Id = value; } }
+		public string Surname { get => ModelRef.Surname; set { ModelRef.Surname = value; } }
+		public string Name { get => ModelRef.Name; set { ModelRef.Name = value; } }
+		public string Patronymic { get => ModelRef.Patronymic; set { ModelRef.Patronymic = value; } }
+		#endregion
+		#region Поля для предыдущих значний
+		int _prevId = 0;
+		private string _prevSurname = null;
+		private string _prevName = null;
+		private string _prevPatronymic = null;
+		#endregion
 		#endregion
 
 
@@ -43,6 +37,11 @@ namespace SchoolSchedule.Model.DTO
 		public DTOTeacher(Model.Teacher other) 
 		{
 			ModelRef = other;
+
+			_prevId = other.Id;
+			_prevSurname = other.Surname;
+			_prevName = other.Name;
+			_prevPatronymic = other.Patronymic;
 
 			LoadSubjectLabel();
 		}
@@ -82,6 +81,31 @@ namespace SchoolSchedule.Model.DTO
 			}
 			buildedString = stringBuilder.ToString();
 			PhoneNumber = buildedString != string.Empty ? buildedString : UNKNOWN;
+		}
+
+		public override void Restore()
+		{
+
+			if (_prevId != 0)
+			{
+				ModelRef.Id = _prevId;
+				_prevId = 0;
+			}
+			if (_prevSurname != null)
+			{
+				ModelRef.Surname = _prevSurname;
+				_prevSurname = null;
+			}
+			if (_prevName != null)
+			{
+				ModelRef.Name = _prevName;
+				_prevName = null;
+			}
+			if (_prevPatronymic != null)
+			{
+				ModelRef.Patronymic = _prevPatronymic;
+				_prevPatronymic = null;
+			}
 		}
 	}
 }

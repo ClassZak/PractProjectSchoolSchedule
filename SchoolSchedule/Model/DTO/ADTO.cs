@@ -26,5 +26,6 @@ namespace SchoolSchedule.Model.DTO
 			return DTOId != 0;
 		}
 		public abstract bool HasReferenceOfNotExistingObject();
+		public abstract void Restore();
 	}
 }

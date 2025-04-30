@@ -8,14 +8,18 @@ namespace SchoolSchedule.Model.DTO
 {
 	public class DTOSubject : ADTO<Model.Subject>
 	{
-		//Свойства от ссылки
-		public string Name
-		{
-			get => ModelRef.Name;
-			set => ModelRef.Name = value;
-		}
-		
-		
+		#region Свойства DTOSubject
+		#region Свойства Subject
+		public int Id { get => ModelRef.Id; set { ModelRef.Id = value; } }
+		public string Name { get => ModelRef.Name; set { ModelRef.Name = value; } }
+		#region Поля для предыдущих значений
+		int _prevId = 0;
+		string _prevName = null;
+		#endregion
+		#endregion
+		#endregion
+
+
 		static int _lastDTOId = 0;
 		public DTOSubject() 
 		{
@@ -24,11 +28,26 @@ namespace SchoolSchedule.Model.DTO
 		public DTOSubject(Model.Subject other)
 		{
 			base.ModelRef = other;
+			_prevId = other.Id;
+			_prevName = other.Name;
 		}
 
 		public override bool HasReferenceOfNotExistingObject()
 		{
 			return false;
+		}
+		public override void Restore()
+		{
+			if (_prevId != 0)
+			{
+				ModelRef.Id= _prevId;
+				_prevId = 0;
+			}
+			if(_prevName != null)
+			{
+				ModelRef.Name= _prevName;
+				_prevName= null;
+			}
 		}
 	}
 }
