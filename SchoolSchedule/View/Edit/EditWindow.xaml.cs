@@ -22,6 +22,9 @@ namespace SchoolSchedule.View.Edit
 		private List<Model.Subject> _subjects = new List<Model.Subject>();
 		private List<Model.Teacher> _teachers = new List<Model.Teacher>();
 		private List<Model.TeacherPhone> _teacherPhones =new List<Model.TeacherPhone>();
+		private List<Model.BellScheduleType> _bellScheduleTypes = new List<Model.BellScheduleType>();
+		private List<Model.BellSchedule> _bellSchedules = new List<Model.BellSchedule>();
+		private List<Model.LessonSubsitutionSchedule> _lessonSubsitutionSchedules = new List<Model.LessonSubsitutionSchedule>();
 
 
 		private EditWindow()
@@ -38,6 +41,9 @@ namespace SchoolSchedule.View.Edit
 			List<Model.Subject> subjects,
 			List<Model.Teacher> teachers,
 			List<Model.TeacherPhone> teacherPhones,
+			List<Model.BellScheduleType> bellScheduleTypes,
+			List<Model.BellSchedule> bellSchedules,
+			List<Model.LessonSubsitutionSchedule> lessonSubsitutionSchedules,
 			Window ownerWindow
 		) : this()
 		{
@@ -52,6 +58,9 @@ namespace SchoolSchedule.View.Edit
 			_subjects = subjects;
 			_teachers = teachers;
 			_teacherPhones=teacherPhones;
+			_bellScheduleTypes=bellScheduleTypes;
+			_bellSchedules = bellSchedules;
+			_lessonSubsitutionSchedules= lessonSubsitutionSchedules;
 
 			SelectPage();
 		}
@@ -79,19 +88,19 @@ namespace SchoolSchedule.View.Edit
 
 				mainFrame.Content = new EditPage.EditPageSubject(EditObject as Model.Subject, _subjects);
 			}
-			if (EditType.Name == typeof(Model.Group).Name)
+			else if (EditType.Name == typeof(Model.Group).Name)
 			{
 				if (isNewObject)
 				{
 					newObjectLabel.Text = "Новый класс";
-					EditObject = new Model.Group { Year = 1, Name="А" }; 
+					EditObject = new Model.Group { Year = 1, Name = "А" };
 				}
 				else
 					newObjectLabel.Text = $"Изменение класса \"{(EditObject as Model.Group).Year}{(EditObject as Model.Group).Name}\"";
 
 				mainFrame.Content = new EditPage.EditPageGroup(EditObject as Model.Group, _groups);
 			}
-			if(EditType.Name==typeof(Model.Student).Name)
+			else if (EditType.Name == typeof(Model.Student).Name)
 			{
 				if (isNewObject)
 				{
@@ -105,9 +114,9 @@ namespace SchoolSchedule.View.Edit
 				Height = 500;
 				mainFrame.Content = new EditPage.EditPageStudent(_students, _groups, isNewObject, EditObject as Model.Student);
 			}
-			if(EditType.Name==typeof(Model.Teacher).Name)
+			else if (EditType.Name == typeof(Model.Teacher).Name)
 			{
-				if(isNewObject)				
+				if (isNewObject)
 				{
 					newObjectLabel.Text = "Новый учитель";
 					EditObject = new Model.Teacher();
@@ -117,9 +126,9 @@ namespace SchoolSchedule.View.Edit
 
 				Width = 700;
 				Height = 600;
-				mainFrame.Content = new EditPage.EditPageTeacher(_teachers,_groups,_subjects,_teacherPhones,isNewObject,EditObject as Model.Teacher,this);
+				mainFrame.Content = new EditPage.EditPageTeacher(_teachers, _groups, _subjects, _teacherPhones, isNewObject, EditObject as Model.Teacher, this);
 			}
-			if (EditType.Name == typeof(Model.TeacherPhone).Name)
+			else if (EditType.Name == typeof(Model.TeacherPhone).Name)
 			{
 				if (isNewObject)
 				{
@@ -129,9 +138,9 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Редактирование номера";
 
-				mainFrame.Content = new EditPage.EditPageTeacherPhone(EditObject as Model.TeacherPhone,_teacherPhones);
+				mainFrame.Content = new EditPage.EditPageTeacherPhone(EditObject as Model.TeacherPhone, _teacherPhones);
 			}
-			if(EditType.Name==typeof(Model.Schedule).Name)
+			else if (EditType.Name == typeof(Model.Schedule).Name)
 			{
 				Width = 590;
 				Height = 500;
@@ -144,7 +153,49 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Редактирование расписания";
 
-				mainFrame.Content=new EditPage.EditPageSchedule(_schedules,_teachers,isNewObject,EditObject as Model.Schedule);
+				mainFrame.Content = new EditPage.EditPageSchedule(isNewObject, EditObject as Model.Schedule, _schedules, _subjects,_groups, _teachers,_bellSchedules);
+			}
+			else if (EditType.Name == typeof(Model.BellScheduleType).Name)
+			{
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новое расписание звонков";
+					EditObject = new Model.BellScheduleType();
+				}
+				else
+					newObjectLabel.Text = $"Редактирование названия расписания звонков";
+
+				mainFrame.Content = new EditPage.EditPageBellScheduleType(EditObject as Model.BellScheduleType, _bellScheduleTypes);
+			}
+			else if (EditType.Name == typeof(Model.BellSchedule).Name)
+			{
+				Width = 590;
+				Height = 500;
+
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новые звонки";
+					EditObject = new Model.BellSchedule();
+				}
+				else
+					newObjectLabel.Text = $"Редактирование расписания звонков";
+
+				mainFrame.Content = new EditPage.EditPageBellSchedule(isNewObject, EditObject as Model.BellSchedule, _bellScheduleTypes, _bellSchedules);
+			}
+			else if (EditType.Name == typeof(Model.LessonSubsitutionSchedule).Name)
+			{
+				Width = 590;
+				Height = 500;
+
+				if (isNewObject)
+				{
+					newObjectLabel.Text = "Новая заменая уроков";
+					EditObject = new Model.LessonSubsitutionSchedule();
+				}
+				else
+					newObjectLabel.Text = "Редактирование замены уроков";
+
+				mainFrame.Content = new EditPage.EditPageLessonSubsitutionSchedule(isNewObject, EditObject as Model.LessonSubsitutionSchedule, _lessonSubsitutionSchedules, _subjects,_groups,_teachers);
 			}
 		}
 		#region Кнопки
@@ -159,16 +210,16 @@ namespace SchoolSchedule.View.Edit
 					return;
 				}
 			}
-			if (EditType.Name == typeof(Model.Group).Name)
+			else if (EditType.Name == typeof(Model.Group).Name)
 			{
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageGroup).CheckInputRules();
-				if(!checkResult.Key)
+				if (!checkResult.Key)
 				{
-					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта",MessageBoxButton.OK,MessageBoxImage.Stop);
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 					return;
 				}
 			}
-			if(EditType.Name==typeof(Model.Student).Name)
+			else if(EditType.Name==typeof(Model.Student).Name)
 			{
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageStudent).CheckInputRules();
 				if (!checkResult.Key)
@@ -178,7 +229,7 @@ namespace SchoolSchedule.View.Edit
 				}
 				EditObject = ((mainFrame.Content as EditPage.EditPageStudent).DataContext as EditStudentViewModel).CurrentStudent;
 			}
-			if (EditType.Name == typeof(Model.Teacher).Name)
+			else if (EditType.Name == typeof(Model.Teacher).Name)
 			{
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageTeacher).CheckInputRules();
 				if (!checkResult.Key)
@@ -200,7 +251,7 @@ namespace SchoolSchedule.View.Edit
 
 				EditObject = newTeacher;
 			}
-			if(EditType.Name==typeof (Model.TeacherPhone).Name)
+			else if(EditType.Name==typeof (Model.TeacherPhone).Name)
 			{
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageTeacherPhone).CheckInputRules();
 				if(!checkResult.Key)
@@ -209,7 +260,7 @@ namespace SchoolSchedule.View.Edit
 					return;					
 				}
 			}
-			if(EditType.Name==typeof (Model.Schedule).Name)
+			else if(EditType.Name==typeof (Model.Schedule).Name)
 			{
 				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageSchedule).CheckInputRules();
 				if(!checkResult.Key)
@@ -219,8 +270,37 @@ namespace SchoolSchedule.View.Edit
 				}
 				EditObject = ((mainFrame.Content as EditPage.EditPageSchedule).DataContext as EditScheduleViewModel).CurrentSchedule;
 			}
+			else if(EditType.Name==typeof(Model.BellScheduleType).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageBellScheduleType).CheckInputRules();
+				if(!checkResult.Key) 
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;
+				}
+			}
+			else if (EditType.Name == typeof(Model.BellSchedule).Name)
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageBellSchedule).CheckInputRules();
+				if (!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;
+				}
+				EditObject = ((mainFrame.Content as EditPage.EditPageBellSchedule).DataContext as EditBellScheduleViewModel).CurrentBellSchedule;
+			}
+			else if(EditType.Name==typeof(Model.LessonSubsitutionSchedule).Name) 
+			{
+				KeyValuePair<bool, string> checkResult = (mainFrame.Content as EditPage.EditPageLessonSubsitutionSchedule).CheckInputRules();
+				if (!checkResult.Key)
+				{
+					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
+					return;
+				}
+				EditObject=((mainFrame.Content as EditPage.EditPageLessonSubsitutionSchedule).DataContext as EditLessonSubsitutionScheduleViewModel).CurrentLessonSubsitutionSchedule;
+			}
 
-			DialogResult=true;
+			DialogResult =true;
 			Close();
 		}
 

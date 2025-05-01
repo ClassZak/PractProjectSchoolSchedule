@@ -12,7 +12,7 @@
 		xmlns:DTOModel="clr-namespace:SchoolSchedule.Model.DTO"
 		mc:Ignorable="d"
 		Icon="/Resources/scheduleicon.ico"
-		Title="Школьное расписание" Height="440" Width="680"
+		Title="Школьное расписание" Height="650" Width="860"
 		MinWidth="500"
 		FontFamily="Arial"
 		FontSize="12"
@@ -31,7 +31,7 @@
 		<Menu Grid.RowSpan="1">
 			<MenuItem Header="Файл">
 				<MenuItem Header="Загрузить">
-					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand2}"/>
+					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand}"/>
 				</MenuItem>
 				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
 			</MenuItem>
@@ -56,8 +56,8 @@
 						</DataGrid>
 						<StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Subject}" ToolTip="Добавить новый объект"/>
-							<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Редактировать выбранный объект"/>
-							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Удалить выбранные объекты"/>
+							<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Редактировать выбранный объект"/>
+							<Button Margin="0,5,0,0" Content="Удалить"  Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSubjects}" ToolTip="Удалить выбранные объекты"/>
 						</StackPanel>
 					</Grid>
 				</TabItem>
@@ -76,8 +76,8 @@
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Group}" ToolTip="Добавить новый объект"/>
-								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedGroups}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedGroups}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedGroups}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedGroups}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -100,8 +100,8 @@
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Student}" ToolTip="Добавить новый объект"/>
-								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedStudents}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedStudents}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedStudents}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedStudents}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -126,13 +126,89 @@
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Teacher}" ToolTip="Добавить новый объект"/>
-								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedTeachers}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
 				</TabItem>
-				<TabItem Header="Расписание" Margin="1,0,-1,0">
+				<TabItem Header="Типы расписаний звонков">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="80"/>
+						</Grid.ColumnDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOBellScheduleType}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedBellScheduleTypes}" ToolTip="Проходящие занятия">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Тип расписания" Binding="{Binding Name}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<StackPanel>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:BellScheduleType}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedBellScheduleTypes}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedBellScheduleTypes}" ToolTip="Удалить выбранные объекты"/>
+							</StackPanel>
+						</Grid>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Расписание звонков">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="80"/>
+						</Grid.ColumnDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOBellSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedBellSchedules}" ToolTip="Проходящие занятия">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Название"			Binding="{Binding BellScheduleType}"/>
+								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
+								<DataGridTextColumn Header="Время начала"		Binding="{Binding StartTime}"/>
+								<DataGridTextColumn Header="Время завершения"	Binding="{Binding EndTime}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<StackPanel>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:BellSchedule}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedBellSchedules}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedBellSchedules}" ToolTip="Удалить выбранные объекты"/>
+							</StackPanel>
+						</Grid>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Замены уроков">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="80"/>
+						</Grid.ColumnDefinitions>
+						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOLessonSubsitutionSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedLessonSubsitutionSchedules}" ToolTip="Проходящие занятия">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
+								<DataGridTemplateColumn Header="День для замены">
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTextColumn Header="Предмет"			Binding="{Binding Subject}"/>
+								<DataGridTextColumn Header="Класс"				Binding="{Binding Group}"/>
+								<DataGridTextColumn Header="Кабинет"			Binding="{Binding Subject}"/>
+								<DataGridTextColumn Header="Фамилия учителя"	Binding="{Binding TeacherSurname}"/>
+								<DataGridTextColumn Header="Имя учителя"		Binding="{Binding TeacherName}"/>
+								<DataGridTextColumn Header="Отчество учителя"	Binding="{Binding TeacherPatronymic}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+							<StackPanel>
+								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:LessonSubsitutionSchedule}" ToolTip="Добавить новый объект"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedLessonSubsitutionSchedules}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedLessonSubsitutionSchedules}" ToolTip="Удалить выбранные объекты"/>
+							</StackPanel>
+						</Grid>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Расписание уроков">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition/>
@@ -148,20 +224,14 @@
 								<DataGridTextColumn Header="Отчество учителя"	Binding="{Binding TeacherPatronymic}"/>
 								<DataGridTextColumn Header="Время начала"		Binding="{Binding StartTime}"/>
 								<DataGridTextColumn Header="Время завершения"	Binding="{Binding EndTime}"/>
-								<DataGridTemplateColumn Header="Дата проведения">
-									<DataGridTemplateColumn.CellTemplate>
-										<DataTemplate>
-											<TextBlock Text="{Binding Date, StringFormat=dd/MM/yyyy}"/>
-										</DataTemplate>
-									</DataGridTemplateColumn.CellTemplate>
-								</DataGridTemplateColumn>
+								<DataGridTextColumn Header="Расписание звонков"	Binding="{Binding BellScheduleType}"/>
 							</DataGrid.Columns>
 						</DataGrid>
 						<Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
 							<StackPanel>
 								<Button Margin="0,5,0,0" Content="Добавить" Command="{Binding CreateCommand}" CommandParameter="{x:Type Model:Schedule}" ToolTip="Добавить новый объект"/>
-								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad2}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Редактировать выбранный объект"/>
-								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand2}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Удалить выбранные объекты"/>
+								<Button Margin="0,5,0,0" Content="Изменить" Command="{Binding EditCommad}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Редактировать выбранный объект"/>
+								<Button Margin="0,5,0,0" Content="Удалить"	Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedSchedules}" ToolTip="Удалить выбранные объекты"/>
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -219,7 +289,7 @@
 				Grid.Row="2" 
 				Margin="5"
 				Content="Загрузить все данные из сервера"
-				Command="{Binding UpdateCommand2}"
+				Command="{Binding UpdateCommand}"
 				CommandParameter="{x:Null}"
 				ToolTip="Получить все данные" RenderTransformOrigin="0,0"
 			/>

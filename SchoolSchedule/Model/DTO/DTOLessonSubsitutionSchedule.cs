@@ -17,8 +17,17 @@ namespace SchoolSchedule.Model.DTO
 		public int? IdTeacher {  get=>ModelRef.Id; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
 		public int? ClassRoom{  get=>ModelRef.ClassRoom; set { _prevClassRoom = ModelRef.ClassRoom; ModelRef.ClassRoom = value; } }
 		public int LessonNumber{  get=>ModelRef.LessonNumber; set { _prevLessonNumber = ModelRef.LessonNumber; ModelRef.LessonNumber= value; } }
-		#region
-		#endregion Поля для предыдущих значений
+		#endregion
+		#region Свойства для дополнительной информации
+		public string Subject { get => ModelRef.Subject.ToString(); set { } }
+		public string Group{ get => ModelRef.Group.ToString(); set { } }
+
+
+		public string TeacherSurname{ get => ModelRef.Teacher.Surname;set { } }
+		public string TeacherName{ get => ModelRef.Teacher.Name;set { } }
+		public string TeacherPatronymic { get => ModelRef.Teacher.Patronymic;set { } }
+		#endregion
+		#region Поля для предыдущих значений
 		int _prevId = 0;
 		DateTime _prevDate = DateTime.MinValue;
 		int? _prevIdSubject = 0;

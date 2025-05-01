@@ -31,6 +31,15 @@ namespace SchoolSchedule.ViewModel
 					case Model.Schedule schedule:
 						await UpdateSchedule(schedule, selectedObject as Model.DTO.DTOSchedule, db);
 						break;
+					case Model.BellScheduleType bellScheduleType:
+						await UpdateBellScheduleType(bellScheduleType, selectedObject as Model.DTO.DTOBellScheduleType, db);
+						break;
+					case Model.BellSchedule bellSchedule:
+						await UpdateBellSchedule(bellSchedule, selectedObject as Model.DTO.DTOBellSchedule, db);
+						break;
+					case Model.LessonSubsitutionSchedule lessonSubsitutionSchedule:
+						await UpdateLessonSubsitutionSchedule(lessonSubsitutionSchedule, selectedObject as Model.DTO.DTOLessonSubsitutionSchedule, db);
+						break;
 				}
 				await db.SaveChangesAsync();
 			}
@@ -117,9 +126,28 @@ namespace SchoolSchedule.ViewModel
 		}
 		private async Task UpdateSchedule(Model.Schedule schedule, Model.DTO.DTOSchedule selectedObject, Model.SchoolScheduleEntities db)
 		{
-			var forUpdate = await db.Schedule.FirstAsync(x => x.Id == selectedObject.ModelRef.Id);
-			if (forUpdate == null)
-				throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+			var forUpdate = await db.Schedule.FirstAsync(x => x.Id == selectedObject.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+		}
+		private async Task UpdateBellScheduleType(Model.BellScheduleType bellScheduleType, Model.DTO.DTOBellScheduleType selectedObject, Model.SchoolScheduleEntities db)
+		{
+			var forUpdate = await db.BellScheduleType.FirstAsync(x => x.Id == selectedObject.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+			forUpdate.Name = bellScheduleType.Name;
+		}
+		private async Task UpdateBellSchedule(Model.BellSchedule bellSchedule, Model.DTO.DTOBellSchedule selectedObject, Model.SchoolScheduleEntities db)
+		{
+			var forUpdate = await db.BellSchedule.FirstAsync(x => x.Id == selectedObject.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+			forUpdate.StartTime = bellSchedule.StartTime;
+			forUpdate.EndTime = bellSchedule.EndTime;
+		}
+		private async Task UpdateLessonSubsitutionSchedule(Model.LessonSubsitutionSchedule lessonSubsitutionSchedule, Model.DTO.DTOLessonSubsitutionSchedule selectedObject, Model.SchoolScheduleEntities db)
+		{
+			var forUpdate = await db.LessonSubsitutionSchedule.FirstAsync(x => x.Id == selectedObject.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для его редактирования. Возможно, редактируемый объект удалён. Попробуйте обновить данные с серва");
+			forUpdate.Date = lessonSubsitutionSchedule.Date;
+			forUpdate.IdSubject = lessonSubsitutionSchedule.IdSubject;
+			forUpdate.IdGroup=lessonSubsitutionSchedule.IdGroup;
+			forUpdate.IdTeacher = lessonSubsitutionSchedule.IdTeacher;
+			forUpdate.ClassRoom=lessonSubsitutionSchedule.ClassRoom;
+			forUpdate.LessonNumber = lessonSubsitutionSchedule.LessonNumber;
 		}
 	}
 }

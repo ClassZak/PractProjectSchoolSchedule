@@ -17,6 +17,7 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,39 +41,24 @@ namespace SchoolSchedule.ViewModel
 		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOTeacher> SelectedTeachers { get; set; } = new ObservableCollection<Model.DTO.DTOTeacher>();
 		[ViewModel.Attributes.CollectionOfSelectedItems]
-		public ObservableCollection<Object> SelectedTheacherPhones { get; set; } = new ObservableCollection<Object>();
-		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOSchedule> SelectedSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOSchedule>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
+		public ObservableCollection<Model.DTO.DTOBellScheduleType> SelectedBellScheduleTypes { get; set; } = new ObservableCollection<Model.DTO.DTOBellScheduleType>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
+		public ObservableCollection<Model.DTO.DTOBellSchedule> SelectedBellSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOBellSchedule>();
+		[ViewModel.Attributes.CollectionOfSelectedItems]
+		public ObservableCollection<Model.DTO.DTOLessonSubsitutionSchedule> SelectedLessonSubsitutionSchedules { get; set; } = new ObservableCollection<Model.DTO.DTOLessonSubsitutionSchedule>();
 		public MainViewModel()
 		{
-			_groups = new List<Model.Group>(new List<Model.Group>());
-			_schedules = new List<Model.Schedule>(new List<Model.Schedule>());
-			_students = new List<Model.Student>(new List<Model.Student>());
-			_subjects = new List<Model.Subject>(new List<Model.Subject>());
-			_teachers = new List<Model.Teacher>(new List<Model.Teacher>());
-			_teacherPhones = new List<Model.TeacherPhone>(new List<Model.TeacherPhone>());
-
 #if DEBUG
 			LoadData();
 #else
-			UpdateCommand2.Execute(null);
+			UpdateCommand.Execute(null);
 #endif
 		}
 
 		#region Управление задачами
 		private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-		private bool _isBusy;
-		public bool IsBusy
-		{
-			get => _isBusy;
-			private set
-			{
-				_isBusy = value;
-				OnPropertyChanged();
-				CommandManager.InvalidateRequerySuggested();
-			}
-		}
-
 		TaskViewModel _taskViewModel = new TaskViewModel();
 		public string TaskName
 		{
@@ -160,8 +146,8 @@ namespace SchoolSchedule.ViewModel
 			{
 				ETaskStatus = ETaskStatus.Failed;
 				OnPropertyChanged(nameof(TaskStatus));
-				ErrorMessage = ex.Message;	// отобразим в UI
-				HandleException(ex);        // ваше всплывающее MessageBox
+				ErrorMessage = GetMessageFromException(ex);
+				HandleException(ex);
 
 				CancelTableChanges();
 			}
@@ -190,7 +176,7 @@ namespace SchoolSchedule.ViewModel
 						{
 							await CreateEntityAsync(result.EditObject, targetType);
 
-							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
 							thread.Start();
 						}));
 				}));
@@ -198,12 +184,12 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#region Команда чтения
-		private RelayCommand _updateCommand2;
-		public RelayCommand UpdateCommand2
+		private RelayCommand _updateCommand;
+		public RelayCommand UpdateCommand
 		{
 			get
 			{
-				return _updateCommand2 ?? (_updateCommand2= new RelayCommand(
+				return _updateCommand ?? (_updateCommand= new RelayCommand(
 				async param => await ExecuteCommandAsync("Загрузка данных", async () =>
 				{
 					await LoadDataAsync();
@@ -213,7 +199,7 @@ namespace SchoolSchedule.ViewModel
 		#endregion
 		#region Команда редактирования
 		private RelayCommand _editCommamd2;
-		public RelayCommand EditCommad2
+		public RelayCommand EditCommad
 		{
 			get
 			{
@@ -236,7 +222,7 @@ namespace SchoolSchedule.ViewModel
 						await ExecuteCommandAsync("Редактирование данных", async () => await Task.Run(async () =>
 						{
 							await UpdateEntityAsync(result.EditObject, selectedObject, targetType);
-							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
 							thread.Start();
 						})); 
 				}));
@@ -244,12 +230,12 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#region Команда удаления
-		private RelayCommand _deleteCommand2;
-		public RelayCommand DeleteCommand2
+		private RelayCommand _DeleteCommand;
+		public RelayCommand DeleteCommand
 		{
 			get
 			{
-				return _deleteCommand2 ?? (_deleteCommand2 = new RelayCommand(
+				return _DeleteCommand ?? (_DeleteCommand = new RelayCommand(
 				async param => 
 				{
 					if (param.GetType().GetGenericTypeDefinition() != typeof(ObservableCollection<>))
@@ -267,7 +253,7 @@ namespace SchoolSchedule.ViewModel
 						await ExecuteCommandAsync("Удаление объектов", async () => await Task.Run(async () =>
 						{
 							await DeleteEntitiesAsync(targetCollection, targetType);
-							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand2.Execute(null); }); });
+							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
 							thread.Start();
 						})); 
 				}));
@@ -362,6 +348,21 @@ namespace SchoolSchedule.ViewModel
 				sendingEntity = (dto as DTOTeacherPhone).ModelRef;
 				extractedType = typeof(Model.TeacherPhone);
 			}
+			else if(typename==typeof(DTOBellScheduleType).Name)
+			{
+				sendingEntity = (dto as DTOBellScheduleType).ModelRef;
+				extractedType = (typeof(Model.BellScheduleType));
+			}
+			else if(typename==typeof(DTOBellSchedule).Name)
+			{
+				sendingEntity = (dto as DTOBellSchedule).ModelRef;
+				extractedType = (typeof(Model.BellSchedule));
+			}
+			else if(typename==typeof(DTOLessonSubsitutionSchedule).Name)
+			{
+				sendingEntity = (dto as DTOLessonSubsitutionSchedule).ModelRef;
+				extractedType = (typeof(Model.LessonSubsitutionSchedule));
+			}
 
 			return sendingEntity;
 		}
@@ -378,10 +379,37 @@ namespace SchoolSchedule.ViewModel
 
 			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{
-				window = new EditWindow(targetType, sendingEntity, _groups,_schedules,_students,_subjects,_teachers,_teacherPhones,MainWindow);
+				window = new EditWindow(targetType, sendingEntity, _groups,_schedules,_students,_subjects,_teachers,_teacherPhones,_bellScheduleTypes,_bellSchedules,_lessonSubsitutionSchedules,MainWindow);
 				window.ShowDialog();
 			});
 			return window;
+		}
+		string GetMessageFromException(Exception ex)
+		{
+			if (ex is DbUpdateException)
+			{
+				// Распаковываем вложенные исключения
+				Exception innerException = ex.InnerException;
+				while (innerException.InnerException != null)
+					innerException = innerException.InnerException;
+
+				return (innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message);
+			}
+			else if (ex is SqlException)
+			{
+				if (ex is SqlException sqlException)
+				{
+					if (sqlException.Number == 2)
+						return "Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу";
+					else
+					if (sqlException.Number == 53 || sqlException.Number == -1)
+						return ex.Message;
+					else
+						return $"SQL-ошибка (код {sqlException.Number}): {sqlException.Message}";
+				}
+			}
+			
+			return ex.InnerException != null ? ex.InnerException.Message : ex.Message;
 		}
 		private void HandleException(Exception ex)
 		{
@@ -398,8 +426,7 @@ namespace SchoolSchedule.ViewModel
 				}
 				else if (ex is SqlException)
 				{
-					SqlException sqlException = ex as SqlException;
-					if (sqlException != null)
+					if (ex is SqlException sqlException)
 					{
 						if (sqlException.Number == 2)
 							MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -430,6 +457,10 @@ namespace SchoolSchedule.ViewModel
 				_subjects.Clear();
 				_teachers.Clear();
 				_teacherPhones.Clear();
+				_bellSchedules.Clear();
+				_bellScheduleTypes.Clear();
+				_lessonSubsitutionSchedules.Clear();
+
 
 
 				_studentTable.Clear();
@@ -437,6 +468,9 @@ namespace SchoolSchedule.ViewModel
 				_subjectTable.Clear();
 				_teacherTable.Clear();
 				_scheduleTable.Clear();
+				_bellScheduleTableType.Clear();
+				_bellScheduleTable.Clear();
+				_lessonSubsitutionScheduleTable.Clear();
 			});
 		}
 		private void SaveTableValues()
@@ -448,6 +482,9 @@ namespace SchoolSchedule.ViewModel
 				_subjectTable.SaveChanges();
 				_teacherTable.SaveChanges();
 				_scheduleTable.SaveChanges();
+				_bellScheduleTableType.SaveChanges();
+				_bellScheduleTable.SaveChanges();
+				_lessonSubsitutionScheduleTable.SaveChanges();
 			});
 		}
 		private void CancelTableChanges()
@@ -459,7 +496,10 @@ namespace SchoolSchedule.ViewModel
 				_subjectTable.CancelChanges();
 				_teacherTable.CancelChanges();
 				_scheduleTable.CancelChanges();
-			});		
+				_bellScheduleTableType.CancelChanges();
+				_bellScheduleTable.CancelChanges();
+				_lessonSubsitutionScheduleTable.CancelChanges();
+			});
 		}
 		private void LoadData()
 		{
@@ -483,6 +523,12 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _teachers.Add(el); });
 					foreach (var el in dataBase.TeacherPhone.ToList())
 						App.Current.Dispatcher.Invoke(() => { _teacherPhones.Add(el); });
+					foreach (var el in dataBase.BellScheduleType.ToList())
+						App.Current.Dispatcher.Invoke(() => { _bellScheduleTypes.Add(el); });
+					foreach (var el in dataBase.BellSchedule.ToList())
+						App.Current.Dispatcher.Invoke(() => { _bellSchedules.Add(el); });
+					foreach (var el in dataBase.LessonSubsitutionSchedule.ToList())
+						App.Current.Dispatcher.Invoke(() => { _lessonSubsitutionSchedules.Add(el); });
 
 					foreach (var el in _students)
 						App.Current.Dispatcher.Invoke(() => { _studentTable.Entries.Add(new DTOStudent(el)); });
@@ -494,12 +540,21 @@ namespace SchoolSchedule.ViewModel
 						App.Current.Dispatcher.Invoke(() => { _teacherTable.Entries.Add(new DTOTeacher(el)); });
 					foreach (var el in _schedules)
 						App.Current.Dispatcher.Invoke(() => { _scheduleTable.Entries.Add(new DTOSchedule(el)); });
+					foreach (var el in _bellScheduleTypes)
+						App.Current.Dispatcher.Invoke(() => { _bellScheduleTableType.Entries.Add(new DTOBellScheduleType(el)); });
+					foreach (var el in _bellSchedules)
+						App.Current.Dispatcher.Invoke(() => { _bellScheduleTable.Entries.Add(new DTOBellSchedule(el)); });
+					foreach (var el in _lessonSubsitutionSchedules)
+						App.Current.Dispatcher.Invoke(() => { _lessonSubsitutionScheduleTable.Entries.Add(new DTOLessonSubsitutionSchedule(el)); });
 
 					OnPropertyChanged(nameof(DTOGroup));
 					OnPropertyChanged(nameof(DTOStudents));
 					OnPropertyChanged(nameof(DTOSubject));
 					OnPropertyChanged(nameof(DTOTeacher));
 					OnPropertyChanged(nameof(DTOSchedule));
+					OnPropertyChanged(nameof(DTOBellScheduleType));
+					OnPropertyChanged(nameof(DTOBellSchedule));
+					OnPropertyChanged(nameof(DTOLessonSubsitutionSchedule));
 				}
 			}
 			// Для того, чтобы не было ошибки в xaml
@@ -582,6 +637,18 @@ namespace SchoolSchedule.ViewModel
 		//	return list.Where(s => s.IdLesson == id);
 		//}
 		//#endregion
+		#region Для удаления типа расписания звонков
+		IEnumerable<Model.BellSchedule> FindBellSchedulesUsesBellScheduleType(ref List<Model.BellSchedule> list, int id)
+		{
+			return list.Where(s => s.IdBellScheduleType == id);
+		}
+		#endregion
+		#region Для удаления расписания звонков
+		IEnumerable<SchoolSchedule.Model.Schedule> FindSchedulesUsesBellSchedule(ref List<Model.Schedule> list, int id)
+		{
+			return list.Where(x=>x.IdBellSchedule==id);
+		}
+		#endregion
 		#region Для удаления учителя
 		IEnumerable<Model.Schedule> FindSchedulesUsesTeacher(ref List<Model.Schedule> list, int id)
 		{
@@ -593,29 +660,15 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#endregion
-		private List<Model.Group> _groups;
-		public List<Model.Group> Groups
-		{ get { return _groups; } set { SetPropertyChanged(ref _groups, value); } }
-
-		private List<Model.Schedule> _schedules;
-		public List<Model.Schedule> Schedules
-		{ get { return _schedules; } set { SetPropertyChanged(ref _schedules, value); } }
-
-		private List<Model.Student> _students;
-		public List<Model.Student> Students
-		{ get { return _students; } set { SetPropertyChanged(ref _students, value); } }
-
-		private List<Model.Subject> _subjects;
-		public List<Model.Subject> Subjects
-		{ get { return _subjects; } set { SetPropertyChanged(ref _subjects, value); } }
-
-		private List<Model.Teacher> _teachers;
-		public List<Model.Teacher> Teachers
-		{ get { return _teachers; } set { SetPropertyChanged(ref _teachers, value); } }
-
-		private List<Model.TeacherPhone> _teacherPhones;
-		public List<Model.TeacherPhone> TeacherPhones
-		{ get { return _teacherPhones; } set { SetPropertyChanged(ref _teacherPhones, value); } }
+		private List<Model.Group> _groups=new List<Group>();
+		private List<Model.Schedule> _schedules = new List<Model.Schedule>();
+		private List<Model.Student> _students = new List<Student>();
+		private List<Model.Subject> _subjects = new List<Subject>();
+		private List<Model.Teacher> _teachers = new List<Teacher>();
+		private List<Model.TeacherPhone> _teacherPhones = new List<TeacherPhone>();
+		private List<Model.BellScheduleType> _bellScheduleTypes =new List<BellScheduleType>();
+		private List<Model.BellSchedule> _bellSchedules = new List<BellSchedule>();
+		private List<Model.LessonSubsitutionSchedule> _lessonSubsitutionSchedules=new List<LessonSubsitutionSchedule>();
 
 
 
@@ -624,19 +677,39 @@ namespace SchoolSchedule.ViewModel
 		public ObservableCollection<DTOStudent> DTOStudents
 		{get { return _studentTable.Entries; } set { OnPropertyChanged(nameof(DTOStudents)); _studentTable.Entries=value; }}
 
+
 		private TemplateTable<DTOGroup> _groupTable =new TemplateTable<DTOGroup>();
 		public ObservableCollection<DTOGroup> DTOGroup
 		{get { return _groupTable.Entries; } set { OnPropertyChanged(nameof(DTOGroup)); _groupTable.Entries=value; }}
+
 
 		private TemplateTable<DTOSubject> _subjectTable =new TemplateTable<DTOSubject>();
 		public ObservableCollection<DTOSubject> DTOSubject
 		{get { return _subjectTable.Entries; } set { OnPropertyChanged(nameof(DTOSubject)); _subjectTable.Entries=value; }}
 
+
 		private TemplateTable<DTOTeacher> _teacherTable =new TemplateTable<DTOTeacher>();
 		public ObservableCollection<DTOTeacher> DTOTeacher
 		{get { return _teacherTable.Entries; } set { OnPropertyChanged(nameof(DTOTeacher)); _teacherTable.Entries=value; }}
+
+
 		private TemplateTable<DTOSchedule> _scheduleTable =new TemplateTable<DTOSchedule>();
 		public ObservableCollection<DTOSchedule> DTOSchedule
 		{ get { return _scheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOSchedule)); _scheduleTable.Entries = value; } }
+
+
+		private TemplateTable<DTOBellSchedule> _bellScheduleTable=new TemplateTable<DTOBellSchedule> ();
+		public ObservableCollection<DTOBellSchedule> DTOBellSchedule
+		{ get { return _bellScheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOBellSchedule)); _bellScheduleTable.Entries = value; } }
+
+
+		private TemplateTable<DTOBellScheduleType> _bellScheduleTableType=new TemplateTable<DTOBellScheduleType> ();
+		public ObservableCollection<DTOBellScheduleType> DTOBellScheduleType
+		{ get { return _bellScheduleTableType.Entries; } set { OnPropertyChanged(nameof(DTOBellScheduleType)); _bellScheduleTableType.Entries = value; } }
+
+
+		private TemplateTable<DTOLessonSubsitutionSchedule> _lessonSubsitutionScheduleTable = new TemplateTable<DTOLessonSubsitutionSchedule> ();
+		public ObservableCollection<DTOLessonSubsitutionSchedule> DTOLessonSubsitutionSchedule
+		{ get { return _lessonSubsitutionScheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOLessonSubsitutionSchedule)); _lessonSubsitutionScheduleTable.Entries = value; } }
 	}
 }

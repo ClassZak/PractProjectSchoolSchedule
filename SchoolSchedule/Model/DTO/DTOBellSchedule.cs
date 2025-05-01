@@ -15,6 +15,10 @@ namespace SchoolSchedule.Model.DTO
 		public int LessonNumber { get => ModelRef.LessonNumber; set { _prevLessonNumber= LessonNumber; ModelRef.LessonNumber= value; } }
 		public TimeSpan StartTime { get => ModelRef.StartTime; set { _prevStartTime = StartTime; ModelRef.StartTime = value; } }
 		public TimeSpan EndTime{ get => ModelRef.EndTime; set { _prevEndTime= StartTime; ModelRef.EndTime= value; } }
+
+
+
+		public string BellScheduleType{ get=>ModelRef.BellScheduleType.Name; set { } }
 		#endregion
 		#region Поля для предыдущих значений
 		int _prevId = 0;

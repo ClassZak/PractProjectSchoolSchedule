@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
 
 namespace SchoolSchedule.ViewModel
 {
@@ -24,43 +25,44 @@ namespace SchoolSchedule.ViewModel
 					await DeleteTeachers(selectedObjects as IList<Model.DTO.DTOTeacher>, db);
 				else if (targetType == typeof(Model.DTO.DTOSchedule))
 					await DeleteSchedules(selectedObjects as IList<Model.DTO.DTOSchedule>, db);
+				else if (targetType == typeof(Model.DTO.DTOBellScheduleType))
+					await DeleteBellScheduleTypes(selectedObjects as IList<Model.DTO.DTOBellScheduleType>, db);
+				else if (targetType == typeof(Model.DTO.DTOBellSchedule))
+					await DeleteBellSchedules(selectedObjects as IList<Model.DTO.DTOBellSchedule>, db);
+				else if (targetType == typeof(Model.DTO.DTOLessonSubsitutionSchedule))
+					await DeleteLessonSubsitutionSchedules(selectedObjects as IList<Model.DTO.DTOLessonSubsitutionSchedule>, db);
+
 				await db.SaveChangesAsync();
 			}
 		}
 		private async Task DeleteGroups(IList<Model.DTO.DTOGroup> selectedObjects, Model.SchoolScheduleEntities db)
 		{
 			var teachers = await db.Teacher.ToListAsync();
-			//var lessons = await db.Lesson.ToListAsync();
 			var students = await db.Student.ToListAsync();
 			foreach (var el in selectedObjects)
 			{
-				var selectedDTO = el as Model.DTO.DTOGroup;
-				var teachersUses = FindTeachersUsesGroup(ref teachers, selectedDTO.ModelRef.Id);
-				//var lessonsUses = FindLessonsUsesGroup(ref lessons, selectedDTO.ModelRef.Id);
-				var studentsUsees = FindStudentsUsesGroup(ref students, selectedDTO.ModelRef.Id);
+				var teachersUses = FindTeachersUsesGroup(ref teachers, el.ModelRef.Id);
+				var studentsUsees = FindStudentsUsesGroup(ref students, el.ModelRef.Id);
 
-				if (teachersUses.Count() != 0 /*|| lessonsUses.Count() != 0*/ || studentsUsees.Count() != 0)
-					throw new Exception($"Удалите записи всех уроков, учителей и всех студентов, ссылающихся на класс \"{selectedDTO.ModelRef}\"");
+				if (teachersUses.Count() != 0 || studentsUsees.Count() != 0)
+					throw new Exception($"Удалите записи всех уроков, учителей и всех студентов, ссылающихся на класс \"{el.ModelRef}\"");
 
-				var forDelete = await db.Group.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+				var forDelete = await db.Group.FirstAsync(x => x.Id == el.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 				db.Group.Remove(forDelete);
 			}
 		}
 		private async Task DeleteSubjects(IList<Model.DTO.DTOSubject> selectedObjects, Model.SchoolScheduleEntities db)
 		{
 			var teachers = await db.Teacher.ToListAsync();
-			//var lessons = await db.Lesson.ToListAsync();
 
 			foreach (var el in selectedObjects)
 			{
-				var selectedDTO = el as Model.DTO.DTOSubject;
-				var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, selectedDTO.ModelRef.Id);
-				//var lessonsUsesSubject = FindLessonsUsesSubject(ref lessons, selectedDTO.ModelRef.Id);
+				var teachersUsesSubject = FindTeachersUsesSubject(ref teachers, el.ModelRef.Id);
 
 				if (teachersUsesSubject.Count() != 0 /*|| lessonsUsesSubject.Count() != 0*/)
-					throw new Exception($"Удалите всех уроков и учителей, ссылающихся на предмет \"{selectedDTO.Name}\"");
+					throw new Exception($"Удалите всех уроков и учителей, ссылающихся на предмет \"{el.Name}\"");
 
-				var forDelete = await db.Subject.FirstAsync(x => x.Id == selectedDTO.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+				var forDelete = await db.Subject.FirstAsync(x => x.Id == el.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
 				if (forDelete == null)
 					throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 				db.Subject.Remove(forDelete);
@@ -70,8 +72,7 @@ namespace SchoolSchedule.ViewModel
 		{
 			foreach (var el in selectedObjects)
 			{
-				var selectedDTO = el as Model.DTO.DTOStudent;
-				var forDelete = await db.Student.FirstAsync() ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+				var forDelete = await db.Student.FirstAsync(x=>x.Id==el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
 				db.Student.Remove(forDelete);
 			}
 		}
@@ -81,12 +82,11 @@ namespace SchoolSchedule.ViewModel
 			var phones = db.TeacherPhone.ToListAsync().Result;
 			foreach (var el in selectedObjects)
 			{
-				var selectedDTO = el as Model.DTO.DTOTeacher;
-				var forDelete = await db.Teacher.FirstAsync(x => x.Id == selectedDTO.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+				var forDelete = await db.Teacher.FirstAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
 				var schedulesUsesTeacher = FindSchedulesUsesTeacher(ref schedules, forDelete.Id);
 				var phonesUsesTeacher = FindTeacherPhonesUsesTeacher(ref phones, forDelete.Id);
 				if (schedulesUsesTeacher.Any())
-					throw new Exception($"Удалите все объекты расписания, в которых записан преподаватель {selectedDTO.ModelRef}");
+					throw new Exception($"Удалите все объекты расписания, в которых записан преподаватель {el.ModelRef}");
 				if (forDelete == null)
 					throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
 
@@ -109,9 +109,58 @@ namespace SchoolSchedule.ViewModel
 		{
 			foreach (var el in selectedObjects)
 			{
-				var selectedDTO = el as Model.DTO.DTOSchedule;
-				var forDelete = await db.Schedule.FirstAsync(x => x.Id == selectedDTO.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+				var forDelete = await db.Schedule.FirstAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
 				db.Schedule.Remove(forDelete);
+			}
+		}
+		private async Task DeleteBellSchedules(IEnumerable<Model.DTO.DTOBellSchedule> selectedObjects, Model.SchoolScheduleEntities db)
+		{
+			foreach (var el in selectedObjects)
+			{
+				var schedules = await db.Schedule.ToListAsync();
+				var schedulesUsesBellSchedule = FindSchedulesUsesBellSchedule(ref schedules, el.Id);
+
+				var forDelete = await db.BellSchedule.FirstAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+				if (schedulesUsesBellSchedule.Any())
+					throw new Exception($"Отмените использование расписания \"{forDelete.BellScheduleType.Name}\" на {forDelete.LessonNumber} урок");
+				db.BellSchedule.Remove(forDelete);
+			}
+		}
+		private async Task DeleteBellScheduleTypes(IList<Model.DTO.DTOBellScheduleType> selectedObjects, Model.SchoolScheduleEntities db)
+		{
+			var bellSchedules = await db.BellSchedule.ToListAsync();
+
+			foreach (var el in selectedObjects)
+			{
+				var bellSchedulesUsesBellScheduleType = FindBellSchedulesUsesBellScheduleType(ref bellSchedules, el.ModelRef.Id);
+				var schedulesUsesBellScheduleType = (await db.Schedule.ToListAsync()).Where(x => x.BellSchedule.IdBellScheduleType == el.Id);
+
+				if(schedulesUsesBellScheduleType.Count() != 0 )
+					throw new Exception($"Отмените расписание звонков \"{el.Name}\" для всех уроков, во всём расписании занятий");
+
+				if (bellSchedulesUsesBellScheduleType.Count() != 0)
+				{
+					MessageBoxResult messageBoxResult = MessageBox.Show($"Вы действительно хотите удалить все данные расписания \"{el.Name}\"?","Удаление расписания",MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+					if (messageBoxResult == MessageBoxResult.No || messageBoxResult == MessageBoxResult.Cancel)
+						return;
+
+
+					foreach(var bellSchedule in bellSchedulesUsesBellScheduleType)
+						db.BellSchedule.Remove(bellSchedule);
+				}
+
+				var forDelete = await db.BellScheduleType.FirstAsync(x => x.Id == el.ModelRef.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+				if (forDelete == null)
+					throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера");
+				db.BellScheduleType.Remove(forDelete);
+			}
+		}
+		private async Task DeleteLessonSubsitutionSchedules(IList<Model.DTO.DTOLessonSubsitutionSchedule> selectedObjects, Model.SchoolScheduleEntities db)
+		{
+			foreach (var el in selectedObjects)
+			{
+				var forDelete = await db.LessonSubsitutionSchedule.FirstAsync(x => x.Id == el.Id) ?? throw new Exception("Не удалось найти объект для удаления. Возможно, объект уже был удалён. Попробуйте обновить данные с сервера"); ;
+				db.LessonSubsitutionSchedule.Remove(forDelete);
 			}
 		}
 	}

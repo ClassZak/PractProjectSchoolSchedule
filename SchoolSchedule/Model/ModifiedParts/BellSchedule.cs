@@ -10,5 +10,9 @@
 			this.StartTime=other.StartTime;
 			this.EndTime=other.EndTime;
 		}
+		public override string ToString()
+		{
+			return $"{BellScheduleType?.ToString()} {StartTime:hh\\:mm\\:ss} - {EndTime:hh\\:mm\\:ss} ({LessonNumber} урок)";
+		}
 	}
 }

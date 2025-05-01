@@ -110,6 +110,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
+			ValueRef.PhoneNumber = ValueRef.PhoneNumber.Trim();
 			if (string.IsNullOrWhiteSpace(ValueRef.PhoneNumber) || ValueRef.PhoneNumber==string.Empty)
 				return new KeyValuePair<bool, string>(false, "Введите номер телефона!");
 			if(!Regex.IsMatch(ValueRef.PhoneNumber,@"^\+7 \d{3} \d{3}-\d{2}-\d{2}$"))

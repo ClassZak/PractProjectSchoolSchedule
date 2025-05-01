@@ -27,7 +27,16 @@ namespace SchoolSchedule.ViewModel
 						await CreateTeacher(teacher, db);
 						break;
 					case Model.Schedule schedule:
-						CreateSchedule(schedule,db);
+						CreateSchedule(schedule, db);
+						break;
+					case Model.BellScheduleType bellScheduleType:
+						CreateBellScheduleType(bellScheduleType, db);
+						break;
+					case Model.BellSchedule bellSchedule:
+						CreateBellSchedule(bellSchedule, db);
+						break;
+					case Model.LessonSubsitutionSchedule lessonSubsitutionSchedule:
+						CreateLessonSubsitutionSchedule(lessonSubsitutionSchedule, db);
 						break;
 				}
 				await db.SaveChangesAsync();
@@ -71,6 +80,18 @@ namespace SchoolSchedule.ViewModel
 		private void CreateSchedule(Model.Schedule schedule, SchoolScheduleEntities db)
 		{
 			db.Schedule.Add(schedule);
+		}
+		private void CreateBellScheduleType(Model.BellScheduleType bellScheduleType, SchoolScheduleEntities db)
+		{
+			db.BellScheduleType.Add(bellScheduleType);
+		}
+		private void CreateBellSchedule(Model.BellSchedule bellSchedule, SchoolScheduleEntities db)
+		{
+			db.BellSchedule.Add(bellSchedule);
+		}
+		private void CreateLessonSubsitutionSchedule(Model.LessonSubsitutionSchedule lessonSubsitutionSchedule, SchoolScheduleEntities db)
+		{
+			db.LessonSubsitutionSchedule.Add(lessonSubsitutionSchedule);
 		}
 	}
 }

@@ -39,15 +39,6 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 			DataContext = ValueRef;
 		}
-
-		
-		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			// Разрешить byte
-			var textBox = (TextBox)sender;
-			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
-			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-		}
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			// Разрешить только русские буквы, пробелы и дефис

@@ -10,6 +10,7 @@ namespace SchoolSchedule.Model.DTO
 	public class DTOSchedule : ADTO<Model.Schedule>
 	{
 		#region Свойства DTOSchedule
+		#region Свойства Schedule
 		public int Id { get => ModelRef.Id; set { _prevId = ModelRef.Id; ModelRef.Id = value; } }
 		public int IdSubject { get => ModelRef.IdSubject; set { _prevIdSubject = ModelRef.IdSubject; ModelRef.IdSubject = value; } }
 		public int IdGroup { get => ModelRef.IdGroup; set { _prevIdGroup = ModelRef.IdGroup; ModelRef.IdGroup = value; } }
@@ -17,7 +18,16 @@ namespace SchoolSchedule.Model.DTO
 		public int IdBellSchedule { get => ModelRef.IdBellSchedule; set { _prevIdBellSchedule = ModelRef.IdBellSchedule; ModelRef.IdBellSchedule = value; } }
 		public int DayOfTheWeek { get => ModelRef.DayOfTheWeek; set { _prevDayOfTheWeek = ModelRef.DayOfTheWeek; ModelRef.DayOfTheWeek = value; } }
 		public int ClassRoom { get => ModelRef.ClassRoom; set { _prevClassRoom = ModelRef.ClassRoom; ModelRef.ClassRoom = value; } }
+		#endregion
+		#region Свойства для дополнительной информации
+		public string Subject{ get => ModelRef.Subject.ToString(); set { } }
+		public string Group{ get => ModelRef.Group.ToString(); set { } }
+		public int LessonNumber{ get => ModelRef.BellSchedule.LessonNumber;set{ } }
+		public TimeSpan StartTime { get => ModelRef.BellSchedule.StartTime;set { } }
+		public TimeSpan EndTime { get => ModelRef.BellSchedule.EndTime;set { } }
+		public string BellScheduleType{ get => ModelRef.BellSchedule.BellScheduleType.ToString();set{ } }
 
+		#endregion
 		#region Поля предыдущих значений
 		int _prevId = 0;
 		int _prevIdSubject = 0;

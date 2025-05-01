@@ -2,7 +2,6 @@
 using SchoolSchedule.ViewModel.Edit;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -21,45 +20,32 @@ using System.Windows.Shapes;
 namespace SchoolSchedule.View.Edit.EditPage
 {
 	/// <summary>
-	/// Логика взаимодействия для EditPageSubject.xaml
+	/// Логика взаимодействия для EditPageBellSchedule.xaml
 	/// </summary>
-	public partial class EditPageSchedule : Page, IEditPage<Model.Schedule>
+	public partial class EditPageBellSchedule : Page, IEditPage<BellSchedule>
 	{
-		public bool ObjectIsNew{  get; set; }
-		
-		public List<Model.Schedule> SchedulesForCheck { get; set; } = new List<Model.Schedule>();
-		public Model.Schedule ValueRef{ get ; set ; }
-		protected EditPageSchedule()
+		public bool ObjectIsNew { get; set; }
+		public List<BellSchedule> BellSchedulesForCheck { get; set; } = new List<BellSchedule>();
+		public BellSchedule ValueRef { get; set; }
+		public EditPageBellSchedule()
 		{
 			InitializeComponent();
 			DataContext = ValueRef;
 		}
-
-
-		private EditScheduleViewModel _viewModel;
-		public EditPageSchedule
-		(
-			bool objectIsNew,
-			Model.Schedule schedule,
-			List<Model.Schedule> schedules,
-			List<Model.Subject> subjects,
-			List<Model.Group> groups,
-			List<Model.Teacher> teachers,
-			List<Model.BellSchedule> bellSchedules
-		) : this()
+		EditBellScheduleViewModel _viewModel;
+		public EditPageBellSchedule(bool objectIsNew, BellSchedule editObject, List<BellScheduleType> bellScheduleTypes, List<BellSchedule> bellSchedules) : this()
 		{
-			ObjectIsNew= objectIsNew;
+			ObjectIsNew = objectIsNew;
+			BellSchedulesForCheck = bellSchedules;
 
-			if (ObjectIsNew)
-				ValueRef = new Model.Schedule();
-			else
-				ValueRef = schedule;
+			if(ObjectIsNew)
+				ValueRef = new BellSchedule();
+			else 
+				ValueRef= editObject;
 
-			_viewModel = new EditScheduleViewModel(ObjectIsNew,ValueRef,subjects,groups,teachers,bellSchedules);
+			_viewModel = new EditBellScheduleViewModel(ObjectIsNew,ValueRef,bellScheduleTypes);
 			DataContext = _viewModel;
 		}
-
-
 		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			// Разрешить byte
@@ -137,7 +123,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 		private void TimeBox_LostFocus(object sender, RoutedEventArgs e)
 		{
 			var textBox = (TextBox)sender;
-			if(textBox!=null)
+			if (textBox != null)
 				FormatTimeTextBox(textBox);
 		}
 		private void TimeBox_KeyDown(object sender, KeyEventArgs e)
@@ -153,13 +139,13 @@ namespace SchoolSchedule.View.Edit.EditPage
 			}
 		}
 
-		public KeyValuePair<bool,string> CheckInputRules()
+		public KeyValuePair<bool, string> CheckInputRules()
 		{
-			var obj=(this.DataContext as EditScheduleViewModel).CurrentSchedule;
-			if (SchedulesForCheck.Any(x => x.IdSubject == obj.IdSubject && x.IdGroup == obj.IdGroup && x.IdTeacher == obj.IdTeacher && x.IdBellSchedule == obj.IdBellSchedule && x.DayOfTheWeek == obj.DayOfTheWeek && x.ClassRoom == obj.ClassRoom))
-				return new KeyValuePair<bool, string>(false, "Такое расписание уже существует в базе данных");
-
-			return new KeyValuePair<bool,string>(true,null);
+			var obj = (this.DataContext as EditBellScheduleViewModel).CurrentBellSchedule;
+			if (ObjectIsNew && BellSchedulesForCheck.Where(x => x.LessonNumber == obj.LessonNumber && x.IdBellScheduleType == obj.IdBellScheduleType).Any())
+				return new KeyValuePair<bool, string>(false, $"Расписание \"{_viewModel.BellScheduleTypes.FirstOrDefault(x=>x.Id==obj.IdBellScheduleType)?.Name}\" для {obj.LessonNumber} урока уже есть в базе данных");
+				
+			return new KeyValuePair<bool, string>(true, null);
 		}
 	}
 }

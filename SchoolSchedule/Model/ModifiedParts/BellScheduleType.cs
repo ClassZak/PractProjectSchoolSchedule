@@ -7,5 +7,9 @@
 			this.Id= other.Id;
 			this.Name = other.Name;
 		}
+		public override string ToString()
+		{
+			return $"{Name}";
+		}
 	}
 }

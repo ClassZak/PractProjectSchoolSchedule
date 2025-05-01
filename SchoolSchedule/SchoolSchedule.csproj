@@ -74,7 +74,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="View\TextBoxBehavior.cs" />
+    <Page Include="View\Edit\EditPage\EditPageBellSchedule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Edit\EditPage\EditPageBellScheduleType.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Edit\EditPage\EditPageGroup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Edit\EditPage\EditPageLessonSubsitutionSchedule.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -178,8 +191,9 @@
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Attributes\CollectionOfSelectedItemsAttribute.cs" />
     <Compile Include="ViewModel\Commands\RelayCommand.cs" />
-    <Compile Include="ViewModel\Edit\EditLessonViewModel.cs" />
+    <Compile Include="ViewModel\Edit\EditBellScheduleViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditScheduleViewModel.cs" />
+    <Compile Include="ViewModel\Edit\EditLessonSubsitutionScheduleViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditStudentViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditTeacherViewModel.cs" />
     <Compile Include="ViewModel\MainViewModelParts\Operations\CreateOperations.cs" />
@@ -191,8 +205,17 @@
     <Compile Include="View\DataGridBehavior.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Table\ATable.cs" />
+    <Compile Include="View\Edit\EditPage\EditPageBellSchedule.xaml.cs">
+      <DependentUpon>EditPageBellSchedule.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Edit\EditPage\EditPageBellScheduleType.xaml.cs">
+      <DependentUpon>EditPageBellScheduleType.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Edit\EditPage\EditPageGroup.xaml.cs">
       <DependentUpon>EditPageGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Edit\EditPage\EditPageLessonSubsitutionSchedule.xaml.cs">
+      <DependentUpon>EditPageLessonSubsitutionSchedule.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Edit\EditPage\EditPageSchedule.xaml.cs">
       <DependentUpon>EditPageSchedule.xaml</DependentUpon>

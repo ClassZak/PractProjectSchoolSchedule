@@ -86,6 +86,10 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
+			ValueRef.Email=ValueRef.Email.Trim();
+			if (ValueRef.Email == string.Empty)
+				ValueRef.Email = null;
+			
 			if (string.IsNullOrWhiteSpace(ValueRef.Surname))
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " фамилию нового" : " новую фамилию") + " ученика");
 			if (string.IsNullOrWhiteSpace(ValueRef.Name))
@@ -102,7 +106,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 					if(HasInvalidEmailChars(ValueRef.Email) || !EmailRegex.IsMatch(ValueRef.Email))
 						return new KeyValuePair<bool, string>(false, $"Неверный формат электронной почты!");
 						
-
+			
 			return new KeyValuePair<bool,string>(true,null);
 		}
 	}
