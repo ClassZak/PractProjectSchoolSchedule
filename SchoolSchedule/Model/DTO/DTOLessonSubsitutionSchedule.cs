@@ -14,18 +14,18 @@ namespace SchoolSchedule.Model.DTO
 		public DateTime Date{ get => ModelRef.Date;set { _prevDate = ModelRef.Date; ModelRef.Date = value; } }
 		public int? IdSubject {  get=>ModelRef.IdSubject; set { _prevIdSubject = ModelRef.IdSubject; ModelRef.IdSubject = value; } }
 		public int? IdGroup {  get=>ModelRef.IdGroup; set { _prevIdGroup = ModelRef.IdGroup; ModelRef.IdGroup = value; } }
-		public int? IdTeacher {  get=>ModelRef.Id; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
+		public int? IdTeacher {  get=>ModelRef.IdTeacher; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
 		public int? ClassRoom{  get=>ModelRef.ClassRoom; set { _prevClassRoom = ModelRef.ClassRoom; ModelRef.ClassRoom = value; } }
-		public int LessonNumber{  get=>ModelRef.LessonNumber; set { _prevLessonNumber = ModelRef.LessonNumber; ModelRef.LessonNumber= value; } }
+		public int LessonNumber{  get=>(int)ModelRef.LessonNumber; set { _prevLessonNumber = (int)ModelRef.LessonNumber; ModelRef.LessonNumber= value; } }
 		#endregion
 		#region Свойства для дополнительной информации
-		public string Subject { get => ModelRef.Subject.ToString(); set { } }
-		public string Group{ get => ModelRef.Group.ToString(); set { } }
+		public string Subject { get => ModelRef.Subject?.ToString(); set { } }
+		public string Group{ get => ModelRef.Group?.ToString(); set { } }
 
 
-		public string TeacherSurname{ get => ModelRef.Teacher.Surname;set { } }
-		public string TeacherName{ get => ModelRef.Teacher.Name;set { } }
-		public string TeacherPatronymic { get => ModelRef.Teacher.Patronymic;set { } }
+		public string TeacherSurname{ get => ModelRef.Teacher?.Surname;set { } }
+		public string TeacherName{ get => ModelRef.Teacher?.Name;set { } }
+		public string TeacherPatronymic { get => ModelRef.Teacher?.Patronymic;set { } }
 		#endregion
 		#region Поля для предыдущих значений
 		int _prevId = 0;
@@ -50,7 +50,7 @@ namespace SchoolSchedule.Model.DTO
 			_prevIdGroup=modelRef.IdGroup;
 			_prevIdTeacher=modelRef.IdTeacher;
 			_prevClassRoom = modelRef.ClassRoom;
-			_prevLessonNumber=modelRef.LessonNumber;
+			_prevLessonNumber=(int)modelRef.LessonNumber;
 		}
 
 		public override bool HasReferenceOfNotExistingObject()

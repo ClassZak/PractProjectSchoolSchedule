@@ -193,7 +193,7 @@
 								</DataGridTemplateColumn>
 								<DataGridTextColumn Header="Предмет"			Binding="{Binding Subject}"/>
 								<DataGridTextColumn Header="Класс"				Binding="{Binding Group}"/>
-								<DataGridTextColumn Header="Кабинет"			Binding="{Binding Subject}"/>
+								<DataGridTextColumn Header="Кабинет"			Binding="{Binding ClassRoom}"/>
 								<DataGridTextColumn Header="Фамилия учителя"	Binding="{Binding TeacherSurname}"/>
 								<DataGridTextColumn Header="Имя учителя"		Binding="{Binding TeacherName}"/>
 								<DataGridTextColumn Header="Отчество учителя"	Binding="{Binding TeacherPatronymic}"/>

@@ -12,6 +12,8 @@ namespace SchoolSchedule.Model
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class SchoolScheduleEntities : DbContext
     {
@@ -34,5 +36,44 @@ namespace SchoolSchedule.Model
         public virtual DbSet<Subject> Subject { get; set; }
         public virtual DbSet<Teacher> Teacher { get; set; }
         public virtual DbSet<TeacherPhone> TeacherPhone { get; set; }
+        public virtual DbSet<GroupView> GroupView { get; set; }
+    
+        public virtual ObjectResult<ShowLessonsAtDayForTeacher_Result> ShowLessonsAtDayForTeacher(string surname, string name, string patronymic, Nullable<System.DateTime> date, Nullable<int> idBellScheduleType)
+        {
+            var surnameParameter = surname != null ?
+                new ObjectParameter("surname", surname) :
+                new ObjectParameter("surname", typeof(string));
+    
+            var nameParameter = name != null ?
+                new ObjectParameter("name", name) :
+                new ObjectParameter("name", typeof(string));
+    
+            var patronymicParameter = patronymic != null ?
+                new ObjectParameter("patronymic", patronymic) :
+                new ObjectParameter("patronymic", typeof(string));
+    
+            var dateParameter = date.HasValue ?
+                new ObjectParameter("date", date) :
+                new ObjectParameter("date", typeof(System.DateTime));
+    
+            var idBellScheduleTypeParameter = idBellScheduleType.HasValue ?
+                new ObjectParameter("idBellScheduleType", idBellScheduleType) :
+                new ObjectParameter("idBellScheduleType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ShowLessonsAtDayForTeacher_Result>("ShowLessonsAtDayForTeacher", surnameParameter, nameParameter, patronymicParameter, dateParameter, idBellScheduleTypeParameter);
+        }
+    
+        public virtual ObjectResult<ShowStudentsByGroup_Result> ShowStudentsByGroup(Nullable<int> year, string name)
+        {
+            var yearParameter = year.HasValue ?
+                new ObjectParameter("year", year) :
+                new ObjectParameter("year", typeof(int));
+    
+            var nameParameter = name != null ?
+                new ObjectParameter("name", name) :
+                new ObjectParameter("name", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ShowStudentsByGroup_Result>("ShowStudentsByGroup", yearParameter, nameParameter);
+        }
     }
 }

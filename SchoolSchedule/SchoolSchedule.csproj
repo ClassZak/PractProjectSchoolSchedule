@@ -74,6 +74,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\BellSchedule.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\BellScheduleType.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Group.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\GroupView.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\LessonSubsitutionSchedule.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Schedule.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SchoolSchedule.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SchoolSchedule.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SchoolSchedule.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SchoolSchedule.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ShowLessonsAtDayForTeacher_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ShowStudentsByGroup_Result.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Student.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Subject.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Teacher.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\TeacherPhone.cs">
+      <DependentUpon>SchoolSchedule.tt</DependentUpon>
+    </Compile>
     <Compile Include="View\TextBoxBehavior.cs" />
     <Page Include="View\Edit\EditPage\EditPageBellSchedule.xaml">
       <SubType>Designer</SubType>
@@ -125,12 +176,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\Additional\DayOfTheWeek.cs" />
-    <Compile Include="Model\BellSchedule.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\BellScheduleType.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
     <Compile Include="Model\DTO\DTOBellSchedule.cs" />
     <Compile Include="Model\DTO\DTOBellScheduleType.cs" />
     <Compile Include="Model\DTO\DTOGroup.cs" />
@@ -142,12 +187,6 @@
     <Compile Include="Model\DTO\DTOStudent.cs" />
     <Compile Include="Model\DTO\DTOTeacherPhone.cs" />
     <Compile Include="Model\DTO\IDTO.cs" />
-    <Compile Include="Model\Group.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\LessonSubsitutionSchedule.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
     <Compile Include="Model\ModifiedParts\BellSchedule.cs" />
     <Compile Include="Model\ModifiedParts\BellScheduleType.cs" />
     <Compile Include="Model\ModifiedParts\Group.cs" />
@@ -157,36 +196,6 @@
     <Compile Include="Model\ModifiedParts\Subject.cs" />
     <Compile Include="Model\ModifiedParts\Teacher.cs" />
     <Compile Include="Model\ModifiedParts\TeacherPhone.cs" />
-    <Compile Include="Model\Schedule.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\SchoolSchedule.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SchoolSchedule.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\SchoolSchedule.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\SchoolSchedule.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SchoolSchedule.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Student.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Subject.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Teacher.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\TeacherPhone.cs">
-      <DependentUpon>SchoolSchedule.tt</DependentUpon>
-    </Compile>
     <Compile Include="Resources\Resources.Designer.cs" />
     <Compile Include="ViewModel\ABaseViewModel.cs" />
     <Compile Include="ViewModel\Attributes\CollectionOfSelectedItemsAttribute.cs" />

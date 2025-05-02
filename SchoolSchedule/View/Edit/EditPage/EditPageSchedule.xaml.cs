@@ -48,6 +48,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			List<Model.BellSchedule> bellSchedules
 		) : this()
 		{
+			SchedulesForCheck = schedules;
 			ObjectIsNew= objectIsNew;
 
 			if (ObjectIsNew)
@@ -156,7 +157,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
 			var obj=(this.DataContext as EditScheduleViewModel).CurrentSchedule;
-			if (SchedulesForCheck.Any(x => x.IdSubject == obj.IdSubject && x.IdGroup == obj.IdGroup && x.IdTeacher == obj.IdTeacher && x.IdBellSchedule == obj.IdBellSchedule && x.DayOfTheWeek == obj.DayOfTheWeek && x.ClassRoom == obj.ClassRoom))
+			if (SchedulesForCheck.Any(x => x.IdSubject == obj.IdSubject && x.IdGroup == obj.IdGroup && x.IdTeacher == obj.IdTeacher && x.IdBellSchedule == obj.IdBellSchedule && x.DayOfTheWeek == obj.DayOfTheWeek))
 				return new KeyValuePair<bool, string>(false, "Такое расписание уже существует в базе данных");
 
 			return new KeyValuePair<bool,string>(true,null);
