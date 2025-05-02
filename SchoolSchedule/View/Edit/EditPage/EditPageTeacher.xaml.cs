@@ -44,9 +44,14 @@ namespace SchoolSchedule.View.Edit.EditPage
 			ObjectIsNew = objectIsNew;
 
 			if (ObjectIsNew)
+			{
 				ValueRef = new Model.Teacher();
+				ValueRef.BirthDay = new DateTime(1970, 1, 1);
+				ValueRef.Gender="М";
+			}
 			else
 				ValueRef = teacher;
+
 
 			_editTeacherViewModel = new EditTeacherViewModel(ValueRef,groups,subjects,teacherPhones, OwnerWindow);
 			DataContext = _editTeacherViewModel;
@@ -63,6 +68,13 @@ namespace SchoolSchedule.View.Edit.EditPage
 			var textBox = (TextBox)sender;
 			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
 			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+		}
+		private void Int16NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			// Разрешить byte
+			var textBox = (TextBox)sender;
+			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
+			e.Handled = !short.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
 		}
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{

@@ -7,6 +7,7 @@
 		xmlns:local="clr-namespace:SchoolSchedule"
 		xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
 		xmlns:ViewModelTaskModel="clr-namespace:SchoolSchedule.ViewModel.TaskModel"
+		xmlns:Additional="clr-namespace:SchoolSchedule.Additional"
 		xmlns:View="clr-namespace:SchoolSchedule.View"
 		xmlns:Model="clr-namespace:SchoolSchedule.Model"
 		xmlns:DTOModel="clr-namespace:SchoolSchedule.Model.DTO"
@@ -19,6 +20,7 @@
 		MinHeight="350" WindowStartupLocation="CenterScreen"
 		>
 	<Window.Resources>
+		<Additional:DayOfTheWeekConverter x:Key="DayOfTheWeekConverter"/>
 	</Window.Resources>
 	<Window.DataContext>
 		<ViewModel:MainViewModel/>
@@ -34,6 +36,9 @@
 					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand}"/>
 				</MenuItem>
 				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
+			</MenuItem>
+			<MenuItem Header="Справка">
+				
 			</MenuItem>
 		</Menu>
 		<Grid Margin="6" Grid.Row="1">
@@ -93,6 +98,14 @@
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}"/>
+								<DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
+								<DataGridTemplateColumn Header="День рождения">
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding BirthDay, StringFormat=dd.MM.yyyy}"/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 								<DataGridTextColumn Header="Класс" Binding="{Binding GroupLabel}"/>
 								<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}"/>
 							</DataGrid.Columns>
@@ -118,6 +131,14 @@
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}"/>
+								<DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
+								<DataGridTemplateColumn Header="День рождения">
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding BirthDay, StringFormat=dd.MM.yyyy}"/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
 								<DataGridTextColumn Header="Предмет(ы)" Binding="{Binding Subject}"/>
 								<DataGridTextColumn Header="Руководитель класса(ов)" Binding="{Binding Group}"/>
 								<DataGridTextColumn Header="Телефонные номер(а)" Binding="{Binding PhoneNumber}"/>
@@ -183,7 +204,6 @@
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOLessonSubsitutionSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedLessonSubsitutionSchedules}" ToolTip="Проходящие занятия">
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
 								<DataGridTemplateColumn Header="День для замены">
 									<DataGridTemplateColumn.CellTemplate>
 										<DataTemplate>
@@ -191,6 +211,7 @@
 										</DataTemplate>
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
+								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
 								<DataGridTextColumn Header="Предмет"			Binding="{Binding Subject}"/>
 								<DataGridTextColumn Header="Класс"				Binding="{Binding Group}"/>
 								<DataGridTextColumn Header="Кабинет"			Binding="{Binding ClassRoom}"/>
@@ -216,9 +237,10 @@
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedSchedules}" ToolTip="Проходящие занятия">
 							<DataGrid.Columns>
+								<DataGridTextColumn Header="День недели"		Binding="{Binding DayOfTheWeekEnum,Converter={StaticResource DayOfTheWeekConverter}}"/>
+								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
 								<DataGridTextColumn Header="Предмет"			Binding="{Binding Subject}"/>
 								<DataGridTextColumn Header="Класс"				Binding="{Binding Group}"/>
-								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
 								<DataGridTextColumn Header="Фамилия учителя"	Binding="{Binding TeacherSurname}"/>
 								<DataGridTextColumn Header="Имя учителя"		Binding="{Binding TeacherName}"/>
 								<DataGridTextColumn Header="Отчество учителя"	Binding="{Binding TeacherPatronymic}"/>

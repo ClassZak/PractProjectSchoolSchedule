@@ -26,6 +26,17 @@
 			<TextBox Text="{Binding CurrentTeacher.Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Имя преподавателя"/>
 			<TextBlock Text="Отчество"/>
 			<TextBox Text="{Binding CurrentTeacher.Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Отчество преподавателя"/>
+			<TextBlock Text="Пол"/>
+			<ComboBox
+				SelectedValuePath="Tag"
+				SelectedValue="{Binding CurrentTeacher.Gender}"
+				SelectedIndex="0"
+			>
+				<ComboBoxItem Tag="М">Мужской</ComboBoxItem>
+				<ComboBoxItem Tag="Ж">Женский</ComboBoxItem>
+			</ComboBox>
+			<TextBlock Text="Дата рождения"/>
+			<DatePicker SelectedDate="{Binding CurrentTeacher.BirthDay}" ToolTip="Дата проведения для замены"/>
 
 			<Grid Margin="0,20,0,0">
 				<Grid.RowDefinitions>

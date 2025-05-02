@@ -19,13 +19,13 @@ namespace SchoolSchedule.Model.DTO
 		public int LessonNumber{  get=>(int)ModelRef.LessonNumber; set { _prevLessonNumber = (int)ModelRef.LessonNumber; ModelRef.LessonNumber= value; } }
 		#endregion
 		#region Свойства для дополнительной информации
-		public string Subject { get => ModelRef.Subject?.ToString(); set { } }
-		public string Group{ get => ModelRef.Group?.ToString(); set { } }
+		public string Subject { get => ModelRef.Subject is null ? "По расписанию" : ModelRef.Subject?.ToString(); set { } }
+		public string Group{ get => ModelRef.Group is null ? "По расписанию" : ModelRef.Group?.ToString(); set { } }
 
 
-		public string TeacherSurname{ get => ModelRef.Teacher?.Surname;set { } }
-		public string TeacherName{ get => ModelRef.Teacher?.Name;set { } }
-		public string TeacherPatronymic { get => ModelRef.Teacher?.Patronymic;set { } }
+		public string TeacherSurname{ get => ModelRef.Teacher is null ? "По расписанию" : ModelRef.Teacher?.Surname;set { } }
+		public string TeacherName{ get => ModelRef.Teacher is null ? "По расписанию" : ModelRef.Teacher?.Name;set { } }
+		public string TeacherPatronymic { get => ModelRef.Teacher is null ? "По расписанию" : ModelRef.Teacher?.Patronymic;set { } }
 		#endregion
 		#region Поля для предыдущих значений
 		int _prevId = 0;

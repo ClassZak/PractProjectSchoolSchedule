@@ -19,7 +19,7 @@
 		</Grid.ColumnDefinitions>
 		<StackPanel Margin="20">
 			<TextBlock Text="Год обучения"/>
-			<TextBox Text="{Binding Year}" PreviewTextInput="NumberTextBox_PreviewTextInput" ToolTip="Год обучения в школе" Width="109"/>
+			<TextBox Text="{Binding Year}" PreviewTextInput="NumberTextBox_PreviewTextInput" ToolTip="Год обучения в школе"/>
 		</StackPanel>
 		<StackPanel Margin="20" Grid.Column="1">
 			<TextBlock Text="Группа"/>

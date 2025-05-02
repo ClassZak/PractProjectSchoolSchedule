@@ -24,7 +24,7 @@ CREATE TABLE BellSchedule(
     LessonNumber		INT NOT NULL,
     StartTime			TIME(7) NOT NULL,
     EndTime				TIME(7) NOT NULL,
-	FOREIGN KEY		(IdBellScheduleType) REFERENCES BellScheduleType
+	FOREIGN KEY			(IdBellScheduleType) REFERENCES BellScheduleType
 )
 ALTER TABLE BellSchedule ADD CONSTRAINT 
 UniquesBellScheduleTypeAndLessonNumberConstraint UNIQUE (IdBellScheduleType, LessonNumber)
@@ -77,7 +77,7 @@ CREATE TABLE Teacher(
     Name        NVARCHAR(30)	NOT NULL,
     Patronymic  NVARCHAR(30)	NOT NULL,
 	Gender		NCHAR(1)		NOT NULL DEFAULT 'М',
-    BirthYear	INT				NOT	NULL DEFAULT 1970
+    BirthDay	DATE			NOT	NULL DEFAULT '1970-01-01'
 )
 ALTER TABLE Teacher ADD CONSTRAINT RussianTeacherName
 CHECK (NOT Name LIKE '%[a-zA-Z0-9]%')
@@ -87,8 +87,8 @@ ALTER TABLE Teacher ADD CONSTRAINT RussianTeacherSurname
 CHECK (NOT Surname LIKE '%[a-zA-Z0-9]%')
 ALTER TABLE Teacher ADD CONSTRAINT TeacherGenderCheck
 CHECK (Gender IN ('М', 'Ж'))
-ALTER TABLE Teacher ADD CONSTRAINT TeacherBirthYearCheck
-CHECK (BirthYear BETWEEN 1900 AND YEAR(GETDATE()));
+ALTER TABLE Teacher ADD CONSTRAINT TeacherBirthDayCheck
+CHECK (BirthDay BETWEEN '1900-01-01' AND GETDATE());
 
 
 
@@ -121,13 +121,13 @@ CREATE TABLE Student(
     IdGroup     INT NOT NULL,
     Email       NVARCHAR(60),
 	Gender		NCHAR(1)		NOT NULL DEFAULT 'М',
-    BirthYear	INT				NOT	NULL DEFAULT 2000,
+    BirthDay	DATE			NOT	NULL DEFAULT '2005-01-01',
 	FOREIGN KEY	(IdGroup) REFERENCES [Group]
 )
 ALTER TABLE Student ADD CONSTRAINT StudentGenderCheck
 CHECK (Gender IN ('М', 'Ж'))
 ALTER TABLE Student ADD CONSTRAINT StudentBirthYearCheck
-CHECK (BirthYear BETWEEN 1900 AND YEAR(GETDATE()));
+CHECK (BirthDay BETWEEN '2005-01-01' AND GETDATE());
 ALTER TABLE Student ADD CONSTRAINT RussianStudentName
 CHECK (NOT Name LIKE '%[a-zA-Z0-9]%')
 ALTER TABLE Student ADD CONSTRAINT RussianStudentSurname
@@ -326,19 +326,23 @@ END;
 GO
 
 
-CREATE FUNCTION GetAgeByBirthYear
+CREATE OR ALTER FUNCTION dbo.CalculateAge
 (
-    @BirthYear INT
+    @BirthDate DATE
 )
 RETURNS INT
 AS
 BEGIN
+    DECLARE @Today DATE = GETDATE()
     RETURN 
+        DATEDIFF(YEAR, @BirthDate, @Today) - 
         CASE 
-            WHEN @BirthYear IS NULL THEN NULL
-            ELSE YEAR(GETDATE()) - @BirthYear 
-        END;
-END;
+            WHEN (MONTH(@BirthDate) > MONTH(@Today)) 
+              OR (MONTH(@BirthDate) = MONTH(@Today) AND DAY(@BirthDate) > DAY(@Today)) 
+            THEN 1 
+            ELSE 0 
+        END
+END
 GO
 
 

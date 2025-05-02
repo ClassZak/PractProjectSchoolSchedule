@@ -8,17 +8,8 @@
 			this.Name= other.Name;
 			this.Surname= other.Surname;
 			this.Patronymic= other.Patronymic;
-
-			/*
-			foreach(var el in Schedule)
-				this.Schedule.Add(el);
-			foreach(var el in TeacherPhone)
-				this.TeacherPhone.Add(el);
-			foreach(var el in Group)
-				this.Group.Add(el);
-			foreach(var el in Subject)
-				this.Subject.Add(el);
-			*/
+			this.Gender= other.Gender;
+			this.BirthDay =other.BirthDay;
 		}
 		public override string ToString()
 		{

@@ -11,8 +11,8 @@
 			this.Patronymic=other.Patronymic;
 			this.IdGroup=other.IdGroup;
 			this.Email=other.Email;
-
-			this.Group=other.Group;
+			this.Gender = other.Gender;
+			this.BirthDay = other.BirthDay;
 		}
 	}
 }

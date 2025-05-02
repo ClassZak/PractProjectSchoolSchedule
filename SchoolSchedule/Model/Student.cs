@@ -21,7 +21,7 @@ namespace SchoolSchedule.Model
         public int IdGroup { get; set; }
         public string Email { get; set; }
         public string Gender { get; set; }
-        public int BirthYear { get; set; }
+        public System.DateTime BirthDay { get; set; }
     
         public virtual Group Group { get; set; }
     }

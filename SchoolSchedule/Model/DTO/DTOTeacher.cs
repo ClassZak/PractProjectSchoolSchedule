@@ -14,12 +14,16 @@ namespace SchoolSchedule.Model.DTO
 		public string Surname { get => ModelRef.Surname; set { ModelRef.Surname = value; } }
 		public string Name { get => ModelRef.Name; set { ModelRef.Name = value; } }
 		public string Patronymic { get => ModelRef.Patronymic; set { ModelRef.Patronymic = value; } }
+		public DateTime BirthDay{ get { return ModelRef.BirthDay; } set { _prevBirthDay = ModelRef.BirthDay; ModelRef.BirthDay = value; } }
+		public string Gender { get { return ModelRef.Gender; } set { _prevGender = ModelRef.Gender; ModelRef.Gender = value.Substring(0, 1).ToUpper(); } }
 		#endregion
 		#region Поля для предыдущих значний
 		int _prevId = 0;
 		private string _prevSurname = null;
 		private string _prevName = null;
 		private string _prevPatronymic = null;
+		private DateTime _prevBirthDay = DateTime.MinValue;
+		private string _prevGender = null;
 		#endregion
 		#endregion
 
@@ -33,6 +37,8 @@ namespace SchoolSchedule.Model.DTO
 		public DTOTeacher()
 		{
 			DTOId = ++_lastDTOId;
+			BirthDay = new DateTime(1970, 1, 1);
+			Gender = "М";
 		}
 		public DTOTeacher(Model.Teacher other) 
 		{
@@ -42,6 +48,8 @@ namespace SchoolSchedule.Model.DTO
 			_prevSurname = other.Surname;
 			_prevName = other.Name;
 			_prevPatronymic = other.Patronymic;
+			_prevBirthDay = other.BirthDay;
+			_prevGender = other.Gender;
 
 			LoadSubjectLabel();
 		}
@@ -93,6 +101,10 @@ namespace SchoolSchedule.Model.DTO
 				ModelRef.Name = _prevName;
 			if (_prevPatronymic != null)
 				ModelRef.Patronymic = _prevPatronymic;
+			if (_prevGender != null)
+				ModelRef.Gender = _prevGender;
+			if (_prevBirthDay != DateTime.MinValue)
+				ModelRef.BirthDay = _prevBirthDay;
 		}
 	}
 }

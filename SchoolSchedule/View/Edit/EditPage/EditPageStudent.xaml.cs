@@ -42,7 +42,11 @@ namespace SchoolSchedule.View.Edit.EditPage
 			ObjectIsNew= objectIsNew;
 
 			if (ObjectIsNew)
+			{
 				ValueRef = new Student();
+				ValueRef.BirthDay = new DateTime(2005, 1, 1);
+				ValueRef.Gender = "М";
+			}
 			else
 				ValueRef = student;
 
@@ -51,12 +55,12 @@ namespace SchoolSchedule.View.Edit.EditPage
 		}
 
 
-		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		private void Int16NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			// Разрешить byte
 			var textBox = (TextBox)sender;
 			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
-			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+			e.Handled = !short.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
 		}
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -86,10 +90,6 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
-			ValueRef.Email=ValueRef.Email.Trim();
-			if (ValueRef.Email == string.Empty)
-				ValueRef.Email = null;
-			
 			if (string.IsNullOrWhiteSpace(ValueRef.Surname))
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " фамилию нового" : " новую фамилию") + " ученика");
 			if (string.IsNullOrWhiteSpace(ValueRef.Name))
@@ -97,14 +97,19 @@ namespace SchoolSchedule.View.Edit.EditPage
 			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
 				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " отчество нового" : " новое отчество") + " ученика");
 			if (ValueRef.IdGroup==0)
-				return new KeyValuePair<bool, string>(false, "Выберете класс для ученика");
+				return new KeyValuePair<bool, string>(false, "Выберете класс для ученика(цы)");
 			if(!ObjectIsNew)
-			if(StudentsForCheck.Where(el=>el.Name==ValueRef.Name && el.Surname==ValueRef.Surname && el.Patronymic==ValueRef.Patronymic).Any())
-				return new KeyValuePair<bool, string>(false, $"Ученик \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
+			if(StudentsForCheck.Where(el=>el.Name==ValueRef.Name && el.Surname==ValueRef.Surname && el.Patronymic==ValueRef.Patronymic && el.Gender==ValueRef.Gender && el.BirthDay ==ValueRef.BirthDay).Any())
+				return new KeyValuePair<bool, string>(false, $"Ученик(ца) \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
 			if(ValueRef.Email != null)
+			{
+				ValueRef.Email = ValueRef.Email.Trim();
+				if (ValueRef.Email == string.Empty)
+					ValueRef.Email = null;
 				if(!string.IsNullOrWhiteSpace(ValueRef.Email))
 					if(HasInvalidEmailChars(ValueRef.Email) || !EmailRegex.IsMatch(ValueRef.Email))
 						return new KeyValuePair<bool, string>(false, $"Неверный формат электронной почты!");
+			}
 						
 			
 			return new KeyValuePair<bool,string>(true,null);

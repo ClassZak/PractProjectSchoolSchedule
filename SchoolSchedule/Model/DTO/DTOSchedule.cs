@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchoolSchedule.Model.Additional;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace SchoolSchedule.Model.DTO
 		public int IdTeacher { get => ModelRef.IdTeacher; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
 		public int IdBellSchedule { get => ModelRef.IdBellSchedule; set { _prevIdBellSchedule = ModelRef.IdBellSchedule; ModelRef.IdBellSchedule = value; } }
 		public int DayOfTheWeek { get => ModelRef.DayOfTheWeek; set { _prevDayOfTheWeek = ModelRef.DayOfTheWeek; ModelRef.DayOfTheWeek = value; } }
+		public DayOfTheWeek DayOfTheWeekEnum { get => (DayOfTheWeek)ModelRef.DayOfTheWeek; set { _prevDayOfTheWeek = ModelRef.DayOfTheWeek; ModelRef.DayOfTheWeek = (int)value; } }
 		public int ClassRoom { get => ModelRef.ClassRoom; set { _prevClassRoom = ModelRef.ClassRoom; ModelRef.ClassRoom = value; } }
 		#endregion
 		#region Свойства для дополнительной информации

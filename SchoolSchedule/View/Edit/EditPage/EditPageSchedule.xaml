@@ -22,7 +22,6 @@
 			<TextBlock Text="День недели"/>
 			<ComboBox
 				ToolTip="Кабинет для занятий"
-				PreviewTextInput="NumberTextBox_PreviewTextInput"
 				SelectedValue="{Binding CurrentSchedule.DayOfTheWeek}"
 				SelectedValuePath="Tag"
 			>

@@ -73,7 +73,7 @@
           <Property Name="IdGroup" Type="int" Nullable="false" />
           <Property Name="Email" Type="nvarchar" MaxLength="60" />
           <Property Name="Gender" Type="nchar" MaxLength="1" Nullable="false" />
-          <Property Name="BirthYear" Type="int" Nullable="false" />
+          <Property Name="BirthDay" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="Subject">
           <Key>
@@ -91,7 +91,7 @@
           <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
           <Property Name="Patronymic" Type="nvarchar" MaxLength="30" Nullable="false" />
           <Property Name="Gender" Type="nchar" MaxLength="1" Nullable="false" />
-          <Property Name="BirthYear" Type="int" Nullable="false" />
+          <Property Name="BirthDay" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="TeacherPhone">
           <Key>
@@ -298,8 +298,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="GetAgeByBirthYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
-          <Parameter Name="BirthYear" Type="int" Mode="In" />
+        <Function Name="CalculateAge" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="BirthDate" Type="date" Mode="In" />
         </Function>
         <Function Name="ShowLessonsAtDayForTeacher" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="surname" Type="nvarchar" Mode="In" />
@@ -467,7 +467,7 @@
           <Property Name="IdGroup" Type="Int32" Nullable="false" />
           <Property Name="Email" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="BirthYear" Type="Int32" Nullable="false" />
+          <Property Name="BirthDay" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="Group" Relationship="Self.FK__Student__IdGroup__5812160E" FromRole="Student" ToRole="Group" />
         </EntityType>
         <EntityType Name="Subject">
@@ -489,7 +489,7 @@
           <Property Name="Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Patronymic" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="BirthYear" Type="Int32" Nullable="false" />
+          <Property Name="BirthDay" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="LessonSubsitutionSchedule" Relationship="Self.FK__LessonSub__IdTea__6B24EA82" FromRole="Teacher" ToRole="LessonSubsitutionSchedule" />
           <NavigationProperty Name="Schedule" Relationship="Self.FK__Schedule__IdTeac__628FA481" FromRole="Teacher" ToRole="Schedule" />
           <NavigationProperty Name="TeacherPhone" Relationship="Self.FK__TeacherPh__IdTea__52593CB8" FromRole="Teacher" ToRole="TeacherPhone" />
@@ -796,7 +796,7 @@
                 <ScalarProperty Name="IdGroup" ColumnName="IdGroup" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Gender" ColumnName="Gender" />
-                <ScalarProperty Name="BirthYear" ColumnName="BirthYear" />
+                <ScalarProperty Name="BirthDay" ColumnName="BirthDay" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -816,7 +816,7 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
                 <ScalarProperty Name="Gender" ColumnName="Gender" />
-                <ScalarProperty Name="BirthYear" ColumnName="BirthYear" />
+                <ScalarProperty Name="BirthDay" ColumnName="BirthDay" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -29,7 +29,7 @@ namespace SchoolSchedule.Model
         public string Name { get; set; }
         public string Patronymic { get; set; }
         public string Gender { get; set; }
-        public int BirthYear { get; set; }
+        public System.DateTime BirthDay { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LessonSubsitutionSchedule> LessonSubsitutionSchedule { get; set; }

@@ -70,6 +70,8 @@ namespace SchoolSchedule.ViewModel
 			forUpdate.Patronymic = student.Patronymic;
 			forUpdate.IdGroup = student.IdGroup;
 			forUpdate.Email = student.Email;
+			forUpdate.Gender = student.Gender;
+			forUpdate.BirthDay = student.BirthDay;
 		}
 		private async Task UpdateTeacher(Model.Teacher teacher, Model.DTO.DTOTeacher selectedObject, Model.SchoolScheduleEntities db)
 		{
@@ -91,6 +93,8 @@ namespace SchoolSchedule.ViewModel
 			forUpdate.Surname = teacher.Surname;
 			forUpdate.Name = teacher.Name;
 			forUpdate.Patronymic = teacher.Patronymic;
+			forUpdate.Gender = teacher.Gender;
+			forUpdate.BirthDay = teacher.BirthDay;
 
 			foreach (var phone in forUpdate.TeacherPhone.ToList())
 			{

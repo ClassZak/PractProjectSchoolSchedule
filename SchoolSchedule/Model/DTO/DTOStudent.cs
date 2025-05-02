@@ -16,6 +16,8 @@ namespace SchoolSchedule.Model.DTO
 		public string Name{ get { return ModelRef.Name; } set { _prevName = ModelRef.Name;  ModelRef.Name = value; } }
 		public string Patronymic{ get { return ModelRef.Patronymic; } set { _prevPatronymic = ModelRef.Patronymic;  ModelRef.Patronymic = value; } }
 		public string Email { get { return ModelRef.Email; } set { _prevEmail = ModelRef.Email; ModelRef.Email = value; } }
+		public DateTime BirthDay { get { return ModelRef.BirthDay; } set { _prevBirthDay = ModelRef.BirthDay; ModelRef.BirthDay = value; } }
+		public string Gender{ get { return ModelRef.Gender=="М" ? "Мужской" : (ModelRef.Gender == "Ж" ? "Женский" : string.Empty); } set { _prevGender = ModelRef.Gender; ModelRef.Gender = value.Substring(0,1).ToUpper(); } }
 		#endregion
 		#region Поля предыдущих значений
 		private int _prevId = 0;
@@ -23,6 +25,8 @@ namespace SchoolSchedule.Model.DTO
 		private string _prevName = null;
 		private string _prevPatronymic = null;
 		private string _prevEmail = null;
+		private DateTime _prevBirthDay = DateTime.MinValue;
+		private string _prevGender = null;
 		#endregion
 		#endregion
 
@@ -40,6 +44,8 @@ namespace SchoolSchedule.Model.DTO
 		public DTOStudent()
 		{
 			DTOId=++_lastDTOId;
+			BirthDay = new DateTime(2005,1,1);
+			Gender = "М";
 		}
 		public DTOStudent(Model.Student other) 
 		{
@@ -51,6 +57,8 @@ namespace SchoolSchedule.Model.DTO
 			_prevName=other.Name;
 			_prevPatronymic=other.Patronymic;
 			_prevEmail=other.Email;
+			_prevBirthDay=other.BirthDay;
+			_prevGender=other.Gender;
 		}
 		
 		public override bool HasReferenceOfNotExistingObject()
@@ -69,6 +77,10 @@ namespace SchoolSchedule.Model.DTO
 				ModelRef.Patronymic=_prevPatronymic;
 			if(_prevEmail != null)
 				ModelRef.Email = _prevEmail;
+			if(_prevGender != null)
+				ModelRef.Gender = _prevGender;
+			if (_prevBirthDay != DateTime.MinValue)
+				ModelRef.BirthDay =_prevBirthDay;
 		}
 	}
 }

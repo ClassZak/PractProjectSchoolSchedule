@@ -74,6 +74,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Additional\DayOfTheWeekConverter.cs" />
+    <Compile Include="Additional\InputEventHandler.cs" />
+    <Compile Include="Model\Additional\Gender.cs" />
     <Compile Include="Model\BellSchedule.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
