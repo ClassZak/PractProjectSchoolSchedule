@@ -326,6 +326,21 @@ END;
 GO
 
 
+CREATE FUNCTION GetAgeByBirthYear
+(
+    @BirthYear INT
+)
+RETURNS INT
+AS
+BEGIN
+    RETURN 
+        CASE 
+            WHEN @BirthYear IS NULL THEN NULL
+            ELSE YEAR(GETDATE()) - @BirthYear 
+        END;
+END;
+GO
+
 
 INSERT INTO BellScheduleType ([Name]) VALUES ('Расписание звонков на каждую неделю')
 
