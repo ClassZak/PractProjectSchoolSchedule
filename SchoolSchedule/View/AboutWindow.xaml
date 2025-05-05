@@ -1,0 +1,94 @@
+﻿<Window x:Class="SchoolSchedule.View.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SchoolSchedule.View"
+        mc:Ignorable="d"
+		ResizeMode="CanMinimize"
+		Title="О программе" Height="270" Width="400" WindowStartupLocation="CenterOwner"
+		FontFamily="Arial"
+		>
+    <Grid>
+		<Grid>
+			<StackPanel>
+				<TextBlock 
+					Text="Школное расписания" 
+					HorizontalAlignment="Center" 
+					FontSize="20"
+				/>
+				<StackPanel>
+					<TextBlock Margin="10,0,0,0"
+						Text="Данная программа предназначена работы с школьной базой данных и обеспечивает следующие возможности:"
+						TextWrapping="Wrap" TextAlignment="Center"
+					/>
+
+					<Grid Margin="20,0,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="—"/>
+						<TextBlock 
+							Grid.Column="1"
+							Text="хранение в базе данных (БД) информации о предметах, классах, учениках, учителях, расписании звонков, расписании уроков и о заменах уроков;"
+							TextWrapping="Wrap" TextAlignment="Left"
+						/>
+					</Grid>
+					<Grid Margin="20,0,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="—"/>
+						<TextBlock 
+							Grid.Column="1"
+							Text="добавление, удаление и изменение информацию в БД;"
+							TextWrapping="Wrap" TextAlignment="Left"
+						/>
+					</Grid>
+					<Grid Margin="20,0,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="—"/>
+						<TextBlock 
+							Grid.Column="1"
+							Text="обеспечение ввода, просмотра и редактирования информации о предметах, классах, учениках, учителях, расписании звонков, расписании уроков и о заменах уроков."
+							TextWrapping="Wrap" TextAlignment="Left"
+						/>
+					</Grid>
+				</StackPanel>
+				<UniformGrid Rows="4" Margin="16,0">
+					<UniformGrid Rows="1" Columns="2">
+						<TextBlock
+						Text="Версия приложения:"
+					/>
+						<TextBlock
+						Text="1.0.0.0" FontWeight="Bold"
+					/>
+					</UniformGrid>
+					<UniformGrid Rows="1" Columns="2">
+						<TextBlock
+						Text="Автор приложения:"
+					/>
+						<TextBlock
+						Text="Голуб Захар Владимирович" FontWeight="Bold"
+					/>
+					</UniformGrid>
+					<UniformGrid Rows="1" Columns="2">
+						<TextBlock
+						Text="Группа :"
+					/>
+						<TextBlock
+						Text="ИС-33" FontWeight="Bold"
+					/>
+					</UniformGrid>
+				</UniformGrid>
+
+			</StackPanel>
+			<TextBlock Text="г. Майкоп 2025" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10"/>
+		</Grid>
+	</Grid>
+</Window>

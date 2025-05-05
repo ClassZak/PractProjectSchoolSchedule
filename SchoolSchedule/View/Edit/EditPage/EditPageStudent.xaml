@@ -43,7 +43,7 @@
 				<ComboBoxItem Tag="М">Мужской</ComboBoxItem>
 				<ComboBoxItem Tag="Ж">Женский</ComboBoxItem>
 			</ComboBox>
-			<TextBlock Text="День рождения"/>
+			<TextBlock Text="Дата рождения"/>
 			<DatePicker SelectedDate="{Binding CurrentStudent.BirthDay}" ToolTip="Дата проведения для замены"/>
 		</StackPanel>
 	</Grid>

@@ -31,6 +31,39 @@ namespace SchoolSchedule.ViewModel
 {
 	public partial class MainViewModel : ABaseViewModel
 	{
+		#region Окна
+		AboutWindow AboutWindow { get; set; } = null;
+		#region Команды запуска окон
+		RelayCommand _showAboutWindow;
+		public RelayCommand ShowAboutWindow
+		{
+			get
+			{
+				return _showAboutWindow ?? (_showAboutWindow=new RelayCommand(param=> 
+				{
+					if (AboutWindow != null)
+						AboutWindow.Focus();
+					else
+					{
+						AboutWindow = new AboutWindow();
+						AboutWindow.Owner = MainWindow;
+						AboutWindow.Closed += WindowClosedEventHandeler;
+						AboutWindow.Show();
+					}
+				}));
+			}
+		}
+		#endregion
+		#region Обработчики событий закрытия окна
+		void WindowClosedEventHandeler(object sender, EventArgs eventArgs)
+		{
+			if (ReferenceEquals(sender, AboutWindow))
+				AboutWindow = null;
+		}
+		#endregion
+		#endregion
+
+
 		public MainWindow MainWindow { get; set; }
 		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOSubject> SelectedSubjects { get; set; } = new ObservableCollection<Model.DTO.DTOSubject>();

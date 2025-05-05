@@ -128,7 +128,14 @@
     <Compile Include="Model\TeacherPhone.cs">
       <DependentUpon>SchoolSchedule.tt</DependentUpon>
     </Compile>
+    <Compile Include="View\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\TextBoxBehavior.cs" />
+    <Page Include="View\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Edit\EditPage\EditPageBellSchedule.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

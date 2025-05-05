@@ -38,7 +38,7 @@
 				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
 			</MenuItem>
 			<MenuItem Header="Справка">
-				
+				<MenuItem Header="О программе" Command="{Binding ShowAboutWindow}"/>
 			</MenuItem>
 		</Menu>
 		<Grid Margin="6" Grid.Row="1">
@@ -99,7 +99,7 @@
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}"/>
 								<DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
-								<DataGridTemplateColumn Header="День рождения">
+								<DataGridTemplateColumn Header="Дата рождения">
 									<DataGridTemplateColumn.CellTemplate>
 										<DataTemplate>
 											<TextBlock Text="{Binding BirthDay, StringFormat=dd.MM.yyyy}"/>
@@ -132,7 +132,7 @@
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
 								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}"/>
 								<DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
-								<DataGridTemplateColumn Header="День рождения">
+								<DataGridTemplateColumn Header="Дата рождения">
 									<DataGridTemplateColumn.CellTemplate>
 										<DataTemplate>
 											<TextBlock Text="{Binding BirthDay, StringFormat=dd.MM.yyyy}"/>
