@@ -55,6 +55,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOSubject}" View:DataGridBehavior.SelectedItems="{Binding SelectedSubjects}" ToolTip="Школьные предметы">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
@@ -73,6 +78,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOGroup}" View:DataGridBehavior.SelectedItems="{Binding SelectedGroups}" ToolTip="Классы">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Год" Binding="{Binding Year}"/>
 								<DataGridTextColumn Header="Группа" Binding="{Binding Name}"/>
@@ -94,6 +104,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOStudents}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedStudents}" ToolTip="Ученики">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -127,6 +142,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding DTOTeacher}" View:DataGridBehavior.SelectedItems="{Binding SelectedTeachers}" ToolTip="Учителя">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
 								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -160,6 +180,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOBellScheduleType}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedBellScheduleTypes}" ToolTip="Проходящие занятия">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Тип расписания" Binding="{Binding Name}"/>
 							</DataGrid.Columns>
@@ -180,6 +205,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOBellSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedBellSchedules}" ToolTip="Проходящие занятия">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Название"			Binding="{Binding BellScheduleType}"/>
 								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
@@ -203,6 +233,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOLessonSubsitutionSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedLessonSubsitutionSchedules}" ToolTip="Проходящие занятия">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTemplateColumn Header="День для замены">
 									<DataGridTemplateColumn.CellTemplate>
@@ -236,6 +271,11 @@
 							<ColumnDefinition Width="80"/>
 						</Grid.ColumnDefinitions>
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DTOSchedule}" IsReadOnly="True" View:DataGridBehavior.SelectedItems="{Binding SelectedSchedules}" ToolTip="Проходящие занятия">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Расписание звонков"	Binding="{Binding BellScheduleType}"/>
 								<DataGridTextColumn Header="День недели"		Binding="{Binding DayOfTheWeekEnum,Converter={StaticResource DayOfTheWeekConverter}}"/>

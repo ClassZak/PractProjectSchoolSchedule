@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace SchoolSchedule.ViewModel
@@ -62,7 +63,101 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#endregion
+		#region Копирование в буфер обмена
+		private List<string> GetDisplayedProperties(DataGrid dataGrid)
+		{
+			return dataGrid.Columns
+				.OfType<DataGridBoundColumn>()
+				.Select(column => (column.Binding as Binding)?.Path.Path)
+				.Where(path => !string.IsNullOrEmpty(path))
+				.ToList();
+		}
+		private object GetPropertyValue(object source, string propertyPath)
+		{
+			if (source == null || string.IsNullOrEmpty(propertyPath)) return null;
 
+			var parts = propertyPath.Split('.');
+			object current = source;
+
+			foreach (var part in parts)
+			{
+				var type = current.GetType();
+				var prop = type.GetProperty(part);
+
+				if (prop == null) return null;
+				current = prop.GetValue(current);
+
+				if (current == null) break;
+			}
+
+			return current;
+		}
+		private List<Dictionary<string, object>> GetSelectedItemsData(DataGrid dataGrid)
+		{
+			var result = new List<Dictionary<string, object>>();
+			var properties = GetDisplayedProperties(dataGrid);
+
+			foreach (var item in dataGrid.SelectedItems)
+			{
+				var itemData = new Dictionary<string, object>();
+				foreach (var propertyPath in properties)
+				{
+					itemData[propertyPath] = GetPropertyValue(item, propertyPath);
+				}
+				result.Add(itemData);
+			}
+
+			return result;
+		}
+		RelayCommand _dataGridDataToClipboard;
+		public RelayCommand DataGridDataToClipboard
+		{
+			get
+			{
+				return _dataGridDataToClipboard ?? (_dataGridDataToClipboard = new RelayCommand(param => 
+				{
+					if (param is null)
+						throw new ArgumentNullException(nameof(param));
+					if (!(param is DataGrid dataGrid))
+						throw new ArgumentException("Параметр должен быть DataGrid", nameof(param));
+
+					// Получаем видимые элементы в правильном порядке
+					var orderedSelectedItems = dataGrid.Items.Cast<object>()
+						.Where(item => dataGrid.ItemContainerGenerator.ContainerFromItem(item) != null)
+						.ToList()
+						.Where(item => dataGrid.SelectedItems.Contains(item))
+						.ToList();
+
+					var columns = dataGrid.Columns
+						.OfType<DataGridBoundColumn>()
+						.Select(c => (c.Binding as Binding)?.Path.Path)
+						.Where(p => !string.IsNullOrEmpty(p))
+						.ToList();
+
+					var stringBuilder = new StringBuilder();
+					foreach (var item in orderedSelectedItems)
+					{
+						var values = new List<string>();
+						foreach (var propertyPath in columns)
+						{
+							object value = item;
+							foreach (var part in propertyPath.Split('.'))
+							{
+								var prop = value?.GetType().GetProperty(part);
+								value = prop?.GetValue(value);
+								if (value == null) break;
+							}
+							values.Add(value?.ToString() ?? string.Empty);
+						}
+						stringBuilder.AppendLine(string.Join("\t", values));
+					}
+
+					if (stringBuilder.Length > 0)
+						Clipboard.SetText(stringBuilder.ToString().TrimEnd());
+				}));
+			}
+		}
+		#endregion
 
 		public MainWindow MainWindow { get; set; }
 		[ViewModel.Attributes.CollectionOfSelectedItems]
