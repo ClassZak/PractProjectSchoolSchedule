@@ -1,4 +1,5 @@
-﻿using SchoolSchedule.ViewModel.Edit;
+﻿using SchoolSchedule.Model;
+using SchoolSchedule.ViewModel.Edit;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,56 +26,14 @@ namespace SchoolSchedule.View.Edit.EditPage
 	public partial class EditPageTeacher : Page
 	{
 		public Window OwnerWindow { get; set; }
-		
-		public bool ObjectIsNew { get; set; }
-		public List<Model.Teacher> TeachersForCheck { get; set; } = new List<Model.Teacher>();
-		public Model.Teacher ValueRef { get; set; }
-		private EditTeacherViewModel _editTeacherViewModel { get; set; }
-
 		protected EditPageTeacher()
 		{
 			InitializeComponent();
-			DataContext = ValueRef;
 		}
-		public EditPageTeacher(List<Model.Teacher> teachers,List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones, bool objectIsNew,Model.Teacher teacher,Window window) : this()
+		public EditPageTeacher(List<Model.Teacher> teachers,List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones, bool objectIsNew,Model.Teacher model, Window window) : this()
 		{
-			OwnerWindow = window;	
-
-			TeachersForCheck = teachers;
-			ObjectIsNew = objectIsNew;
-
-			if (ObjectIsNew)
-			{
-				ValueRef = new Model.Teacher();
-				ValueRef.BirthDay = new DateTime(1970, 1, 1);
-				ValueRef.Gender="М";
-			}
-			else
-				ValueRef = teacher;
-
-
-			_editTeacherViewModel = new EditTeacherViewModel(ValueRef,groups,subjects,teacherPhones, OwnerWindow);
-			DataContext = _editTeacherViewModel;
-			foreach(var el in teacherPhones)
-				if(el.IdTeacher==teacher.Id)
-					_editTeacherViewModel.TeacherPhones.Add(new Model.DTO.DTOTeacherPhone(el));
-		}
-
-
-
-		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			// Разрешить byte
-			var textBox = (TextBox)sender;
-			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
-			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-		}
-		private void Int16NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			// Разрешить byte
-			var textBox = (TextBox)sender;
-			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
-			e.Handled = !short.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+			OwnerWindow = window;
+			DataContext = new EditTeacherViewModel(objectIsNew ? new Teacher { BirthDay = new DateTime(1970, 1, 1), Gender = "М" } : model, teachers, groups, subjects, teacherPhones, objectIsNew, window);
 		}
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -83,29 +42,10 @@ namespace SchoolSchedule.View.Edit.EditPage
 			e.Handled = !regex.IsMatch(e.Text);
 		}
 
-		private static readonly Regex forbiddenCharsRegex = new Regex
-		(
-			@"[^\w.%+-@-]", // Инвертированный набор разрешённых символов
-			RegexOptions.IgnoreCase
-		);
-		public static bool HasInvalidEmailChars(string input)
-		{
-			return forbiddenCharsRegex.IsMatch(input);
-		}
-
 
 		public KeyValuePair<bool, string> CheckInputRules()
 		{
-			if (string.IsNullOrWhiteSpace(ValueRef.Surname))
-				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " фамилию нового" : " новую фамилию") + " учителя");
-			if (string.IsNullOrWhiteSpace(ValueRef.Name))
-				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " имя нового" : " новое имя") + " учителя");
-			if (string.IsNullOrWhiteSpace(ValueRef.Patronymic))
-				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " отчество нового " : " новое отчество ") + "учителя");
-			if (ObjectIsNew && TeachersForCheck.Where(el => el.Name == ValueRef.Name && el.Surname == ValueRef.Surname && el.Patronymic == ValueRef.Patronymic).Any())
-				return new KeyValuePair<bool, string>(false, $"Учитель \"{ValueRef.Surname} {ValueRef.Name} {ValueRef.Patronymic}\" уже присутствует в базе данных");
-
-			return new KeyValuePair<bool, string>(true, null);
+			return (DataContext as EditTeacherViewModel).CheckInputRules();
 		}
 	}
 }

@@ -19,7 +19,10 @@ namespace SchoolSchedule.ViewModel.Table
 		public virtual void CancelChanges()
 		{
 			App.Current.Dispatcher.Invoke(() =>
-			{ 
+			{
+				if (PreviousEntries.Count == 0)
+					return;
+
 				Entries.Clear();
 
 				T[] array=new T[PreviousEntries.Count];

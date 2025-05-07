@@ -66,7 +66,6 @@ namespace SchoolSchedule.ViewModel
 
 
 			var forEdit = db.Teacher.Add(teacher);
-			await db.SaveChangesAsync();
 
 			if (forEdit == null)
 				throw new Exception("Не удалось добавить предметы и классы для учителей");
@@ -75,7 +74,7 @@ namespace SchoolSchedule.ViewModel
 			foreach (var el in groups)
 				forEdit.Group.Add(await db.Group.FindAsync(el.Id));
 			foreach (var el in phones)
-				db.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = el.IdTeacher, PhoneNumber = el.PhoneNumber });
+				db.TeacherPhone.Add(new Model.TeacherPhone { IdTeacher = teacher.Id, PhoneNumber = el.PhoneNumber });
 		}
 		private void CreateSchedule(Model.Schedule schedule, SchoolScheduleEntities db)
 		{

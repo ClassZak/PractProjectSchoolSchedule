@@ -5,17 +5,22 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SchoolSchedule.View.Edit.EditPage"
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
+      xmlns:ViewModel="clr-namespace:SchoolSchedule.ViewModel"
+      xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit"
       mc:Ignorable="d" 
 	  	FontFamily="Arial"
 		FontSize="12"
       d:DesignHeight="135" d:DesignWidth="320">
 	<Page.DataContext>
-		<Model:Subject/>
+		<EditViewModel:EditSubjectViewModel/>
 	</Page.DataContext>
 	<Grid>
 		<StackPanel>
-			<TextBlock Text="Название"/>
-			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Название нового предмета в базе данных"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Название" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Название школьного предмета в базе данных" LostFocus="NameTextBox_LostFocus"/>
 		</StackPanel>
 	</Grid>
 </Page>

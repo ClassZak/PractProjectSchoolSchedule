@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace SchoolSchedule.ViewModel
 {
@@ -295,18 +296,31 @@ namespace SchoolSchedule.ViewModel
 				return _createCommmand ?? (_createCommmand = new RelayCommand(
 				async param =>
 				{
-					if (!(param is Type targetType))
-						throw new ArgumentException("Выбран неверный тип аргумента");
+					try
+					{
+						if (!(param is Type targetType))
+							throw new ArgumentException("Выбран неверный тип аргумента");
 
-					var result = await ShowEditWindowAsync(targetType, null);
-					if(result.DialogResult && MessageBox.Show("Вы действительно хотите добавить новый объект?","Добаваление объектов",MessageBoxButton.YesNoCancel,MessageBoxImage.Question)==MessageBoxResult.Yes)
-						await ExecuteCommandAsync("Добавление новых записей", async () => await Task.Run(async () =>
-						{
-							await CreateEntityAsync(result.EditObject, targetType);
+						var result = await ShowEditWindowAsync(targetType, null);
+						if (result.DialogResult && MessageBox.Show("Вы действительно хотите добавить новый объект?", "Добаваление объектов", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
+							await ExecuteCommandAsync("Добавление новых записей", async () => await Task.Run(async () =>
+							{
+								await CreateEntityAsync(result.EditObject, targetType);
 
-							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
-							thread.Start();
-						}));
+								Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
+								thread.Start();
+							}));
+					}
+					catch (Exception ex)
+					{
+						TaskName = "Добаваление объектов";
+						ETaskStatus = ETaskStatus.Failed;
+						OnPropertyChanged(nameof(TaskStatus));
+						ErrorMessage = GetMessageFromException(ex);
+						HandleException(ex);
+
+						CancelTableChanges();
+					}
 				}));
 			}
 		}
@@ -344,15 +358,32 @@ namespace SchoolSchedule.ViewModel
 						return;
 					}
 					var selectedObject = (targetCollection)[0];
-					var result = await ShowEditWindowAsync(targetType, selectedObject);
+					try
+					{
+						var result = await ShowEditWindowAsync(targetType, selectedObject);
 
-					if (result.DialogResult && MessageBox.Show("Вы действительно хотите сохранить изменения?", "Редактирование данных", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
-						await ExecuteCommandAsync("Редактирование данных", async () => await Task.Run(async () =>
-						{
-							await UpdateEntityAsync(result.EditObject, selectedObject, targetType);
-							Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
-							thread.Start();
-						})); 
+						
+						if (result.DialogResult && MessageBox.Show("Вы действительно хотите сохранить изменения?", "Редактирование данных", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
+							await ExecuteCommandAsync("Редактирование данных", async () => await Task.Run(async () =>
+							{
+								await UpdateEntityAsync(result.EditObject, selectedObject, targetType);
+								SaveTableValues();
+								Thread thread = new Thread(() => { Thread.Sleep(200); _semaphore.Wait(); _semaphore.Release(); App.Current.Dispatcher.Invoke(() => { _updateCommand.Execute(null); }); });
+								thread.Start();
+							})); 
+						else
+							CancelChangesForDTOItem(selectedObject, targetType);
+					}
+					catch (Exception ex)
+					{
+						TaskName = "Редактирование данных";
+						ETaskStatus = ETaskStatus.Failed;
+						OnPropertyChanged(nameof(TaskStatus));
+						ErrorMessage = GetMessageFromException(ex);
+						HandleException(ex);
+
+						CancelTableChanges();
+					}
 				}));
 			}
 		}
@@ -439,6 +470,28 @@ namespace SchoolSchedule.ViewModel
 					MessageBoxImage.Warning
 				);
 			});
+		}
+		private void CancelChangesForDTOItem(object dto, Type type)
+		{
+			if (type.Name== typeof(DTOSubject).Name)
+				(dto as DTOSubject).Restore();
+			else if (type.Name== typeof(DTOGroup).Name)
+				(dto as DTOGroup).Restore();
+			else if (type.Name== typeof(DTOSchedule).Name)
+				(dto as DTOSchedule).Restore();
+			else if (type.Name== typeof(DTOStudent).Name)
+				(dto as DTOStudent).Restore();
+			else if (type.Name== typeof(DTOTeacher).Name)
+				(dto as DTOTeacher).Restore();
+			else if (type.Name== typeof(DTOTeacherPhone).Name)
+				(dto as DTOTeacherPhone).Restore();
+			else if (type.Name== typeof(DTOBellScheduleType).Name)
+				(dto as DTOBellScheduleType).Restore();
+			else if (type.Name== typeof(DTOBellSchedule).Name)
+				(dto as DTOBellSchedule).Restore();
+			else if (type.Name== typeof(DTOLessonSubsitutionSchedule).Name)
+				(dto as DTOLessonSubsitutionSchedule).Restore();
+				
 		}
 		protected object GetModelRefOfADTOObject(object dto, out Type extractedType)
 		{
@@ -619,9 +672,9 @@ namespace SchoolSchedule.ViewModel
 		{
 			App.Current.Dispatcher.Invoke(() =>
 			{
+				_subjectTable.CancelChanges();
 				_studentTable.CancelChanges();
 				_groupTable.CancelChanges();
-				_subjectTable.CancelChanges();
 				_teacherTable.CancelChanges();
 				_scheduleTable.CancelChanges();
 				_bellScheduleTableType.CancelChanges();
@@ -639,23 +692,23 @@ namespace SchoolSchedule.ViewModel
 
 					ClearTables();
 
-					foreach (var el in dataBase.Group.ToList()						.OrderBy(x=>x.Year).ThenBy(x=>x.Name))
+					foreach (var el in dataBase.Group.Include(g => g.Teacher).ToList()	.OrderBy(x => x.Year).ThenBy(x => x.Name))
 						_groups.Add(el);
-					foreach (var el in dataBase.Schedule.ToList()					.OrderBy(x=>x.IdBellSchedule).ThenBy(x=>x.DayOfTheWeek).ThenBy(x=>x.IdGroup))
+					foreach (var el in dataBase.Schedule.ToList()						.OrderBy(x=>x.IdBellSchedule).ThenBy(x=>x.DayOfTheWeek).ThenBy(x=>x.IdGroup))
 						_schedules.Add(el);
-					foreach (var el in dataBase.Student.ToList()					.OrderBy(x => x.Gender).ThenBy(x => x.IdGroup).ThenBy(x=>x.BirthDay).ThenBy(x=>x.Surname).ThenBy(x=>x.Name).ThenBy(x=>x.Patronymic))
+					foreach (var el in dataBase.Student.ToList()						.OrderBy(x => x.Gender).ThenBy(x => x.IdGroup).ThenBy(x=>x.BirthDay).ThenBy(x=>x.Surname).ThenBy(x=>x.Name).ThenBy(x=>x.Patronymic))
 						_students.Add(el);
-					foreach (var el in dataBase.Subject.ToList()					.OrderBy(x => x.Name))
+					foreach (var el in dataBase.Subject.ToList()						.OrderBy(x => x.Name))
 						_subjects.Add(el);
-					foreach (var el in dataBase.Teacher.ToList()					.OrderBy(x => x.Gender).ThenBy(x => x.BirthDay).ThenBy(x => x.Surname).ThenBy(x => x.Name).ThenBy(x => x.Patronymic))
+					foreach (var el in dataBase.Teacher.ToList()						.OrderBy(x => x.Gender).ThenBy(x => x.Surname).ThenBy(x => x.Name).ThenBy(x => x.Patronymic).ThenBy(x => x.BirthDay))
 						_teachers.Add(el);
-					foreach (var el in dataBase.TeacherPhone.ToList()				.OrderBy(x => x.IdTeacher).ThenBy(x => x.PhoneNumber))
+					foreach (var el in dataBase.TeacherPhone.ToList()					.OrderBy(x => x.IdTeacher).ThenBy(x => x.PhoneNumber))
 						_teacherPhones.Add(el);
-					foreach (var el in dataBase.BellScheduleType.ToList()			.OrderBy(x => x.Name))
+					foreach (var el in dataBase.BellScheduleType.ToList()				.OrderBy(x => x.Name))
 						_bellScheduleTypes.Add(el);
-					foreach (var el in dataBase.BellSchedule.ToList()				.OrderBy(x => x.IdBellScheduleType).ThenBy(x => x.LessonNumber))
+					foreach (var el in dataBase.BellSchedule.ToList()					.OrderBy(x => x.IdBellScheduleType).ThenBy(x => x.LessonNumber))
 						_bellSchedules.Add(el);
-					foreach (var el in dataBase.LessonSubsitutionSchedule.ToList()	.OrderBy(x => x.Date).ThenBy(x => x.LessonNumber).ThenBy(x=>x.IdGroup))
+					foreach (var el in dataBase.LessonSubsitutionSchedule.ToList()		.OrderBy(x => x.Date).ThenBy(x => x.LessonNumber).ThenBy(x=>x.IdGroup))
 						_lessonSubsitutionSchedules.Add(el);
 
 					foreach (var el in _students)

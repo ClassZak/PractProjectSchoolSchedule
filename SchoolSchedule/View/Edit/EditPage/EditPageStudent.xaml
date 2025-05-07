@@ -19,32 +19,50 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		<StackPanel Margin="20,0,20,0">
-			<TextBlock Text="Фамилия"/>
-			<TextBox Text="{Binding CurrentStudent.Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
-			<TextBlock Text="Имя"/>
-			<TextBox Text="{Binding CurrentStudent.Name}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
-			<TextBlock Text="Отчество"/>
-			<TextBox Text="{Binding CurrentStudent.Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Фамилия" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Имя" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Отчество" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
 		</StackPanel>
 		<StackPanel Grid.Column="1" Margin="10,0,10,0">
 			<TextBlock Text="Электронная почта"/>
-			<TextBox Text="{Binding CurrentStudent.Email}" PreviewTextInput="Email_PreviewTextInput" ToolTip="Электронная почта, если есть"/>
-			<TextBlock Text="Класс"/>
+			<TextBox Text="{Binding Email}" PreviewTextInput="Email_PreviewTextInput" ToolTip="Электронная почта, если есть"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Класс" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentStudent.IdGroup}"
+				SelectedValue="{Binding IdGroup}"
 			/>
-			<TextBlock Text="Пол"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Пол" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox
 				SelectedValuePath="Tag"
-				SelectedValue="{Binding CurrentStudent.Gender}"
+				SelectedValue="{Binding Gender}"
 				SelectedIndex="0"
 			>
 				<ComboBoxItem Tag="М">Мужской</ComboBoxItem>
 				<ComboBoxItem Tag="Ж">Женский</ComboBoxItem>
 			</ComboBox>
-			<TextBlock Text="Дата рождения"/>
-			<DatePicker SelectedDate="{Binding CurrentStudent.BirthDay}" ToolTip="Дата проведения для замены"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Дата рождения" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<DatePicker SelectedDate="{Binding BirthDay}" ToolTip="Дата рождения от января 2005го года"/>
 		</StackPanel>
 	</Grid>
 </Page>

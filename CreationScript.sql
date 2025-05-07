@@ -15,7 +15,7 @@ CREATE TABLE BellScheduleType(
 	Name	NVARCHAR(50) NOT NULL
 )
 ALTER TABLE BellScheduleType ADD CONSTRAINT
-RussianBellScheduleTypeConstraint CHECK (NOT Name LIKE '%[a-zA-Z0-9]%')
+RussianBellScheduleTypeConstraint CHECK (NOT Name LIKE '%[a-zA-Z]%')
 
 
 CREATE TABLE BellSchedule(
@@ -68,6 +68,8 @@ CREATE TABLE Subject(
 	Id		INT IDENTITY PRIMARY KEY,
 	Name	NVARCHAR(70) NOT NULL
 )
+ALTER TABLE Subject ADD CONSTANT RussianSubjectConstraint
+CHECK (NOT [Name] LIKE '%[a-zA-Z]%')
 
 
 
@@ -134,9 +136,23 @@ ALTER TABLE Student ADD CONSTRAINT RussianStudentSurname
 CHECK (NOT Surname LIKE '%[a-zA-Z0-9]%')
 ALTER TABLE Student ADD CONSTRAINT RussianStudentPatronymic
 CHECK (NOT Patronymic LIKE '%[a-zA-Z0-9]%')
-
 ALTER TABLE Student ADD CONSTRAINT StudentEmailCheck
 CHECK (Email IS NULL OR Email LIKE '%_@%_.__%')
+
+CREATE TRIGGER StudentLowerCaseEmailTrigger
+ON Student
+AFTER INSERT, UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	UPDATE Student
+		SET email = LOWER(i.email)
+	FROM Student s
+	INNER JOIN inserted i ON s.id = i.id
+	WHERE s.Email IS NOT NULL AND s.Email <> LOWER(i.Email);
+END;
+GO
 
 
 

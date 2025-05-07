@@ -22,14 +22,14 @@
 			<TextBlock Text="Расписание" Margin="0,10,0,0"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding BellScheduleTypes}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentBellSchedule.IdBellScheduleType}"
+				SelectedValue="{Binding IdBellScheduleType}"
 				ToolTip="Тип расписания"
 			>
 				<ComboBox.Style>
 					<Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
 						<Setter Property="IsEnabled" Value="True"/>
 						<Style.Triggers>
-							<DataTrigger Binding="{Binding IsNewObject}" Value="False">
+							<DataTrigger Binding="{Binding ObjectIsNew}" Value="False">
 								<Setter Property="IsEnabled" Value="False"/>
 							</DataTrigger>
 						</Style.Triggers>
@@ -37,7 +37,7 @@
 				</ComboBox.Style>
 			</ComboBox>
 			<TextBlock Text="Номер урока" Margin="0,10,0,0"/>
-			<TextBox Text="{Binding CurrentBellSchedule.LessonNumber}"
+			<TextBox Text="{Binding LessonNumber}"
 				ToolTip="Номер урока"
 				PreviewTextInput="NumberTextBox_PreviewTextInput"
 			>
@@ -45,7 +45,7 @@
 					<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
 						<Setter Property="IsReadOnly" Value="False"/>
 						<Style.Triggers>
-							<DataTrigger Binding="{Binding IsNewObject}" Value="False">
+							<DataTrigger Binding="{Binding ObjectIsNew}" Value="False">
 								<Setter Property="IsReadOnly" Value="True"/>
 							</DataTrigger>
 						</Style.Triggers>
@@ -54,7 +54,7 @@
 			</TextBox>
 			<TextBlock Text="Начало" Margin="0,10,0,0"/>
 			<TextBox 
-				Text="{Binding CurrentBellSchedule.StartTime, 
+				Text="{Binding StartTime, 
 				Converter={StaticResource  TimeConverter},
 				UpdateSourceTrigger=LostFocus}"
 				KeyDown="TimeBox_KeyDown"
@@ -65,7 +65,7 @@
 
 			<TextBlock Text="Окончание" Margin="0,10,0,0"/>
 			<TextBox
-				Text="{Binding CurrentBellSchedule.EndTime, 
+				Text="{Binding EndTime, 
 				Converter={StaticResource TimeConverter},
 				UpdateSourceTrigger=LostFocus}"
 				KeyDown="TimeBox_KeyDown"

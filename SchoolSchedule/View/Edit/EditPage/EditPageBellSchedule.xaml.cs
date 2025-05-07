@@ -32,19 +32,12 @@ namespace SchoolSchedule.View.Edit.EditPage
 			InitializeComponent();
 			DataContext = ValueRef;
 		}
-		EditBellScheduleViewModel _viewModel;
 		public EditPageBellSchedule(bool objectIsNew, BellSchedule editObject, List<BellScheduleType> bellScheduleTypes, List<BellSchedule> bellSchedules) : this()
 		{
 			ObjectIsNew = objectIsNew;
 			BellSchedulesForCheck = bellSchedules;
 
-			if(ObjectIsNew)
-				ValueRef = new BellSchedule();
-			else 
-				ValueRef= editObject;
-
-			_viewModel = new EditBellScheduleViewModel(ObjectIsNew,ValueRef,bellScheduleTypes);
-			DataContext = _viewModel;
+			DataContext =  new EditBellScheduleViewModel(ObjectIsNew,ValueRef,bellScheduleTypes);
 		}
 		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -141,11 +134,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		public KeyValuePair<bool, string> CheckInputRules()
 		{
-			var obj = (this.DataContext as EditBellScheduleViewModel).CurrentBellSchedule;
-			if (ObjectIsNew && BellSchedulesForCheck.Where(x => x.LessonNumber == obj.LessonNumber && x.IdBellScheduleType == obj.IdBellScheduleType).Any())
-				return new KeyValuePair<bool, string>(false, $"Расписание \"{_viewModel.BellScheduleTypes.FirstOrDefault(x=>x.Id==obj.IdBellScheduleType)?.Name}\" для {obj.LessonNumber} урока уже есть в базе данных");
-				
-			return new KeyValuePair<bool, string>(true, null);
+			return (DataContext as EditBellScheduleViewModel).CheckInputRules();
 		}
 	}
 }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SchoolSchedule.Model;
+using SchoolSchedule.ViewModel.Edit;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,24 +15,20 @@ namespace SchoolSchedule.View.Edit.EditPage
 	/// </summary>
 	public partial class EditPageGroup : Page, IEditPage<Model.Group>
 	{
-		public List<Model.Group> GroupsForCheck { get; set; } = new List<Model.Group>();
-		public Model.Group ValueRef { get; set; } = new Model.Group();
 		public EditPageGroup()
 		{
 			InitializeComponent();
-			DataContext = ValueRef;
 		}
-		public EditPageGroup(Model.Group group, List<Model.Group> groups) : this()
+		public EditPageGroup(Model.Group currentModel, List<Model.Group> modelsForUniqueCheck) : this()
 		{
-			ValueRef = group;
+			List<Model.Group> modelsForViewModel = new List<Model.Group>(modelsForUniqueCheck);
+			if (currentModel != null)
+				modelsForViewModel.Remove(currentModel);
 
-			foreach (var el in groups)
-				GroupsForCheck.Add(new Model.Group { Id=el.Id, Year=el.Year, Name=el.Name });
-
-			DataContext = ValueRef;
+			DataContext = new EditGroupViewModel(currentModel, modelsForViewModel);
 		}
 
-		
+		#region Фильтрация ввода
 		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			// Разрешить byte
@@ -43,21 +42,27 @@ namespace SchoolSchedule.View.Edit.EditPage
 			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
 			e.Handled = !regex.IsMatch(e.Text);
 		}
+		#endregion
+		#region Фокус полей ввода
+		private void NameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException();
+			
+			(DataContext as ViewModel.Edit.EditGroupViewModel).Name=textBox.Text;
+        }
+		private void YearTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
 
+			int.TryParse(textBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out int data);
+			(DataContext as ViewModel.Edit.EditGroupViewModel).Year=data;
+        }
+		#endregion
 		public KeyValuePair<bool, string> CheckInputRules()
 		{
-			if (string.IsNullOrWhiteSpace(ValueRef.Name))
-				return new KeyValuePair<bool, string>(false, "Введите непустое значение для группы класса");
-			string upperStr = ValueRef.Name.ToUpper();
-			if (upperStr.Length != 1 || (upperStr[0] < 'А' || upperStr[0] > 'Е'))
-				return new KeyValuePair<bool, string>(false, "Введите одну русскую букву от А до Е для определения группы");
-			if (ValueRef.Year<1 || ValueRef.Year>11)
-				return new KeyValuePair<bool, string>(false, "Введите номер года обучения от 1 до 11 включительно");
-			if (GroupsForCheck.Where(el => el.Name == ValueRef.Name && el.Year==ValueRef.Year).Any())
-				return new KeyValuePair<bool, string>(false, $"Класс \"{ValueRef.Year}{ValueRef.Name}\" уже присутствует в базе данных");
-
-			return new KeyValuePair<bool, string>(true, null);
-		
+			return (DataContext as ViewModel.Edit.EditGroupViewModel).CheckInputRules();
 		}
 	}
 }

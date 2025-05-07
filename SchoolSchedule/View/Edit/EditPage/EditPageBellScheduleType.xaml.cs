@@ -23,36 +23,38 @@ namespace SchoolSchedule.View.Edit.EditPage
 	public partial class EditPageBellScheduleType : Page, IEditPage<BellScheduleType>
 	{
 		public List<BellScheduleType> BellScheduleTypesForCheck { get; set; } = new List<BellScheduleType>();
-		public BellScheduleType ValueRef { get; set; }
 		public EditPageBellScheduleType()
 		{
 			InitializeComponent();
-			DataContext = ValueRef;
 		}
-		public EditPageBellScheduleType(BellScheduleType bellScheduleType, List<BellScheduleType> bellScheduleTypes) : this()
+		public EditPageBellScheduleType(BellScheduleType currentModel, List<BellScheduleType> modelsForUniqueCheck) : this()
 		{
-			ValueRef = bellScheduleType;
+			List<BellScheduleType> modelsForViewModel=new List<BellScheduleType>(modelsForUniqueCheck);
+			if (currentModel != null)
+				modelsForViewModel.Remove(currentModel);
 
-			foreach (var el in bellScheduleTypes)
-				BellScheduleTypesForCheck.Add(new BellScheduleType { Id = el.Id, Name = el.Name });
-
-			DataContext = ValueRef;
+			DataContext = new ViewModel.Edit.EditBellScheduleTypeViewModel(currentModel, modelsForViewModel);
 		}
+		#region Фильтрация ввода
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
-			// Разрешить только русские буквы, пробелы и дефис
-			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
+			// Разрешить только русские буквы, пробелы, дефис и цифры
+			var regex = new Regex(@"^[\p{IsCyrillic}\s\-\d]+$");
 			e.Handled = !regex.IsMatch(e.Text);
 		}
+		#endregion
+		#region Фокус полей ввода
+		private void NameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
 
+			(DataContext as ViewModel.Edit.EditBellScheduleTypeViewModel).Name = textBox.Text;
+		}
+		#endregion
 		public KeyValuePair<bool, string> CheckInputRules()
 		{
-			if (string.IsNullOrWhiteSpace(ValueRef.Name))
-				return new KeyValuePair<bool, string>(false, "Введите не пустое значение для названия расписания");
-			if (BellScheduleTypesForCheck.Where(el => el.Name == ValueRef.Name).Any())
-				return new KeyValuePair<bool, string>(false, $"Расписание \"{ValueRef.Name}\" уже присутствует в базе данных");
-
-			return new KeyValuePair<bool, string>(true, null);
+			return (DataContext as ViewModel.Edit.EditBellScheduleTypeViewModel).CheckInputRules();
 		}
 	}
 }

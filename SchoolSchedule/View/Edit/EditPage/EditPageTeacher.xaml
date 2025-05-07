@@ -20,23 +20,38 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		<StackPanel Margin="10,0,5,0">
-			<TextBlock Text="Фамилия"/>
-			<TextBox Text="{Binding CurrentTeacher.Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Фамилия преподавателя"/>
-			<TextBlock Text="Имя"/>
-			<TextBox Text="{Binding CurrentTeacher.Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Имя преподавателя"/>
-			<TextBlock Text="Отчество"/>
-			<TextBox Text="{Binding CurrentTeacher.Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Отчество преподавателя"/>
-			<TextBlock Text="Пол"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Фамилия" ToolTip="Обязательное поле для заполнения" />
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Фамилия преподавателя"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Имя" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Имя преподавателя"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Отчество" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Отчество преподавателя"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Пол" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox
 				SelectedValuePath="Tag"
-				SelectedValue="{Binding CurrentTeacher.Gender}"
+				SelectedValue="{Binding Gender}"
 				SelectedIndex="0"
 			>
 				<ComboBoxItem Tag="М">Мужской</ComboBoxItem>
 				<ComboBoxItem Tag="Ж">Женский</ComboBoxItem>
 			</ComboBox>
-			<TextBlock Text="Дата рождения"/>
-			<DatePicker SelectedDate="{Binding CurrentTeacher.BirthDay}" ToolTip="Дата проведения для замены"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Дата рождения" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<DatePicker SelectedDate="{Binding BirthDay}" ToolTip="Дата проведения для замены"/>
 
 			<Grid Margin="0,20,0,0">
 				<Grid.RowDefinitions>

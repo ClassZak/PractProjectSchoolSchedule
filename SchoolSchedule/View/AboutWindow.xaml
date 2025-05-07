@@ -13,7 +13,7 @@
 		<Grid>
 			<StackPanel>
 				<TextBlock 
-					Text="Школное расписания" 
+					Text="Школное расписание" 
 					HorizontalAlignment="Center" 
 					FontSize="20"
 				/>
@@ -60,7 +60,7 @@
 						/>
 					</Grid>
 				</StackPanel>
-				<UniformGrid Rows="4" Margin="16,0">
+				<UniformGrid Rows="4" Margin="16,5">
 					<UniformGrid Rows="1" Columns="2">
 						<TextBlock
 						Text="Версия приложения:"

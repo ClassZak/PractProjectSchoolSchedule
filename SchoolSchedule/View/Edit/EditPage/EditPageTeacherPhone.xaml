@@ -5,23 +5,27 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SchoolSchedule.View.Edit.EditPage"
       xmlns:Model="clr-namespace:SchoolSchedule.Model"
+      xmlns:EditViewModel="clr-namespace:SchoolSchedule.ViewModel.Edit"
       mc:Ignorable="d" 
 	  	FontFamily="Arial"
 		FontSize="12"
       d:DesignHeight="135" d:DesignWidth="320">
 	<Page.DataContext>
-		<Model:TeacherPhone/>
+		<EditViewModel:EditTeacherPhoneViewModel/>
 	</Page.DataContext>
 	<Grid>
 		<StackPanel>
-			<TextBlock Text="Телефонный номер"/>
-			<TextBlock Text="Пример для заполнения: +7 123 456-78-90" FontSize="12" FontStyle="Italic"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Телефонный номер" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBlock Text="Формат заполнения: +7 XXX XXX-XX-XX" FontSize="12" FontStyle="Italic" />
 			<TextBox
 				Text="{Binding PhoneNumber}"
 				PreviewTextInput="PhonePreviewTextInput" 
 				PreviewKeyDown="PhonePreviewKeyDown"
 				LostFocus="PhoneLostFocus"
-				ToolTip="Пример для заполнения: +7 123 456-78-90"
+				ToolTip="Формат заполнения: +7 XXX XXX-XX-XX"
 			/>
 		</StackPanel>
 	</Grid>

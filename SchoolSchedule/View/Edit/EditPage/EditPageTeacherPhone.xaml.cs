@@ -1,4 +1,5 @@
 ﻿using SchoolSchedule.Model;
+using SchoolSchedule.ViewModel.Edit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,19 +29,20 @@ namespace SchoolSchedule.View.Edit.EditPage
 		public EditPageTeacherPhone()
 		{
 			InitializeComponent();
-			DataContext = ValueRef ;
 		}
 		public EditPageTeacherPhone(TeacherPhone teacherPhone, List<TeacherPhone> teacherPhones) : this()
 		{
 			ValueRef = teacherPhone;
 
-			foreach (var el in teacherPhones)
-				TeacherPhonesForCheck.Add(new TeacherPhone { Id=el.Id,IdTeacher=el.IdTeacher,PhoneNumber=el.PhoneNumber});
+			foreach(var el in teacherPhones)
+				TeacherPhonesForCheck.Add(el);
+			if(teacherPhone != null) 
+				TeacherPhonesForCheck.Remove(teacherPhone);
 
-			DataContext = ValueRef;
+			DataContext = new EditTeacherPhoneViewModel(ValueRef,TeacherPhonesForCheck);
 		}
 
-		#region События для номера телефона
+		#region Фильтрация ввода
 		private void PhonePreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			var textBox = (TextBox)sender;
@@ -69,11 +71,12 @@ namespace SchoolSchedule.View.Edit.EditPage
 
 		private void PhonePreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			var textBox = (TextBox)sender;
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
 
 			// Блокировка удаления первых двух символов
-			if ((e.Key == Key.Back && textBox.SelectionStart <= 2) ||
-				(e.Key == Key.Delete && textBox.SelectionStart < 2))
+			if (((e.Key == Key.Back && textBox.SelectionStart <= 2) ||
+				(e.Key == Key.Delete && textBox.SelectionStart < 2)) && textBox.Text.StartsWith("+7"))
 				e.Handled = true;
 
 			// Проверка вставляемого текста
@@ -84,40 +87,19 @@ namespace SchoolSchedule.View.Edit.EditPage
 					e.Handled = true;
 			}
 		}
-
+		#endregion
+		#region Фокус полей ввода
 		private void PhoneLostFocus(object sender, RoutedEventArgs e)
 		{
-			var textBox = (TextBox)sender;
-			if (textBox.Text.Length < 2)
-				textBox.Text = "+7 ";
-			string rawDigits = Regex.Replace(textBox.Text.Substring(2), @"[^\d]", "");
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
 
-			if (rawDigits.Length == 10)
-				textBox.Text = $"+7 {rawDigits.Substring(0, 3)} {rawDigits.Substring(3, 3)}-{rawDigits.Substring(6, 2)}-{rawDigits.Substring(8, 2)}";
+			(DataContext as ViewModel.Edit.EditTeacherPhoneViewModel).PhoneNumber = textBox.Text;
 		}
 		#endregion
-		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			// Разрешить только русские буквы, пробелы и дефис
-			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
-			e.Handled = !regex.IsMatch(e.Text);
-		}
-		private void Phome_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			var regex = new Regex(@"^[\-]+$");
-			e.Handled = !regex.IsMatch(e.Text);
-		}
-
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
-			ValueRef.PhoneNumber = ValueRef.PhoneNumber.Trim();
-			if (string.IsNullOrWhiteSpace(ValueRef.PhoneNumber) || ValueRef.PhoneNumber==string.Empty)
-				return new KeyValuePair<bool, string>(false, "Введите номер телефона!");
-			if(!Regex.IsMatch(ValueRef.PhoneNumber,@"^\+7 \d{3} \d{3}-\d{2}-\d{2}$"))
-				return new KeyValuePair<bool, string>(false, "Неверный формат номера телефона!\nПравильно: +7 123 456-78-90");
-
-				
-			return new KeyValuePair<bool,string>(true,null);
+			return (DataContext as EditTeacherPhoneViewModel).CheckInputRules();
 		}
 	}
 }

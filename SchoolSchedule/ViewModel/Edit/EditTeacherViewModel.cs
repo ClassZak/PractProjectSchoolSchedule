@@ -10,22 +10,98 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using SchoolSchedule.ViewModel.Attributes;
+using System.Text.RegularExpressions;
+using System.Security.Policy;
+using SchoolSchedule.Model.Additional;
 
 namespace SchoolSchedule.ViewModel.Edit
 {
 	public class EditTeacherViewModel : ABaseViewModel
 	{
+		public EditTeacherViewModel() { }
 		public Window OwnerWindow{  get; set; }
-		
-		public EditTeacherViewModel()
+
+		public bool ObjectIsNew { get; set; }
+		public Teacher CurrentModel { get; set; } = new Teacher();
+		public List<Model.Teacher> ModelsForUniqueCheck { get; set; }
+		#region Свойства для ввода
+		public string Surname
 		{
+			get => CurrentModel.Surname; set
+			{
+				string inputValue = value is null ? "Иванов" : Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-]", "");
+				if (string.IsNullOrEmpty(inputValue))
+					CurrentModel.Surname = "Иванов";
+				else
+					CurrentModel.Surname = inputValue;
+
+				OnPropertyChanged(nameof(Surname));
+			}
 		}
-		public Model.Teacher CurrentTeacher { get; set; }
-		public List<Model.Group> Groups { get; set; }
-		public List<Model.Subject> Subjects{ get; set; }
+		public string Name
+		{
+			get => CurrentModel.Name; set
+			{
+				string inputValue = value is null ? "Иван" : Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-]", "");
+				if (string.IsNullOrEmpty(inputValue))
+					CurrentModel.Name = "Иван";
+				else
+					CurrentModel.Name = inputValue;
 
+				OnPropertyChanged(nameof(Name));
+			}
+		}
+		public string Patronymic
+		{
+			get => CurrentModel.Patronymic; set
+			{
+				string inputValue = value is null ? "Иванович" : Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-]", "");
+				if (string.IsNullOrEmpty(inputValue))
+					CurrentModel.Patronymic = "Иванович";
+				else
+					CurrentModel.Patronymic = inputValue;
 
+				OnPropertyChanged(nameof(Patronymic));
+			}
+		}
+		public DateTime BirthDay
+		{
+			get => CurrentModel.BirthDay; set
+			{
+				if (value < new DateTime(2005, 1, 1))
+					CurrentModel.BirthDay = new DateTime(2005, 1, 1);
+				else
+				if (value > DateTime.Now)
+					CurrentModel.BirthDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+				else
+					CurrentModel.BirthDay = value;
 
+				OnPropertyChanged(nameof(BirthDay));
+			}
+		}
+		public string Gender
+		{
+			get => CurrentModel.Gender; set
+			{
+				string inputValue = value is null ? string.Empty : value.Trim().ToUpper();
+				if (string.IsNullOrEmpty(inputValue))
+					CurrentModel.Gender = "М";
+				else
+				{
+
+					inputValue = inputValue.Substring(0, 1);
+					if (inputValue[0] == 'М' || inputValue[0] == 'M'/*English*/)
+						CurrentModel.Gender = "М";
+					else if (inputValue[0] == 'Ж' || inputValue[0] == 'F'/*English*/)
+						CurrentModel.Gender = "Ж";
+					else
+						CurrentModel.Gender = "М";
+				}
+				OnPropertyChanged(nameof(Gender));
+			}
+		}
+		#endregion
+		#region Свойства для выбора
 		public ObservableCollection<Model.Group> ChoosenGroups { get; set; } = new ObservableCollection<Model.Group>();
 		public ObservableCollection<Model.Group> NotChoosenGroups { get; set; } = new ObservableCollection<Model.Group>();
 		public ObservableCollection<Model.Subject> ChoosenSubjects { get; set; } = new ObservableCollection<Model.Subject>();
@@ -46,28 +122,81 @@ namespace SchoolSchedule.ViewModel.Edit
 		public ObservableCollection<Model.DTO.DTOTeacherPhone> TeacherPhones { get => _dtoTeacherPhones; set => SetPropertyChanged(ref _dtoTeacherPhones, value); } 
 		List<Model.TeacherPhone> _teacherPhones { get; set; } = new List<Model.TeacherPhone>();
 		public ObservableCollection<Model.DTO.DTOTeacherPhone> SelectedTeacherPhones { get; set; } = new ObservableCollection<Model.DTO.DTOTeacherPhone>();
-
-		public EditTeacherViewModel(Model.Teacher teacher, List<Model.Group> groups, List<Model.Subject> subjects, List<Model.TeacherPhone> teacherPhones,Window window) : this()
+		#endregion
+		public EditTeacherViewModel
+		(
+			Model.Teacher model, 
+			List<Model.Teacher> modelsForUniqueCheck,
+			List<Model.Group> groups, 
+			List<Model.Subject> subjects, 
+			List<Model.TeacherPhone> teacherPhones,
+			bool objectIsNew,
+			Window window
+		) : this()
 		{
-			CurrentTeacher = teacher;
+			ObjectIsNew = objectIsNew;
+			CurrentModel = model;
+
 			NotChoosenGroups = new ObservableCollection<Model.Group>(groups);
 			NotChoosenSubjects = new ObservableCollection<Model.Subject>(subjects);
+			foreach (var el in groups)
+			{
+				if (el.Teacher is null || el.Teacher.Count == 0)
+					continue;
+
+				List<Teacher> groupTeachers = new List<Teacher>();
+				foreach (var teacher in el.Teacher)
+					groupTeachers.Add(teacher);
+				if (groupTeachers.Any(x=>x.Id!=CurrentModel.Id))
+					NotChoosenGroups.Remove(el);
+			}
 			if (teacherPhones == null)
 				_teacherPhones = new List<Model.TeacherPhone>();
 			else
 				_teacherPhones = new List<Model.TeacherPhone>(teacherPhones);
 
-			foreach(var el in teacher.Subject)
+			foreach(var el in CurrentModel.TeacherPhone)
+				TeacherPhones.Add(new Model.DTO.DTOTeacherPhone(el));
+			foreach(var el in CurrentModel.Subject)
 			{
 				NotChoosenSubjects.Remove(el);
 				ChoosenSubjects.Add(el);
 			}
-			foreach(var el in teacher.Group)
+			foreach(var el in CurrentModel.Group)
 			{
 				NotChoosenGroups.Remove(el);
 				ChoosenGroups.Add(el);
 			}
 			OwnerWindow = window;
+
+			// Так надо
+			if (Name is null)
+				Name = Name;
+			if (Surname is null)
+				Surname = Surname;
+			if (Patronymic is null)
+				Patronymic = Patronymic;
+			if (Gender is null)
+				Gender = Gender;
+			if (BirthDay == null || BirthDay == DateTime.MinValue)
+				BirthDay = BirthDay;
+
+			ModelsForUniqueCheck = new List<Teacher>(modelsForUniqueCheck);
+			if (!ObjectIsNew)
+				ModelsForUniqueCheck.Remove(model);
+		}
+		public KeyValuePair<bool,string> CheckInputRules()
+		{
+			if (string.IsNullOrWhiteSpace(CurrentModel.Surname))
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " фамилию нового" : " новую фамилию") + " учителя");
+			if (string.IsNullOrWhiteSpace(CurrentModel.Name))
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " имя нового" : " новое имя") + " учителя");
+			if (string.IsNullOrWhiteSpace(CurrentModel.Patronymic))
+				return new KeyValuePair<bool, string>(false, "Введите" + (ObjectIsNew ? " отчество нового " : " новое отчество ") + "учителя");
+			if (ObjectIsNew && ModelsForUniqueCheck.Where(el => el.Name == CurrentModel.Name && el.Surname == CurrentModel.Surname && el.Patronymic == CurrentModel.Patronymic).Any())
+				return new KeyValuePair<bool, string>(false, $"Учитель \"{CurrentModel.Surname} {CurrentModel.Name} {CurrentModel.Patronymic}\" уже присутствует в базе данных");
+
+			return new KeyValuePair<bool, string>(true, null);
 		}
 
 		#region Выбор классов и предметов
