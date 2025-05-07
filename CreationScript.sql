@@ -30,7 +30,7 @@ ALTER TABLE BellSchedule ADD CONSTRAINT
 UniquesBellScheduleTypeAndLessonNumberConstraint UNIQUE (IdBellScheduleType, LessonNumber)
 ALTER TABLE BellSchedule ADD CONSTRAINT
 BellScheduleCurrentTime CHECK ([StartTime]<[EndTime])
-
+ALTER TABLE BellSchedule ADD CONSTRAINT UniqueStartEndTime UNIQUE (IdBellScheduleType, StartTime, EndTime);
 
 
 
@@ -68,7 +68,7 @@ CREATE TABLE Subject(
 	Id		INT IDENTITY PRIMARY KEY,
 	Name	NVARCHAR(70) NOT NULL
 )
-ALTER TABLE Subject ADD CONSTANT RussianSubjectConstraint
+ALTER TABLE Subject ADD CONSTRAINT RussianSubjectConstraint
 CHECK (NOT [Name] LIKE '%[a-zA-Z]%')
 
 
@@ -138,6 +138,8 @@ ALTER TABLE Student ADD CONSTRAINT RussianStudentPatronymic
 CHECK (NOT Patronymic LIKE '%[a-zA-Z0-9]%')
 ALTER TABLE Student ADD CONSTRAINT StudentEmailCheck
 CHECK (Email IS NULL OR Email LIKE '%_@%_.__%')
+ALTER TABLE Student ADD CONSTRAINT UniqueStudentEmail UNIQUE (Email);
+GO
 
 CREATE TRIGGER StudentLowerCaseEmailTrigger
 ON Student
@@ -171,8 +173,56 @@ CREATE TABLE Schedule(
 )
 ALTER TABLE Schedule ADD CONSTRAINT DayOfTheWeekRangeCheck CHECK (DayOfTheWeek BETWEEN 1 AND 7)
 ALTER TABLE Schedule ADD CONSTRAINT ClassRoomNotZeroCheck CHECK (ClassRoom <> 0)
+GO
+CREATE OR ALTER TRIGGER CheckTeacherAvailability
+ON Schedule
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        JOIN Schedule s ON i.IdTeacher = s.IdTeacher
+        JOIN BellSchedule bs1 ON i.IdBellSchedule = bs1.Id
+        JOIN BellSchedule bs2 ON s.IdBellSchedule = bs2.Id
+        WHERE 
+            i.Id <> s.Id -- Исключаем текущую запись
+            AND i.DayOfTheWeek = s.DayOfTheWeek
+            AND (
+                (bs1.StartTime < bs2.EndTime AND bs1.EndTime > bs2.StartTime)
+            )
+    )
+    BEGIN
+        RAISERROR('Преподаватель уже занят в это время!', 16, 1);
+        ROLLBACK TRANSACTION;
+    END;
+END;
+GO
+CREATE OR ALTER TRIGGER CheckClassRoomAvailability
+ON Schedule
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        JOIN Schedule s ON i.ClassRoom = s.ClassRoom
+                          AND i.DayOfTheWeek = s.DayOfTheWeek
+                          AND i.Id <> s.Id -- Исключаем текущую запись
+        JOIN BellSchedule bs_i ON i.IdBellSchedule = bs_i.Id
+        JOIN BellSchedule bs_s ON s.IdBellSchedule = bs_s.Id
+        WHERE 
+            (bs_i.StartTime < bs_s.EndTime AND bs_i.EndTime > bs_s.StartTime)
+    )
+    BEGIN
+        RAISERROR('Кабинет уже занят в это время!', 16, 1);
+        ROLLBACK TRANSACTION;
+    END;
+END;
 GO
 CREATE TRIGGER PositiveClassRoomTrigger
 ON Schedule

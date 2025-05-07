@@ -27,6 +27,11 @@ namespace SchoolSchedule.View
 			// Для публикации
 			//this.DataContext = new MainViewModel();
 			(this.DataContext as MainViewModel).MainWindow = this;
+
+			#if !DEBUG
+			SplashScreen splashScreen = new SplashScreen();
+			splashScreen.ShowDialog();
+			#endif
 		}
 
 		private void CloseMenu_Click(object sender, RoutedEventArgs e)
