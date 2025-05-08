@@ -17,8 +17,8 @@ namespace SchoolSchedule.ViewModel.Edit
 			StartTime = new TimeSpan(8, 0, 0),
 			EndTime = new TimeSpan(8, 40, 0)
 		};
-		#region Свойства для ввода
 		public List<Model.BellSchedule> ModelsForUniqueCheck { get; set; }
+		#region Свойства для ввода
 		public int IdBellScheduleType { get => CurrentModel.IdBellScheduleType; set => CurrentModel.IdBellScheduleType = value; }
 		public int LessonNumber { get => CurrentModel.LessonNumber; set 
 			{ 
@@ -50,7 +50,7 @@ namespace SchoolSchedule.ViewModel.Edit
 			} 
 		}
 		#endregion
-		#region Свойства для выбора
+		#region Списки для выбора
 		public List<Model.BellScheduleType> BellScheduleTypes { get; set; }
 		#endregion
 

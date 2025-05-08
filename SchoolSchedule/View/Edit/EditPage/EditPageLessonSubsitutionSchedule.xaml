@@ -19,33 +19,41 @@
 	</Page.Resources>
 	<Grid>
 		<StackPanel Margin="10">
-			<TextBlock Text="Номер урока"/>
-			<TextBox Text="{Binding CurrentLessonSubsitutionSchedule.LessonNumber}" 
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Номер урока" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding LessonNumber}" 
+				LostFocus="LessonNumberTextBox_LostFocus"
 				ToolTip="Номер урока по счёту"
 				PreviewTextInput="NumberTextBox_PreviewTextInput"
 			/>
-			<TextBlock Text="Дата"  Margin="0,10,0,0"/>
-			<DatePicker SelectedDate="{Binding CurrentLessonSubsitutionSchedule.Date}" ToolTip="Дата проведения для замены"/>
+			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+				<TextBlock Text="Дата" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<DatePicker SelectedDate="{Binding Date}" ToolTip="Дата проведения для замены"/>
 			<TextBlock Text="Предмет" Margin="0,10,0,0"/>
 			<ComboBox ItemsSource="{Binding Subjects}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentLessonSubsitutionSchedule.IdSubject}"
+				SelectedValue="{Binding IdSubject}"
 				ToolTip="Шаблоное занятие"
 			/>
 			<TextBlock Text="Класс" Margin="0,10,0,0"/>
 			<ComboBox ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentLessonSubsitutionSchedule.IdGroup}"
+				SelectedValue="{Binding IdGroup}"
 				ToolTip="Шаблоное занятие"
 			/>
 			<TextBlock Text="Учитель" Margin="0,10,0,0"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Teachers}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentLessonSubsitutionSchedule.IdTeacher}"
+				SelectedValue="{Binding IdTeacher}"
 				ToolTip="Преподаватель на занятии"
 			/>
 			<TextBlock Text="Кабинет" Margin="0,10,0,0"/>
-			<TextBox Text="{Binding CurrentLessonSubsitutionSchedule.ClassRoom}" 
+			<TextBox Text="{Binding ClassRoom}" 
+				LostFocus="ClassRoomTextBox_LostFocus"
 				ToolTip="Кабинет для занятий"
 				PreviewTextInput="NumberTextBox_PreviewTextInput"
 			/>

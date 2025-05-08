@@ -246,7 +246,7 @@ CREATE TABLE LessonSubsitutionSchedule(
 	IdGroup			INT,
 	IdTeacher		INT,
 	ClassRoom		INT,
-	LessonNumber	INT,
+	LessonNumber	INT NOT NULL,
 	FOREIGN KEY		(IdSubject)	REFERENCES Subject,
 	FOREIGN KEY		(IdGroup)	REFERENCES [Group],
 	FOREIGN KEY		(IdTeacher)	REFERENCES Teacher

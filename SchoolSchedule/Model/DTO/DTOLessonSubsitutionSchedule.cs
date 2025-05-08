@@ -16,7 +16,7 @@ namespace SchoolSchedule.Model.DTO
 		public int? IdGroup {  get=>ModelRef.IdGroup; set { _prevIdGroup = ModelRef.IdGroup; ModelRef.IdGroup = value; } }
 		public int? IdTeacher {  get=>ModelRef.IdTeacher; set { _prevIdTeacher = ModelRef.IdTeacher; ModelRef.IdTeacher = value; } }
 		public int? ClassRoom{  get=>ModelRef.ClassRoom; set { _prevClassRoom = ModelRef.ClassRoom; ModelRef.ClassRoom = value; } }
-		public int LessonNumber{  get=>(int)ModelRef.LessonNumber; set { _prevLessonNumber = (int)ModelRef.LessonNumber; ModelRef.LessonNumber= value; } }
+		public int LessonNumber{  get=>ModelRef.LessonNumber; set { _prevLessonNumber = ModelRef.LessonNumber; ModelRef.LessonNumber= value; } }
 		#endregion
 		#region Свойства для дополнительной информации
 		public string Subject { get => ModelRef.Subject is null ? "По расписанию" : ModelRef.Subject?.ToString(); set { } }
@@ -73,6 +73,10 @@ namespace SchoolSchedule.Model.DTO
 				ModelRef.IdGroup = _prevIdGroup;
 			if(_prevIdTeacher!=null)
 				ModelRef.IdTeacher=_prevIdTeacher.Value;
+			if(_prevClassRoom != null)
+				ModelRef.ClassRoom=_prevClassRoom;
+			if(_prevLessonNumber != 0)
+				ModelRef.LessonNumber = _prevLessonNumber;
 		}
 	}
 }

@@ -25,14 +25,9 @@ namespace SchoolSchedule.View.Edit.EditPage
 	/// </summary>
 	public partial class EditPageLessonSubsitutionSchedule : Page, IEditPage<Model.LessonSubsitutionSchedule>
 	{
-		public bool ObjectIsNew{  get; set; }
-		
-		public List<Model.LessonSubsitutionSchedule> LessonSubsitutionSchedulesForCheck { get; set; } = new List<Model.LessonSubsitutionSchedule>();
-		public Model.LessonSubsitutionSchedule ValueRef { get ; set ; }
 		protected EditPageLessonSubsitutionSchedule()
 		{
 			InitializeComponent();
-			DataContext = ValueRef;
 		}
 
 
@@ -40,23 +35,22 @@ namespace SchoolSchedule.View.Edit.EditPage
 		public EditPageLessonSubsitutionSchedule
 		(
 			bool objectIsNew, 
-			LessonSubsitutionSchedule lessonSubsitutionSchedule,
-			List<LessonSubsitutionSchedule> lessonSubsitutionSchedules, 
+			LessonSubsitutionSchedule model,
+			List<LessonSubsitutionSchedule> modelsForUniqueCheck, 
 			List<Model.Subject> subjects,
 			List<Model.Group> groups,
 			List<Model.Teacher> teachers
 		) : this()
 		{
-			ObjectIsNew= objectIsNew;
-			LessonSubsitutionSchedulesForCheck= lessonSubsitutionSchedules;
-
-			if (ObjectIsNew)
-				ValueRef = new Model.LessonSubsitutionSchedule();
-			else
-				ValueRef = lessonSubsitutionSchedule;
-
-			_viewModel = new EditLessonSubsitutionScheduleViewModel(ObjectIsNew,ValueRef,subjects,groups,teachers);
-			DataContext = _viewModel;
+			DataContext = new ViewModel.Edit.EditLessonSubsitutionScheduleViewModel
+			(
+				model, 
+				modelsForUniqueCheck, 
+				subjects, 
+				groups, 
+				teachers, 
+				objectIsNew
+			);
 		}
 
 
@@ -67,10 +61,31 @@ namespace SchoolSchedule.View.Edit.EditPage
 			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
 			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
 		}
+		#region Фокус полей ввода
+		private void LessonNumberTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+
+			if(int.TryParse(textBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out int data))
+				(DataContext as ViewModel.Edit.EditLessonSubsitutionScheduleViewModel).LessonNumber = data;
+			else
+				(DataContext as ViewModel.Edit.EditLessonSubsitutionScheduleViewModel).LessonNumber = 1;
+		}
+		private void ClassRoomTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+
+			if (int.TryParse(textBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out int data))
+				(DataContext as ViewModel.Edit.EditLessonSubsitutionScheduleViewModel).ClassRoom = data;
+			else
+				(DataContext as ViewModel.Edit.EditLessonSubsitutionScheduleViewModel).ClassRoom = null;
+		}
+		#endregion
 		public KeyValuePair<bool,string> CheckInputRules()
 		{
-			var obj=(this.DataContext as EditLessonSubsitutionScheduleViewModel).CurrentLessonSubsitutionSchedule;
-			return new KeyValuePair<bool,string>(true,null);
+			return (DataContext as EditLessonSubsitutionScheduleViewModel).CheckInputRules();
 		}
 	}
 }

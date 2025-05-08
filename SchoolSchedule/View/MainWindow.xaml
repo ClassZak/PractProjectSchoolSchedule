@@ -21,6 +21,7 @@
 		>
 	<Window.Resources>
 		<Additional:DayOfTheWeekConverter x:Key="DayOfTheWeekConverter"/>
+		<Additional:NullInLessonSubsitutionScheduleConverter x:Key="NullInLessonSubsitutionScheduleConverter"/>
 	</Window.Resources>
 	<Window.DataContext>
 		<ViewModel:MainViewModel/>
@@ -249,7 +250,7 @@
 								<DataGridTextColumn Header="Номер урока"		Binding="{Binding LessonNumber}"/>
 								<DataGridTextColumn Header="Предмет"			Binding="{Binding Subject}"/>
 								<DataGridTextColumn Header="Класс"				Binding="{Binding Group}"/>
-								<DataGridTextColumn Header="Кабинет"			Binding="{Binding ClassRoom}"/>
+								<DataGridTextColumn Header="Кабинет"			Binding="{Binding ClassRoom, Converter={StaticResource NullInLessonSubsitutionScheduleConverter}}"/>
 								<DataGridTextColumn Header="Фамилия учителя"	Binding="{Binding TeacherSurname}"/>
 								<DataGridTextColumn Header="Имя учителя"		Binding="{Binding TeacherName}"/>
 								<DataGridTextColumn Header="Отчество учителя"	Binding="{Binding TeacherPatronymic}"/>

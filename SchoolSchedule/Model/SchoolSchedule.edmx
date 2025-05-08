@@ -48,7 +48,7 @@
           <Property Name="IdGroup" Type="int" />
           <Property Name="IdTeacher" Type="int" />
           <Property Name="ClassRoom" Type="int" />
-          <Property Name="LessonNumber" Type="int" />
+          <Property Name="LessonNumber" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Schedule">
           <Key>
@@ -301,6 +301,9 @@
         <Function Name="CalculateAge" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
           <Parameter Name="BirthDate" Type="date" Mode="In" />
         </Function>
+        <Function Name="GetAgeByBirthYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="BirthYear" Type="int" Mode="In" />
+        </Function>
         <Function Name="ShowLessonsAtDayForTeacher" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="surname" Type="nvarchar" Mode="In" />
           <Parameter Name="name" Type="nvarchar" Mode="In" />
@@ -435,7 +438,7 @@
           <Property Name="IdGroup" Type="Int32" />
           <Property Name="IdTeacher" Type="Int32" />
           <Property Name="ClassRoom" Type="Int32" />
-          <Property Name="LessonNumber" Type="Int32" />
+          <Property Name="LessonNumber" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Group" Relationship="Self.FK__LessonSub__IdGro__6A30C649" FromRole="LessonSubsitutionSchedule" ToRole="Group" />
           <NavigationProperty Name="Subject" Relationship="Self.FK__LessonSub__IdSub__693CA210" FromRole="LessonSubsitutionSchedule" ToRole="Subject" />
           <NavigationProperty Name="Teacher" Relationship="Self.FK__LessonSub__IdTea__6B24EA82" FromRole="LessonSubsitutionSchedule" ToRole="Teacher" />

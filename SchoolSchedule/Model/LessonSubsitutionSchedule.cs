@@ -20,7 +20,7 @@ namespace SchoolSchedule.Model
         public Nullable<int> IdGroup { get; set; }
         public Nullable<int> IdTeacher { get; set; }
         public Nullable<int> ClassRoom { get; set; }
-        public Nullable<int> LessonNumber { get; set; }
+        public int LessonNumber { get; set; }
     
         public virtual Group Group { get; set; }
         public virtual Subject Subject { get; set; }
