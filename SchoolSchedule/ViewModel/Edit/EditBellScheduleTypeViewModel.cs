@@ -13,13 +13,17 @@ namespace SchoolSchedule.ViewModel.Edit
 
 		public Model.BellScheduleType CurrentModel { get; set; } = new Model.BellScheduleType { Name="Расписание звонков"};
 		#region Свойства для ввода
+		const int MAX_NAME_LENGTH = 50;
 		public string Name{ get => CurrentModel.Name; set 
 			{
 				string inputValue = value is null ? "Расписание звонков" : Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-\d]", "");
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Name = "Расписание звонков";
 				else
-					CurrentModel.Name = inputValue;
+				{
+					CurrentModel.Name = inputValue.Length > MAX_NAME_LENGTH ?
+					inputValue.Substring(0, MAX_NAME_LENGTH) : inputValue;
+				}
 
 				OnPropertyChanged(nameof(Name));
 			} 

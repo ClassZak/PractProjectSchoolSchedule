@@ -21,13 +21,18 @@ namespace SchoolSchedule.ViewModel.Edit
 		public Student CurrentModel { get; set; } = new Student();
 		public List<Model.Student> ModelsForUniqueCheck { get; set; } 
 		#region Свойства для ввода
+		const int MAX_NAME_LENGTH = 30;
 		public string Surname{ get => CurrentModel.Surname; set
 			{
 				string inputValue = value is null ? "Иванов" : Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-]", "");
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Surname = "Иванов";
 				else
+				{
 					CurrentModel.Surname = inputValue;
+					if(inputValue.Length>MAX_NAME_LENGTH)
+						CurrentModel.Surname=inputValue.Substring(0,MAX_NAME_LENGTH);
+				}
 
 				OnPropertyChanged(nameof(Surname));
 			} 
@@ -38,7 +43,11 @@ namespace SchoolSchedule.ViewModel.Edit
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Name = "Иван";
 				else
+				{
 					CurrentModel.Name = inputValue;
+					if (inputValue.Length > MAX_NAME_LENGTH)
+						CurrentModel.Name = inputValue.Substring(0, MAX_NAME_LENGTH);
+				}
 
 				OnPropertyChanged(nameof(Name));
 			} 
@@ -49,7 +58,11 @@ namespace SchoolSchedule.ViewModel.Edit
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Patronymic = "Иванович";
 				else
+				{
 					CurrentModel.Patronymic = inputValue;
+					if (inputValue.Length > MAX_NAME_LENGTH)
+						CurrentModel.Patronymic = inputValue.Substring(0, MAX_NAME_LENGTH);
+				}
 
 				OnPropertyChanged(nameof(Patronymic));
 			} 
@@ -94,12 +107,12 @@ namespace SchoolSchedule.ViewModel.Edit
 			} 
 		}
 		#region Работа с почтой
+		const int MAX_EMAIL_LENGTH = 60;
 		private string ProcessEmail(string input)
 		{
 			string cleanValue = (input ?? "").Trim();
 			if (string.IsNullOrEmpty(cleanValue))
 				return null;
-
 
 			string[] parts = cleanValue.Split('@');
 			string localPart = parts[0];
@@ -112,28 +125,42 @@ namespace SchoolSchedule.ViewModel.Edit
 			string mainDomain = domainParts.Length > 0 ? domainParts[0] : "";
 			string tld = domainParts.Length > 1 ? string.Join(".", domainParts.Skip(1)) : "";
 
-			
 			if (string.IsNullOrEmpty(mainDomain))
 			{
 				mainDomain = "yandex";
 				tld = "ru";
 			}
-			else if (string.IsNullOrEmpty(tld))
+			else if (string.IsNullOrEmpty(tld) || tld.Length < 2)
 				tld = "ru";
 
-			// Сборка финального email
+
+			// вместо finalEmail = finalEmail.Trim().ToLower();
+			localPart=localPart.TrimStart();
+			tld = tld.TrimStart();
 			string finalEmail = $"{localPart}@{mainDomain}.{tld}";
-			finalEmail = finalEmail.Trim().ToLower();
 
 			// Применение ограничения длины (60 символов)
-			finalEmail = finalEmail.Length <= 60 ? finalEmail : finalEmail.Substring(0, 60).Split('@')[0] + "@" + finalEmail.Split('@')[1].Substring(0, Math.Min(60 - finalEmail.Split('@')[0].Length - 1, 59));
+			if (finalEmail.Length > MAX_EMAIL_LENGTH)
+			{
+				bool isLocalPartLargest	= localPart.Length	>=mainDomain.Length&& localPart.Length	>=tld.Length;
+				bool isMainDomainLargest= mainDomain.Length	>=localPart.Length && mainDomain.Length	>=tld.Length;
+				bool isTldLargest		= tld.Length		>=mainDomain.Length&& tld.Length		>= localPart.Length;
+				if (isLocalPartLargest)
+					localPart = localPart.Substring(0, MAX_EMAIL_LENGTH - (mainDomain.Length + tld.Length + 2));
+				else if (isMainDomainLargest)
+					mainDomain = mainDomain.Substring(0, MAX_EMAIL_LENGTH - (localPart.Length + tld.Length + 2));
+				else if (isTldLargest)
+					tld = tld.Substring(0, MAX_EMAIL_LENGTH - (mainDomain.Length + localPart.Length + 2));
 
-			
+				finalEmail = $"{localPart}@{mainDomain}.{tld}";
+			}
+
 			if (!EmailRegex.IsMatch(finalEmail))
-				return null;
+				return $"ivan@yandex.ru";
 
 			return finalEmail;
 		}
+
 
 		// Обновленный regex с учетом ограничений БД
 		private static readonly Regex EmailRegex = new Regex(

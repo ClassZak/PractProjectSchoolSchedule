@@ -37,7 +37,7 @@
 		</StackPanel>
 		<StackPanel Grid.Column="1" Margin="10,0,10,0">
 			<TextBlock Text="Электронная почта"/>
-			<TextBox Text="{Binding Email}" PreviewTextInput="Email_PreviewTextInput" ToolTip="Электронная почта, если есть"/>
+			<TextBox Text="{Binding Email}" PreviewTextInput="Email_PreviewTextInput" LostFocus="EmailTextBox_LostFocus" ToolTip="Электронная почта, если есть"/>
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Класс" ToolTip="Обязательное поле для заполнения"/>
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>

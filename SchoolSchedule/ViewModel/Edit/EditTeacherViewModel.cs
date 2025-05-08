@@ -25,6 +25,7 @@ namespace SchoolSchedule.ViewModel.Edit
 		public Teacher CurrentModel { get; set; } = new Teacher();
 		public List<Model.Teacher> ModelsForUniqueCheck { get; set; }
 		#region Свойства для ввода
+		const int MAX_NAME_LENGTH = 30;
 		public string Surname
 		{
 			get => CurrentModel.Surname; set
@@ -33,7 +34,11 @@ namespace SchoolSchedule.ViewModel.Edit
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Surname = "Иванов";
 				else
+				{
 					CurrentModel.Surname = inputValue;
+					if (inputValue.Length > MAX_NAME_LENGTH)
+						CurrentModel.Surname = inputValue.Substring(0, MAX_NAME_LENGTH);
+				}
 
 				OnPropertyChanged(nameof(Surname));
 			}
@@ -46,7 +51,11 @@ namespace SchoolSchedule.ViewModel.Edit
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Name = "Иван";
 				else
+				{
 					CurrentModel.Name = inputValue;
+					if (inputValue.Length > MAX_NAME_LENGTH)
+						CurrentModel.Name = inputValue.Substring(0, MAX_NAME_LENGTH);
+				}
 
 				OnPropertyChanged(nameof(Name));
 			}
@@ -59,7 +68,11 @@ namespace SchoolSchedule.ViewModel.Edit
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Patronymic = "Иванович";
 				else
+				{
 					CurrentModel.Patronymic = inputValue;
+					if (inputValue.Length > MAX_NAME_LENGTH)
+						CurrentModel.Patronymic = inputValue.Substring(0, MAX_NAME_LENGTH);
+				}
 
 				OnPropertyChanged(nameof(Patronymic));
 			}

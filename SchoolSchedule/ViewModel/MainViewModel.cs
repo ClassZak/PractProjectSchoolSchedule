@@ -275,7 +275,8 @@ namespace SchoolSchedule.ViewModel
 			{
 				ETaskStatus = ETaskStatus.Failed;
 				OnPropertyChanged(nameof(TaskStatus));
-				ErrorMessage = GetMessageFromException(ex);
+				//ErrorMessage = GetMessageFromException(ex);
+				ErrorMessage = GetEnhancedExceptionMessage(ex);
 				HandleException(ex);
 
 				CancelTableChanges();
@@ -591,6 +592,45 @@ namespace SchoolSchedule.ViewModel
 			}
 			
 			return ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+		}
+		private string GetEnhancedExceptionMessage(Exception ex)
+		{
+			var sb = new StringBuilder();
+			while (ex != null)
+			{
+				if (ex is DbEntityValidationException validationEx)
+				{
+					foreach (var error in validationEx.EntityValidationErrors)
+					{
+						foreach (var validationError in error.ValidationErrors)
+						{
+							sb.AppendLine($"{validationError.PropertyName}: {validationError.ErrorMessage}");
+						}
+					}
+				}
+				else if (ex is DbUpdateException updateEx)
+				{
+					var sqlEx = updateEx.InnerException as SqlException;
+					if (sqlEx != null)
+					{
+						sb.AppendLine($"SQL Error {sqlEx.Number}: {sqlEx.Message}");
+						switch (sqlEx.Number)
+						{
+							case 547: // Foreign key violation
+								sb.AppendLine("Ошибка целостности данных: существуют связанные записи");
+								break;
+							case 2601: // Unique constraint
+								sb.AppendLine("Нарушение уникальности данных");
+								break;
+							case 2627: // Primary key violation
+								sb.AppendLine("Нарушение первичного ключа");
+								break;
+						}
+					}
+				}
+				ex = ex.InnerException;
+			}
+			return sb.Length > 0 ? sb.ToString() : "Неизвестная ошибка";
 		}
 		private void HandleException(Exception ex)
 		{

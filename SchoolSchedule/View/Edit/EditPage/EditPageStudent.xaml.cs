@@ -75,6 +75,12 @@ namespace SchoolSchedule.View.Edit.EditPage
 				throw new ArgumentException(nameof(sender));
 			(DataContext as ViewModel.Edit.EditStudentViewModel).Patronymic = textBox.Text;
 		}
+		private void EmailTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditStudentViewModel).Email = textBox.Text;
+		}
 		#endregion
 
 		public KeyValuePair<bool,string> CheckInputRules()

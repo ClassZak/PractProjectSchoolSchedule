@@ -14,13 +14,15 @@ namespace SchoolSchedule.ViewModel.Edit
 		public Model.Subject CurrentModel { get; set; } = new Model.Subject { Name = "Предмет"};
 		public List<Model.Subject> ModelsForUniqueCheck{ get; set; }
 		#region Свойства для ввода
+		const int MAX_NAME_LENGTH = 70;
 		public string Name{ get { return CurrentModel.Name; } set
 			{ 
 				string inputValue = value is null ? "Предмет" :  Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-\d]","");
 				if(string.IsNullOrEmpty(inputValue) )
 					CurrentModel.Name = "Предмет";
 				else
-					CurrentModel.Name = inputValue;
+					CurrentModel.Name = inputValue.Length > MAX_NAME_LENGTH ?
+					inputValue.Substring(0,MAX_NAME_LENGTH) : inputValue;
 				
 				OnPropertyChanged(nameof(Name));
 			} 
