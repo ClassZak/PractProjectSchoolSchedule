@@ -149,9 +149,9 @@ namespace SchoolSchedule.ViewModel.Edit
 
 		public EditStudentViewModel(Student model, List<Student> modelsForUniqueCheck, List<Model.Group> groups, bool objectIsNew)
 		{
-			ObjectIsNew = objectIsNew;
 			if (groups.Count == 0)
 				throw new ArgumentException("В базе данных нет классов для зачисления учеников");
+			ObjectIsNew = objectIsNew;
 			CurrentModel = model;
 			Groups = new List<Model.Group>(groups);
 

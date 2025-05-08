@@ -48,10 +48,7 @@ namespace SchoolSchedule.ViewModel.Edit
 		public List<Model.Teacher> Teachers{ get; set; }
 		#endregion
 
-		public EditLessonSubsitutionScheduleViewModel()
-		{
-		}
-
+		public EditLessonSubsitutionScheduleViewModel() { }
 		public EditLessonSubsitutionScheduleViewModel
 		(
 			Model.LessonSubsitutionSchedule model,

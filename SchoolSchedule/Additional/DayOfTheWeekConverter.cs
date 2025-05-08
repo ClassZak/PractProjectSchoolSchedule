@@ -36,5 +36,13 @@ namespace SchoolSchedule.Additional
 
 			return null;
 		}
+
+
+
+
+		public static string Convert(DayOfTheWeek value)
+		{
+			return DAYS[value];
+		}
 	}
 }

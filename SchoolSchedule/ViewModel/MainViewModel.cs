@@ -692,23 +692,23 @@ namespace SchoolSchedule.ViewModel
 
 					ClearTables();
 
-					foreach (var el in dataBase.Group.Include(g => g.Teacher).ToList()	.OrderBy(x => x.Year).ThenBy(x => x.Name))
+					foreach (var el in dataBase.Group.Include(g => g.Teacher).ToList()				.OrderBy(x => x.Year).ThenBy(x => x.Name))
 						_groups.Add(el);
-					foreach (var el in dataBase.Schedule.ToList()						.OrderBy(x=>x.IdBellSchedule).ThenBy(x=>x.DayOfTheWeek).ThenBy(x=>x.IdGroup))
+					foreach (var el in dataBase.Schedule.ToList()									.OrderBy(x=>x.IdBellSchedule).ThenBy(x=>x.DayOfTheWeek).ThenBy(x=>x.IdGroup))
 						_schedules.Add(el);
-					foreach (var el in dataBase.Student.ToList()						.OrderBy(x => x.Gender).ThenBy(x => x.IdGroup).ThenBy(x=>x.BirthDay).ThenBy(x=>x.Surname).ThenBy(x=>x.Name).ThenBy(x=>x.Patronymic))
+					foreach (var el in dataBase.Student.ToList()									.OrderBy(x => x.Gender).ThenBy(x => x.IdGroup).ThenBy(x=>x.BirthDay).ThenBy(x=>x.Surname).ThenBy(x=>x.Name).ThenBy(x=>x.Patronymic))
 						_students.Add(el);
-					foreach (var el in dataBase.Subject.ToList()						.OrderBy(x => x.Name))
+					foreach (var el in dataBase.Subject.ToList()									.OrderBy(x => x.Name))
 						_subjects.Add(el);
-					foreach (var el in dataBase.Teacher.ToList()						.OrderBy(x => x.Gender).ThenBy(x => x.Surname).ThenBy(x => x.Name).ThenBy(x => x.Patronymic).ThenBy(x => x.BirthDay))
+					foreach (var el in dataBase.Teacher.ToList()									.OrderBy(x => x.Gender).ThenBy(x => x.Surname).ThenBy(x => x.Name).ThenBy(x => x.Patronymic).ThenBy(x => x.BirthDay))
 						_teachers.Add(el);
-					foreach (var el in dataBase.TeacherPhone.ToList()					.OrderBy(x => x.IdTeacher).ThenBy(x => x.PhoneNumber))
+					foreach (var el in dataBase.TeacherPhone.ToList()								.OrderBy(x => x.IdTeacher).ThenBy(x => x.PhoneNumber))
 						_teacherPhones.Add(el);
-					foreach (var el in dataBase.BellScheduleType.ToList()				.OrderBy(x => x.Name))
+					foreach (var el in dataBase.BellScheduleType.ToList()							.OrderBy(x => x.Name))
 						_bellScheduleTypes.Add(el);
-					foreach (var el in dataBase.BellSchedule.ToList()					.OrderBy(x => x.IdBellScheduleType).ThenBy(x => x.LessonNumber))
+					foreach (var el in dataBase.BellSchedule.Include(g=>g.BellScheduleType).ToList().OrderBy(x => x.IdBellScheduleType).ThenBy(x => x.LessonNumber))
 						_bellSchedules.Add(el);
-					foreach (var el in dataBase.LessonSubsitutionSchedule.ToList()		.OrderBy(x => x.Date).ThenBy(x => x.LessonNumber).ThenBy(x=>x.IdGroup))
+					foreach (var el in dataBase.LessonSubsitutionSchedule.ToList()					.OrderBy(x => x.Date).ThenBy(x => x.LessonNumber).ThenBy(x=>x.IdGroup))
 						_lessonSubsitutionSchedules.Add(el);
 
 					foreach (var el in _students)

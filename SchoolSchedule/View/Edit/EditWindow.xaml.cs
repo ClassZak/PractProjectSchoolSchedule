@@ -268,7 +268,7 @@ namespace SchoolSchedule.View.Edit
 					MessageBox.Show(checkResult.Value, "Ошибка редактирования атрибутов объекта", MessageBoxButton.OK, MessageBoxImage.Stop);
 					return;					
 				}
-				EditObject = ((mainFrame.Content as EditPage.EditPageSchedule).DataContext as EditScheduleViewModel).CurrentSchedule;
+				EditObject = ((mainFrame.Content as EditPage.EditPageSchedule).DataContext as EditScheduleViewModel).CurrentModel;
 			}
 			else if(EditType.Name==typeof(Model.BellScheduleType).Name)
 			{

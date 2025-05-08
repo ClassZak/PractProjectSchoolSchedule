@@ -14,15 +14,15 @@
 	<Page.DataContext>
 		<EditViewModel:EditScheduleViewModel/>
 	</Page.DataContext>
-	<Page.Resources>
-		<Additional:TimeSpanToStringConverter x:Key="TimeConverter"/>
-	</Page.Resources>
 	<Grid>
 		<StackPanel Margin="10">
-			<TextBlock Text="День недели"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="День недели" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox
-				ToolTip="Кабинет для занятий"
-				SelectedValue="{Binding CurrentSchedule.DayOfTheWeek}"
+				ToolTip="День проведения урока"
+				SelectedValue="{Binding DayOfTheWeek}"
 				SelectedValuePath="Tag"
 			>
 				<ComboBoxItem Tag="1">Понедельник</ComboBoxItem>
@@ -33,34 +33,49 @@
 				<ComboBoxItem Tag="6">Суббота</ComboBoxItem>
 				<ComboBoxItem Tag="7">Воскресенье</ComboBoxItem>
 			</ComboBox>
-			<TextBlock Text="Предмет" Margin="0,10,0,0"/>
+			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+				<TextBlock Text="Предмет" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox ItemsSource="{Binding Subjects}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentSchedule.IdSubject}"
-				ToolTip="Шаблоное занятие"
+				SelectedValue="{Binding IdSubject}"
+				ToolTip="Предмет"
 			/>
-			<TextBlock Text="Класс" Margin="0,10,0,0"/>
+			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+				<TextBlock Text="Класс" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentSchedule.IdGroup}"
-				ToolTip="Шаблоное занятие"
+				SelectedValue="{Binding IdGroup}"
+				ToolTip="Класс"
 			/>
-			<TextBlock Text="Учитель" Margin="0,10,0,0"/>
+			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+				<TextBlock Text="Учитель" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox ItemsSource="{Binding Teachers}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentSchedule.IdTeacher}"
-				ToolTip="Преподаватель на занятии"
+				SelectedValue="{Binding IdTeacher}"
+				ToolTip="Преподаватель на уроке"
 			/>
-			<TextBlock Text="Расписание звонков" Margin="0,10,0,0"/>
+			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+				<TextBlock Text="Расписание звонков" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
 			<ComboBox ItemsSource="{Binding BellSchedules}" 
 				SelectedValuePath="Id"
-				SelectedValue="{Binding CurrentSchedule.IdBellSchedule}"
-				ToolTip="Преподаватель на занятии"
+				SelectedValue="{Binding IdBellSchedule}"
+				ToolTip="Звонки на начало и на конец урока"
 			/>
-			<TextBlock Text="Кабинет" Margin="0,10,0,0"/>
-			<TextBox Text="{Binding CurrentSchedule.ClassRoom}" 
+			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+				<TextBlock Text="Кабинет" ToolTip="Обязательное поле для заполнения"/>
+				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+			</StackPanel>
+			<TextBox Text="{Binding ClassRoom}" 
 				ToolTip="Кабинет для занятий"
-				PreviewTextInput="NumberTextBox_PreviewTextInput"
+				PreviewTextInput="Int16NumberTextBox_PreviewTextInput"
 			/>
 		</StackPanel>
 	</Grid>
