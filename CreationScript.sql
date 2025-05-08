@@ -261,7 +261,7 @@ CREATE TABLE ClassTeacher(
 	FOREIGN KEY	(IdTeacher) REFERENCES Teacher,
 	FOREIGN KEY	(IdGroup) 	REFERENCES [Group]
 )
-
+ALTER TABLE ClassTeacher ADD CONSTRAINT UniqueGroupConstraint UNIQUE (IdGroup)
 
 
 

@@ -42,7 +42,26 @@ namespace SchoolSchedule.View.Edit.EditPage
 			e.Handled = !regex.IsMatch(e.Text);
 		}
 
-
+		#region Фокус полей ввода
+		private void NameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditTeacherViewModel).Name = textBox.Text;
+		}
+		private void SurnameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditTeacherViewModel).Surname = textBox.Text;
+		}
+		private void PatronymicTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditTeacherViewModel).Patronymic = textBox.Text;
+		}
+		#endregion
 		public KeyValuePair<bool, string> CheckInputRules()
 		{
 			return (DataContext as EditTeacherViewModel).CheckInputRules();

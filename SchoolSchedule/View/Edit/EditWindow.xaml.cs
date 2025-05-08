@@ -180,7 +180,7 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Редактирование расписания звонков";
 
-				mainFrame.Content = new EditPage.EditPageBellSchedule(isNewObject, EditObject as Model.BellSchedule, _bellScheduleTypes, _bellSchedules);
+				mainFrame.Content = new EditPage.EditPageBellSchedule(isNewObject, EditObject as Model.BellSchedule, _bellSchedules,_bellScheduleTypes);
 			}
 			else if (EditType.Name == typeof(Model.LessonSubsitutionSchedule).Name)
 			{

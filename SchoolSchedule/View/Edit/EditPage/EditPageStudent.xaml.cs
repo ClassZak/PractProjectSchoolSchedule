@@ -35,7 +35,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 		{
 			DataContext = new EditStudentViewModel(objectIsNew ? new Student{ BirthDay = new DateTime(2005, 1, 1), Gender = "М"} : model, students, groups, objectIsNew);
 		}
-
+		#region Фильтрация ввода
 		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			// Разрешить только русские буквы, пробелы и дефис
@@ -46,7 +46,6 @@ namespace SchoolSchedule.View.Edit.EditPage
 		{
 			e.Handled=HasInvalidEmailChars(e.Text);
 		}
-
 		private static readonly Regex forbiddenCharsRegex = new Regex
 		(
 			@"[^a-z.%+-@-]", // Инвертированный набор разрешённых символов
@@ -56,6 +55,27 @@ namespace SchoolSchedule.View.Edit.EditPage
 		{
 			return forbiddenCharsRegex.IsMatch(input);
 		}
+		#endregion
+		#region Фокус полей ввода
+		private void NameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditStudentViewModel).Name = textBox.Text;
+		}
+		private void SurnameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditStudentViewModel).Surname= textBox.Text;
+		}
+		private void PatronymicTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			(DataContext as ViewModel.Edit.EditStudentViewModel).Patronymic = textBox.Text;
+		}
+		#endregion
 
 		public KeyValuePair<bool,string> CheckInputRules()
 		{

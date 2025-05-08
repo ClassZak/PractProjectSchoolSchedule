@@ -24,20 +24,13 @@ namespace SchoolSchedule.View.Edit.EditPage
 	/// </summary>
 	public partial class EditPageBellSchedule : Page, IEditPage<BellSchedule>
 	{
-		public bool ObjectIsNew { get; set; }
-		public List<BellSchedule> BellSchedulesForCheck { get; set; } = new List<BellSchedule>();
-		public BellSchedule ValueRef { get; set; }
 		public EditPageBellSchedule()
 		{
 			InitializeComponent();
-			DataContext = ValueRef;
 		}
-		public EditPageBellSchedule(bool objectIsNew, BellSchedule editObject, List<BellScheduleType> bellScheduleTypes, List<BellSchedule> bellSchedules) : this()
+		public EditPageBellSchedule(bool objectIsNew, BellSchedule model, List<BellSchedule> modelsForUniqueCheck, List<BellScheduleType> bellScheduleTypes) : this()
 		{
-			ObjectIsNew = objectIsNew;
-			BellSchedulesForCheck = bellSchedules;
-
-			DataContext =  new EditBellScheduleViewModel(ObjectIsNew,ValueRef,bellScheduleTypes);
+			DataContext =  new EditBellScheduleViewModel(model, modelsForUniqueCheck, bellScheduleTypes, objectIsNew);
 		}
 		private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -46,19 +39,13 @@ namespace SchoolSchedule.View.Edit.EditPage
 			string newText = textBox.Text.Insert(textBox.CaretIndex, e.Text);
 			e.Handled = !byte.TryParse(newText, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
 		}
-		private void RussianTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			// Разрешить только русские буквы, пробелы и дефис
-			var regex = new Regex(@"^[\p{IsCyrillic}\s\-]+$");
-			e.Handled = !regex.IsMatch(e.Text);
-		}
-		static Regex timeRegex = new Regex(@"^[0-9:]+$");
+		static readonly Regex timeRegex = new Regex(@"^[0-9:]+$");
 		private void TimeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			e.Handled = !timeRegex.IsMatch(e.Text);
 		}
 
-
+		#region TimeBox
 		private void FormatTimeTextBox(TextBox textBox)
 		{
 			var input = textBox.Text.Trim();
@@ -111,14 +98,6 @@ namespace SchoolSchedule.View.Edit.EditPage
 			if (value > max) return max;
 			return value;
 		}
-
-
-		private void TimeBox_LostFocus(object sender, RoutedEventArgs e)
-		{
-			var textBox = (TextBox)sender;
-			if (textBox != null)
-				FormatTimeTextBox(textBox);
-		}
 		private void TimeBox_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Enter)
@@ -131,6 +110,22 @@ namespace SchoolSchedule.View.Edit.EditPage
 				e.Handled = true;
 			}
 		}
+		#endregion
+		#region Фокус полей ввода
+		private void TimeBox_LostFocus(object sender, RoutedEventArgs e)
+		{
+			var textBox = (TextBox)sender;
+			if (textBox != null)
+				FormatTimeTextBox(textBox);
+		}
+		private void LessonNumberTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!(sender is TextBox textBox))
+				throw new ArgumentException(nameof(sender));
+			int.TryParse(textBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out int data);
+			(DataContext as ViewModel.Edit.EditBellScheduleViewModel).LessonNumber = data;
+		}
+		#endregion
 
 		public KeyValuePair<bool, string> CheckInputRules()
 		{

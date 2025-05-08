@@ -151,12 +151,19 @@ namespace SchoolSchedule.ViewModel.Edit
 		{
 			ObjectIsNew = objectIsNew;
 			if (groups.Count == 0)
-				throw new ArgumentNullException("В базе данных нет классов для зачисления учеников");
+				throw new ArgumentException("В базе данных нет классов для зачисления учеников");
 			CurrentModel = model;
 			Groups = new List<Model.Group>(groups);
 
-			CurrentModel.IdGroup=groups.First().Id;
-			OnPropertyChanged(nameof(IdGroup));
+			if (ObjectIsNew)
+			{
+				CurrentModel.IdGroup=groups.First().Id;
+				OnPropertyChanged(nameof(IdGroup));
+			}
+
+			ModelsForUniqueCheck=new List<Student>(modelsForUniqueCheck);
+			if(!ObjectIsNew)
+				ModelsForUniqueCheck.Remove(model);
 
 			// Так надо
 			if (Name is null)
@@ -169,10 +176,6 @@ namespace SchoolSchedule.ViewModel.Edit
 				Gender = Gender;
 			if(BirthDay == null || BirthDay==DateTime.MinValue)
 				BirthDay = BirthDay;
-
-			ModelsForUniqueCheck=new List<Student>(modelsForUniqueCheck);
-			if(!ObjectIsNew)
-				ModelsForUniqueCheck.Remove(model);
 		}
 
 		public KeyValuePair<bool, string> CheckInputRules()
