@@ -138,7 +138,7 @@ namespace SchoolSchedule.View.Edit
 				else
 					newObjectLabel.Text = $"Редактирование номера";
 
-				mainFrame.Content = new EditPage.EditPageTeacherPhone(EditObject as Model.TeacherPhone, _teacherPhones);
+				mainFrame.Content = new EditPage.EditPageTeacherPhone(isNewObject, EditObject as Model.TeacherPhone, _teacherPhones);
 			}
 			else if (EditType.Name == typeof(Model.Schedule).Name)
 			{

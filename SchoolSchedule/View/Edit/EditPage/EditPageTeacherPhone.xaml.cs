@@ -30,7 +30,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 		{
 			InitializeComponent();
 		}
-		public EditPageTeacherPhone(TeacherPhone teacherPhone, List<TeacherPhone> teacherPhones) : this()
+		public EditPageTeacherPhone(bool objectIsNew, TeacherPhone teacherPhone, List<TeacherPhone> teacherPhones) : this()
 		{
 			ValueRef = teacherPhone;
 
@@ -39,7 +39,7 @@ namespace SchoolSchedule.View.Edit.EditPage
 			if(teacherPhone != null) 
 				TeacherPhonesForCheck.Remove(teacherPhone);
 
-			DataContext = new EditTeacherPhoneViewModel(ValueRef,TeacherPhonesForCheck);
+			DataContext = new EditTeacherPhoneViewModel(objectIsNew, ValueRef,TeacherPhonesForCheck);
 		}
 
 		#region Фильтрация ввода

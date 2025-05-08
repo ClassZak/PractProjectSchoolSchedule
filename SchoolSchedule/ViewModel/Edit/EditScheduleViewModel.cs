@@ -103,10 +103,10 @@ namespace SchoolSchedule.ViewModel.Edit
 			if(ModelsForUniqueCheck.Any
 				(
 					x=>
-					x.IdTeacher==CurrentModel.IdTeacher && 
-					x.BellSchedule.IdBellScheduleType==CurrentModel.BellSchedule.IdBellScheduleType &&
+					x.IdTeacher==CurrentModel.IdTeacher &&
+					x.DayOfTheWeek == CurrentModel.DayOfTheWeek &&
 					x.BellSchedule.LessonNumber == CurrentModel.BellSchedule.LessonNumber &&
-					x.DayOfTheWeek==CurrentModel.DayOfTheWeek 
+					x.BellSchedule.IdBellScheduleType == CurrentModel.BellSchedule.IdBellScheduleType
 				))
 				return new KeyValuePair<bool, string>
 				(
@@ -121,12 +121,27 @@ namespace SchoolSchedule.ViewModel.Edit
 					x.ClassRoom==CurrentModel.ClassRoom &&
 					x.DayOfTheWeek==CurrentModel.DayOfTheWeek &&
 					x.BellSchedule.LessonNumber==CurrentModel.BellSchedule.LessonNumber &&
-					x.BellSchedule.IdBellScheduleType == CurrentModel.IdBellSchedule
+					x.BellSchedule.IdBellScheduleType == CurrentModel.BellSchedule.IdBellScheduleType
 				))
 				return new KeyValuePair<bool, string>
 				(
 					false, 
 					$"Кабинет номер {CurrentModel.ClassRoom} уже занят на " +
+					$"{CurrentModel.BellSchedule.LessonNumber} уроке в " +
+					$"{Additional.DayOfTheWeekConverter.Convert((Model.Additional.DayOfTheWeek)DayOfTheWeek).ToLower()}"
+				);
+			if(ModelsForUniqueCheck.Any
+				(
+					x=>
+					x.IdGroup==CurrentModel.IdGroup &&
+					x.DayOfTheWeek==CurrentModel.DayOfTheWeek &&
+					x.BellSchedule.LessonNumber==CurrentModel.BellSchedule.LessonNumber &&
+					x.BellSchedule.IdBellScheduleType == CurrentModel.BellSchedule.IdBellScheduleType
+				))
+				return new KeyValuePair<bool, string>
+				(
+					false, 
+					$"Класс {CurrentModel.Group} уже занят на " +
 					$"{CurrentModel.BellSchedule.LessonNumber} уроке в " +
 					$"{Additional.DayOfTheWeekConverter.Convert((Model.Additional.DayOfTheWeek)DayOfTheWeek).ToLower()}"
 				);

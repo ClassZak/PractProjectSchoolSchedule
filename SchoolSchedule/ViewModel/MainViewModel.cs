@@ -632,40 +632,93 @@ namespace SchoolSchedule.ViewModel
 			}
 			return sb.Length > 0 ? sb.ToString() : "Неизвестная ошибка";
 		}
+		#region Исключения
 		private void HandleException(Exception ex)
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				if (ex is DbUpdateException)
+				if (ex is DbUpdateException dbUpdateEx)
 				{
-					// Распаковываем вложенные исключения
-					Exception innerException = ex.InnerException;
-					while (innerException.InnerException != null)
-						innerException = innerException.InnerException;
+					// Обрабатываем вложенные исключения Entity Framework
+					Exception innerException = dbUpdateEx.InnerException;
+					SqlException sqlEx = innerException as SqlException ?? innerException?.InnerException as SqlException;
 
-					MessageBox.Show(innerException.InnerException != null ? innerException.InnerException.Message : innerException.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-				}
-				else if (ex is SqlException)
-				{
-					if (ex is SqlException sqlException)
+					if (sqlEx != null)
 					{
-						if (sqlException.Number == 2)
-							MessageBox.Show("Ошибка: Файл базы данных не найден. Проверьте путь в строке подключения и подключение к серверу", "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-						else
-						if (sqlException.Number == 53 || sqlException.Number == -1)
-							MessageBox.Show(ex.Message, "Ошибка подключения к базе данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-						else
-							MessageBox.Show($"SQL-ошибка (код {sqlException.Number}): {sqlException.Message}", "Ошибка базы данных");
+						HandleSqlException(sqlEx);
 					}
-					ClearTables();
+					else
+					{
+						MessageBox.Show(dbUpdateEx.Message, "Ошибка обновления базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+					}
 				}
+				else if (ex is SqlException sqlException)
+					HandleSqlException(sqlException);
 				else
-				{
-					MessageBox.Show(ex.InnerException != null ? ex.InnerException.Message : ex.Message, "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-					if (ex.Message == "The underlying provider failed on Open.")
-						ClearTables();
-				}
+					MessageBox.Show(ex.Message, "Общая ошибка", MessageBoxButton.OK, MessageBoxImage.Stop);
 			});
+		}
+		private void HandleSqlException(SqlException sqlEx)
+		{
+			switch (sqlEx.Number)
+			{
+				// Кастомные ошибки из триггеров (RAISERROR)
+				case 50000:
+					ShowCleanMessage(sqlEx.Message);
+					break;
+				// Ошибки уникальности (UNIQUE constraint)
+				case 2627:
+				case 2601:
+					var uniqueMessage = ExtractConstraintMessage(sqlEx.Message, "уникальности");
+					MessageBox.Show($"Нарушение уникальности: {uniqueMessage}", "Ошибка данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+					break;
+				// Check constraint, Foreign Key, и другие ограничения
+				case 547:
+					var constraintMessage = ExtractConstraintMessage(sqlEx.Message, "ограничения");
+					MessageBox.Show($"Нарушение ограничения: {constraintMessage}", "Ошибка данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+					break;
+				// Ошибки связанные с NULL (например, обязательные поля)
+				case 515:
+					MessageBox.Show("Нельзя сохранить пустое значение в обязательном поле", "Ошибка данных", MessageBoxButton.OK, MessageBoxImage.Stop);
+					break;
+				// Ошибки подключения
+				case 2:
+				case 53:
+				case -1:
+					MessageBox.Show("Ошибка подключения к базе данных. Проверьте соединение", "Ошибка сети", MessageBoxButton.OK, MessageBoxImage.Stop);
+					ClearTables();
+					break;
+				// Общие SQL ошибки
+				default:
+					MessageBox.Show($"SQL-ошибка ({sqlEx.Number}): {sqlEx.Message}", "Ошибка БД",MessageBoxButton.OK,MessageBoxImage.Stop);
+					break;
+			}
+		}
+		private string ExtractConstraintMessage(string originalMessage, string constraintType)
+		{
+			try
+			{
+				int startIndex = originalMessage.IndexOf(constraintType) + constraintType.Length + 2;
+				int endIndex = originalMessage.IndexOf(". The conflict");
+
+				return originalMessage.Substring(startIndex, endIndex - startIndex);
+			}
+			catch
+			{
+				return originalMessage;
+			}
+		}
+		#endregion
+
+		// Убирает техническую часть сообщения из RAISERROR
+		private void ShowCleanMessage(string message)
+		{
+			int lastNewLineIndex = message.LastIndexOf('\n');
+			string cleanMsg = lastNewLineIndex == -1
+				? message
+				: message.Substring(0, lastNewLineIndex);
+
+			MessageBox.Show(cleanMsg, "Ошибка операции", MessageBoxButton.OK, MessageBoxImage.Stop);
 		}
 		#endregion
 		private void ClearTables()

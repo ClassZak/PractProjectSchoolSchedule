@@ -11,7 +11,7 @@ namespace SchoolSchedule.ViewModel.Edit
 	public class EditTeacherPhoneViewModel : ABaseViewModel
 	{
 		public EditTeacherPhoneViewModel() { }
-
+		public bool ObjectIsNew { get; set; }
 		public Model.TeacherPhone CurrentModel { get; set; } = new Model.TeacherPhone { PhoneNumber= "+7 123 456-78-90" };
 		#region Свойства для ввода
 		public string PhoneNumber { get => CurrentModel?.PhoneNumber; set 
@@ -35,8 +35,9 @@ namespace SchoolSchedule.ViewModel.Edit
 		#endregion
 
 		public List<Model.TeacherPhone> ModelsForUniqueCheck { get; set; }
-		public EditTeacherPhoneViewModel(Model.TeacherPhone currentModel, List<Model.TeacherPhone> modelsForUniqueCheck)
+		public EditTeacherPhoneViewModel(bool objectIsNew, Model.TeacherPhone currentModel, List<Model.TeacherPhone> modelsForUniqueCheck)
 		{
+			ObjectIsNew = objectIsNew;
 			CurrentModel = currentModel;
 			ModelsForUniqueCheck = modelsForUniqueCheck;
 
@@ -56,9 +57,9 @@ namespace SchoolSchedule.ViewModel.Edit
 			}
 			if (!Regex.IsMatch(CurrentModel.PhoneNumber, @"^\+7 \d{3} \d{3}-\d{2}-\d{2}$"))
 				return new KeyValuePair<bool, string>(false, "Неверный формат номера телефона!\nПравильный формат: +7 XXX XXX-XX-XX");
-			if (ModelsForUniqueCheck.Any(x=>x.PhoneNumber==CurrentModel.PhoneNumber))
+			if (ObjectIsNew && ModelsForUniqueCheck.Any(x => x.PhoneNumber == CurrentModel.PhoneNumber))
 				return new KeyValuePair<bool, string>(false, $"Номер {CurrentModel.PhoneNumber} уже существует");
-				
+
 
 			return new KeyValuePair<bool, string>(true, null);
 		}

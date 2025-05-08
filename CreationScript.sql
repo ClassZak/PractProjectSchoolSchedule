@@ -112,6 +112,7 @@ CREATE TABLE TeacherPhone(
 )
 ALTER TABLE TeacherPhone ADD CONSTRAINT TeacherPhoneConstraint
 CHECK (PhoneNumber LIKE '+7 [0-9][0-9][0-9] [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')
+ALTER TABLE TeacherPhone ADD CONSTRAINT UniqueTeacherPhone UNIQUE (PhoneNumber);
 
 
 
@@ -158,6 +159,26 @@ GO
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 CREATE TABLE Schedule(
 	Id				INT IDENTITY PRIMARY KEY,
 	IdSubject		INT NOT NULL,
@@ -181,21 +202,51 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (
-        SELECT 1
-        FROM inserted i
-        JOIN Schedule s ON i.IdTeacher = s.IdTeacher
-        JOIN BellSchedule bs1 ON i.IdBellSchedule = bs1.Id
-        JOIN BellSchedule bs2 ON s.IdBellSchedule = bs2.Id
-        WHERE 
-            i.Id <> s.Id -- Исключаем текущую запись
-            AND i.DayOfTheWeek = s.DayOfTheWeek
-            AND (
-                (bs1.StartTime < bs2.EndTime AND bs1.EndTime > bs2.StartTime)
-            )
-    )
+    DECLARE 
+        @TeacherName NVARCHAR(100),
+        @DayOfWeekNumber INT,
+        @DayOfWeekName NVARCHAR(20),
+        @ExistingLessonNumber INT,
+        @ErrorMsg NVARCHAR(500);
+
+    -- Получаем данные о конфликте
+    SELECT TOP 1
+        @TeacherName = t.Surname + ' ' + t.[Name] + ' ' + t.Patronymic ,-- Имя преподавателя
+        @DayOfWeekNumber = i.DayOfTheWeek,         -- Число 1-7
+        @ExistingLessonNumber = bs2.LessonNumber   -- Номер урока
+    FROM inserted i
+    JOIN Schedule s ON i.IdTeacher = s.IdTeacher
+    JOIN BellSchedule bs1 ON i.IdBellSchedule = bs1.Id
+    JOIN BellSchedule bs2 ON s.IdBellSchedule = bs2.Id
+    JOIN Teacher t ON s.IdTeacher = t.Id           -- Предполагается таблица Teacher
+    WHERE 
+        i.Id <> s.Id
+        AND i.DayOfTheWeek = s.DayOfTheWeek
+        AND (bs1.StartTime < bs2.EndTime AND bs1.EndTime > bs2.StartTime);
+
+    IF @@ROWCOUNT > 0
     BEGIN
-        RAISERROR('Преподаватель уже занят в это время!', 16, 1);
+        -- Преобразуем номер дня в название
+        SET @DayOfWeekName = CASE @DayOfWeekNumber
+            WHEN 1 THEN 'понедельник'
+            WHEN 2 THEN 'вторник'
+            WHEN 3 THEN 'среду'
+            WHEN 4 THEN 'четверг'
+            WHEN 5 THEN 'пятницу'
+            WHEN 6 THEN 'субботу'
+            WHEN 7 THEN 'воскресенье'
+            ELSE 'неизвестный день'
+        END;
+
+        -- Формируем сообщение
+        SET @ErrorMsg = FORMATMESSAGE(
+            N'Учитель %s уже проводит занятие в %s на %d уроке.', 
+            @TeacherName,
+            @DayOfWeekName,
+            @ExistingLessonNumber
+        );
+
+        RAISERROR(@ErrorMsg, 16, 1);
         ROLLBACK TRANSACTION;
     END;
 END;
@@ -207,19 +258,118 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (
-        SELECT 1
-        FROM inserted i
-        JOIN Schedule s ON i.ClassRoom = s.ClassRoom
-                          AND i.DayOfTheWeek = s.DayOfTheWeek
-                          AND i.Id <> s.Id -- Исключаем текущую запись
-        JOIN BellSchedule bs_i ON i.IdBellSchedule = bs_i.Id
-        JOIN BellSchedule bs_s ON s.IdBellSchedule = bs_s.Id
-        WHERE 
-            (bs_i.StartTime < bs_s.EndTime AND bs_i.EndTime > bs_s.StartTime)
-    )
+    DECLARE 
+        @ClassRoom NVARCHAR(10),
+        @DayOfWeekNumber INT,
+        @DayOfWeekName NVARCHAR(20),
+        @LessonNumber INT,
+        @ErrorMsg NVARCHAR(500);
+
+    -- Получаем данные о конфликте
+    SELECT TOP 1
+        @ClassRoom = i.ClassRoom,
+        @DayOfWeekNumber = i.DayOfTheWeek,
+        @LessonNumber = bs_s.LessonNumber
+    FROM inserted i
+    JOIN Schedule s 
+        ON i.ClassRoom = s.ClassRoom
+        AND i.DayOfTheWeek = s.DayOfTheWeek
+        AND i.Id <> s.Id
+    JOIN BellSchedule bs_i 
+        ON i.IdBellSchedule = bs_i.Id
+    JOIN BellSchedule bs_s 
+        ON s.IdBellSchedule = bs_s.Id
+    WHERE 
+        bs_i.StartTime < bs_s.EndTime 
+        AND bs_i.EndTime > bs_s.StartTime;
+
+    IF @@ROWCOUNT > 0
     BEGIN
-        RAISERROR('Кабинет уже занят в это время!', 16, 1);
+        -- Определяем название дня недели в винительном падеже
+        SET @DayOfWeekName = CASE @DayOfWeekNumber
+            WHEN 1 THEN 'понедельник'
+            WHEN 2 THEN 'вторник'
+            WHEN 3 THEN 'среду'
+            WHEN 4 THEN 'четверг'
+            WHEN 5 THEN 'пятницу'
+            WHEN 6 THEN 'субботу'
+            WHEN 7 THEN 'воскресенье'
+            ELSE 'неизвестный день'
+        END;
+
+        -- Формируем сообщение
+        SET @ErrorMsg = FORMATMESSAGE(
+            N'Кабинет %s уже занят в %s на %d уроке.', 
+            @ClassRoom,
+            @DayOfWeekName,
+            @LessonNumber
+        );
+
+        RAISERROR(@ErrorMsg, 16, 1);
+        ROLLBACK TRANSACTION;
+    END;
+END;
+GO
+CREATE OR ALTER TRIGGER CheckGroupAvailability
+ON Schedule
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE 
+        @GroupYear INT,
+        @GroupName NVARCHAR(1),
+        @DayOfWeekNumber INT,
+        @DayOfWeekName NVARCHAR(20),
+        @LessonNumber INT,
+        @ErrorMsg NVARCHAR(500);
+
+    -- Получаем данные о конфликте
+    SELECT TOP 1
+        @GroupYear = g.[Year],               -- Год обучения
+        @GroupName = g.[Name],           -- Буква класса (А, Б и т.д.)
+        @DayOfWeekNumber = i.DayOfTheWeek, -- День недели (1-7)
+        @LessonNumber = bs_s.LessonNumber  -- Номер урока
+    FROM inserted i
+    JOIN Schedule s 
+        ON i.IdGroup = s.IdGroup
+        AND i.DayOfTheWeek = s.DayOfTheWeek
+        AND i.Id <> s.Id
+    JOIN BellSchedule bs_i 
+        ON i.IdBellSchedule = bs_i.Id
+    JOIN BellSchedule bs_s 
+        ON s.IdBellSchedule = bs_s.Id
+    JOIN [Group] g 
+        ON s.IdGroup = g.Id
+    WHERE 
+        bs_i.StartTime < bs_s.EndTime 
+        AND bs_i.EndTime > bs_s.StartTime;
+
+    IF @@ROWCOUNT > 0
+    BEGIN
+        -- Определяем день недели
+        SET @DayOfWeekName = CASE @DayOfWeekNumber
+            WHEN 1 THEN 'понедельник'
+            WHEN 2 THEN 'вторник'
+            WHEN 3 THEN 'среду'
+            WHEN 4 THEN 'четверг'
+            WHEN 5 THEN 'пятницу'
+            WHEN 6 THEN 'субботу'
+            WHEN 7 THEN 'воскресенье'
+            ELSE 'неизвестный день'
+        END;
+
+        -- Формируем сообщение
+        SET @ErrorMsg = FORMATMESSAGE(
+            N'Группа %d-%s уже имеет занятие в %s на %d уроке.', 
+            @GroupYear,
+            @GroupName,
+            @DayOfWeekName,
+            @LessonNumber
+        );
+
+        RAISERROR(@ErrorMsg, 16, 1);
         ROLLBACK TRANSACTION;
     END;
 END;
@@ -236,6 +386,18 @@ BEGIN
 		ClassRoom=ABS(ClassRoom)
 END
 GO
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 
