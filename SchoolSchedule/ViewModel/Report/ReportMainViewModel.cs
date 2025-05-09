@@ -1,4 +1,5 @@
-﻿using SchoolSchedule.Model;
+﻿using Microsoft.Win32;
+using SchoolSchedule.Model;
 using SchoolSchedule.Model.DTO;
 using SchoolSchedule.ViewModel.Commands;
 using SchoolSchedule.ViewModel.TaskModel;
@@ -8,8 +9,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,8 +24,17 @@ namespace SchoolSchedule.ViewModel.Report
 	public class ReportMainViewModel : ABaseViewModel
 	{
 		public ReportMainViewModel() { }
-		private readonly MainViewModel _mainVM;
+		private int _selectedTabIndex;
 
+		public int SelectedTabIndex
+		{
+			get => _selectedTabIndex;
+			set
+			{
+				_selectedTabIndex = value;
+				OnPropertyChanged(nameof(SelectedTabIndex));
+			}
+		}
 		#region Статус задачи
 		TaskViewModel _taskViewModel = new TaskViewModel();
 		public string TaskName
@@ -107,6 +119,33 @@ namespace SchoolSchedule.ViewModel.Report
 				}));
 			}
 		}
+		#region Команды сохранения
+		RelayCommand _saveToTxtCommand;
+		public RelayCommand SaveToTxtCommand { get 
+			{
+				return _saveToTxtCommand ?? (_saveToTxtCommand=new RelayCommand(async param=>
+				{
+					SaveFileDialog saveFileDialog = new SaveFileDialog();
+					saveFileDialog.Title = "Сохранение отчёта";
+					saveFileDialog.Filter = "Текстовый файл (*.txt)|*.txt";
+					if (saveFileDialog.ShowDialog()==true)
+					{
+						switch(SelectedTabIndex)
+						{
+							case 0:
+								await IO.Saver.SaveToFileAsync(ShowLessonsAtDayForTeacherByIdTeacher_ProcResults, saveFileDialog.FileName);
+								break;
+							case 1:
+								await IO.Saver.SaveToFileAsync(ShowStudentsByGroupByIdGroup_ProcResults, saveFileDialog.FileName);
+								break;
+							default:
+								throw new ArgumentException("Неверный индекс вкладки");
+						}
+					}
+				}));
+			}
+		}
+		#endregion
 		#endregion
 		#region Буфер обмена
 		RelayCommand _dataGridDataToClipboard;

@@ -139,7 +139,7 @@ ALTER TABLE Student ADD CONSTRAINT RussianStudentPatronymic
 CHECK (NOT Patronymic LIKE '%[a-zA-Z0-9]%')
 ALTER TABLE Student ADD CONSTRAINT StudentEmailCheck
 CHECK (Email IS NULL OR Email LIKE '%_@%_.__%')
-ALTER TABLE Student ADD CONSTRAINT UniqueStudentEmail UNIQUE (Email);
+--ALTER TABLE Student ADD CONSTRAINT UniqueStudentEmail UNIQUE (Email);
 GO
 
 CREATE TRIGGER StudentLowerCaseEmailTrigger
@@ -684,34 +684,100 @@ END
 GO
 
 
-INSERT INTO BellScheduleType ([Name]) VALUES ('Расписание звонков на каждую неделю')
+-- Расписания звонков
+INSERT INTO BellScheduleType (Name) 
+VALUES 
+    ('Расписание звонков на каждую неделю'),
+    ('Расписание звонков на короткие дни');
 
+INSERT INTO BellSchedule (IdBellScheduleType, LessonNumber, StartTime, EndTime)
+VALUES
+    (1, 1, '08:00', '08:40'),
+    (1, 2, '08:50', '09:30'),
+    (1, 3, '09:00', '09:40'),
+    (1, 4, '10:00', '10:40'),
+    (1, 5, '10:50', '11:30'),
+    (2, 1, '08:00', '08:20'),
+    (2, 2, '08:25', '08:45');
 
-INSERT INTO BellSchedule (IdBellScheduleType, LessonNumber, StartTime, EndTime) VALUES (1, 1, CAST('08:00:00' AS Time), CAST('08:40:00' AS Time))
-INSERT INTO BellSchedule (IdBellScheduleType, LessonNumber, StartTime, EndTime) VALUES (1, 2, CAST('08:50:00' AS Time), CAST('09:30:00' AS Time))
+-- Группы учащихся
+INSERT INTO [Group] (Year, Name)
+VALUES
+    (1, 'В'), (1, 'А'), (1, 'Б'), (1, 'Г'),
+    (2, 'А'), (2, 'Б'), (2, 'В'), (2, 'Г'),
+    (3, 'А'), (3, 'Б'), (3, 'В'), (3, 'Г'),
+    (4, 'А'), (5, 'А'), (6, 'А'), (7, 'А'),
+    (8, 'А'), (9, 'А'), (10, 'А'), (11, 'А'),
+    (4, 'Б'), (5, 'Б'), (6, 'Б'), (7, 'Б'),
+    (8, 'Б'), (9, 'Б'), (4, 'Г'), (4, 'В'),
+    (5, 'В'), (6, 'В'), (8, 'В'), (7, 'В'),
+    (9, 'В'), (5, 'Г'), (6, 'Г'), (7, 'Г'),
+    (8, 'Г');
 
+-- Учебные предметы
+INSERT INTO Subject (Name)
+VALUES
+    ('Математика'),
+    ('Русский язык'),
+    ('Литература'),
+    ('Окружающий мир'),
+    ('География'),
+    ('ОБЖ'),
+    ('Обществознание');
 
-INSERT INTO [Group] ([Year], [Name]) VALUES (1, 'В')
+-- Преподаватели
+INSERT INTO Teacher (Surname, Name, Patronymic, Gender, BirthDay)
+VALUES
+    ('Владимиров', 'Владимир', 'Владимирович', 'М', '1970-01-01'),
+    ('Григорин', 'Александр', 'Викторович', 'М', '1990-04-23'),
+    ('Иванов', 'Иван', 'Иванович', 'М', '1970-01-01'),
+    ('Ивановясчм', 'Иван', 'Иванович', 'М', '1900-01-01'),
+    ('Сасус', 'Иван', 'Иванович', 'М', '1970-01-01');
 
+-- Расписание занятий
+INSERT INTO Schedule (IdSubject, IdGroup, IdTeacher, IdBellSchedule, DayOfTheWeek, ClassRoom)
+VALUES
+    (1, 1, 1, 1, 4, 123),
+    (1, 1, 1, 2, 4, 111),
+    (2, 2, 1, 1, 1, 110),
+    (1, 4, 2, 6, 1, 123);
 
-INSERT INTO Subject ([Name]) VALUES ('Математика')
+-- Учащиеся
+INSERT INTO Student (Surname, Name, Patronymic, IdGroup, Gender, BirthDay)
+VALUES
+    ('Иванов', 'Пётр', 'Васильевич', 6, 'М', '2018-04-22'),
+    ('Добрынин', 'Сергей', 'Иванович', 4, 'М', '2018-07-01'),
+    ('Дробышев', 'Александр', 'Кузьмич', 2, 'М', '2018-03-12'),
+    ('Жукова', 'Алина', 'Сергеевна', 37, 'Ж', '2005-01-01');
+INSERT INTO Student (Surname, Name, Patronymic, IdGroup, Gender, BirthDay, Email)
+VALUES
+    ('Иванов', 'Иван', 'Иванович', 1, 'М', '2018-09-29', 'sigma_777@mail.ru')
 
+-- Замены занятий
+INSERT INTO LessonSubsitutionSchedule (Date, IdSubject, IdGroup, IdTeacher, ClassRoom, LessonNumber)
+VALUES
+    ('2025-05-01', 1, 1, 1, 345, 2),
+    ('2025-05-01', 1, 3, 2, 127, 1),
+    ('2025-05-08', NULL, NULL, 5, NULL, 1);
 
-INSERT INTO Teacher (Surname, [Name], Patronymic) VALUES ('Владимиров', 'Владимир', 'Владимирович')
+-- Связи преподавателей
+INSERT INTO ClassTeacher (IdTeacher, IdGroup)
+VALUES
+    (1, 1),
+    (2, 7),
+    (2, 20);
 
+INSERT INTO TeacherSubject (IdTeacher, IdSubject)
+VALUES
+    (2, 1),
+    (2, 7);
 
-INSERT INTO Schedule (IdSubject, IdGroup, IdTeacher, IdBellSchedule, DayOfTheWeek, ClassRoom) VALUES (1, 1, 1, 1, 4, 123)
-INSERT INTO Schedule (IdSubject, IdGroup, IdTeacher, IdBellSchedule, DayOfTheWeek, ClassRoom) VALUES (1, 1, 1, 2, 4, 111)
-
-
-INSERT INTO Student (Surname, [Name], Patronymic, IdGroup, Email) VALUES ('Иванов', 'Иван', 'Иванович', 1, NULL)
-
-
-INSERT INTO LessonSubsitutionSchedule ([Date], IdSubject, IdGroup, IdTeacher, ClassRoom, LessonNumber) VALUES (CAST('2025-05-01' AS Date), 1, 1, 1, 345, 2)
-INSERT INTO LessonSubsitutionSchedule ([Date], IdSubject, IdGroup, IdTeacher, ClassRoom, LessonNumber) VALUES (CAST('2025-05-01' AS Date), 1, NULL, NULL, NULL, 1)
-
-
-INSERT INTO ClassTeacher ([IdTeacher], [IdGroup]) VALUES (1, 1)
+-- Телефоны преподавателей
+INSERT INTO TeacherPhone (IdTeacher, PhoneNumber)
+VALUES
+    (1, '+7 123 456-78-90'),
+    (2, '+7 890 000-02-34'),
+    (2, '+7 234 234-23-42');
 GO
 
 

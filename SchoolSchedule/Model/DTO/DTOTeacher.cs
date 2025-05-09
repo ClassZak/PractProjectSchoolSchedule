@@ -15,7 +15,7 @@ namespace SchoolSchedule.Model.DTO
 		public string Name { get => ModelRef.Name; set { ModelRef.Name = value; } }
 		public string Patronymic { get => ModelRef.Patronymic; set { ModelRef.Patronymic = value; } }
 		public DateTime BirthDay{ get { return ModelRef.BirthDay; } set { _prevBirthDay = ModelRef.BirthDay; ModelRef.BirthDay = value; } }
-		public string Gender { get { return ModelRef.Gender; } set { _prevGender = ModelRef.Gender; ModelRef.Gender = value.Substring(0, 1).ToUpper(); } }
+		public string Gender { get { return ModelRef.Gender == "М" ? "Мужской" : (ModelRef.Gender == "Ж" ? "Женский" : string.Empty); } set { _prevGender = ModelRef.Gender; ModelRef.Gender = value.Substring(0, 1).ToUpper(); } }
 		#endregion
 		#region Поля для предыдущих значний
 		int _prevId = 0;

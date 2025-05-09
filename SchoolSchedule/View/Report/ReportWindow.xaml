@@ -8,7 +8,7 @@
         xmlns:ViewModelTaskModel="clr-namespace:SchoolSchedule.ViewModel.TaskModel"
         xmlns:View="clr-namespace:SchoolSchedule.View"
         mc:Ignorable="d"
-        Title="ReportWindow" Height="450" Width="800"
+        Title="Отчёты" Height="450" Width="800"
         WindowStartupLocation="CenterOwner"
         FontFamily="Arial"
         FontSize="12"
@@ -26,8 +26,7 @@
 		<Menu>
 			<MenuItem Header="Файл">
 				<MenuItem Header="Сохранить в">
-					<MenuItem Header="Сохранить в xslx файл"/>
-					<MenuItem Header="Сохранить в txt файл"/>
+					<MenuItem Header="Сохранить в txt файл" Command="{Binding SaveToTxtCommand}"/>
 				</MenuItem>
 			</MenuItem>
 		</Menu>
@@ -37,7 +36,7 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<TabControl>
+			<TabControl SelectedIndex="{Binding SelectedTabIndex}">
 				<TabItem Header="Расписание уроков для учителя">
 					<Grid>
 						<Grid.ColumnDefinitions>
