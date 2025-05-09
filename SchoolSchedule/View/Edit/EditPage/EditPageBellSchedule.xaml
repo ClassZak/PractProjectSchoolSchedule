@@ -44,7 +44,7 @@
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
 			</StackPanel>
 			<TextBox Text="{Binding LessonNumber}"
-				ToolTip="Номер урока"
+				ToolTip="Номер урока по счёту"
 				PreviewTextInput="NumberTextBox_PreviewTextInput"
 				LostFocus="LessonNumberTextBox_LostFocus"
 			>
@@ -70,7 +70,7 @@
 				KeyDown="TimeBox_KeyDown"
 				LostFocus="TimeBox_LostFocus"
 				PreviewTextInput="TimeTextBox_PreviewTextInput"
-				ToolTip="Начало урока"
+				ToolTip="Звонок на начало урока"
 			/>
 
 			<StackPanel Orientation="Horizontal" Margin="0,10,0,0" >
@@ -84,7 +84,7 @@
 				KeyDown="TimeBox_KeyDown"
 				LostFocus="TimeBox_LostFocus"
 				PreviewTextInput="TimeTextBox_PreviewTextInput"
-				ToolTip="Окончание урока"
+				ToolTip="Звонок на конец урока"
 			/>
 		</StackPanel>
 	</Grid>

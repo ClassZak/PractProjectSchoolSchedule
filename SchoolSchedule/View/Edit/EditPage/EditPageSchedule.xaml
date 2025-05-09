@@ -74,7 +74,7 @@
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
 			</StackPanel>
 			<TextBox Text="{Binding ClassRoom}" 
-				ToolTip="Кабинет для занятий"
+				ToolTip="Кабинет для урока"
 				PreviewTextInput="Int16NumberTextBox_PreviewTextInput"
 			/>
 		</StackPanel>

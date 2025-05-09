@@ -276,8 +276,9 @@ namespace SchoolSchedule.ViewModel
 				ETaskStatus = ETaskStatus.Failed;
 				OnPropertyChanged(nameof(TaskStatus));
 				//ErrorMessage = GetMessageFromException(ex);
-				ErrorMessage = GetEnhancedExceptionMessage(ex);
-				HandleException(ex);
+				var result = HandleException(ex);
+				ErrorMessage = result.Value;
+				MessageBox.Show(result.Value,result.Key,MessageBoxButton.OK, MessageBoxImage.Error);
 
 				CancelTableChanges();
 			}
@@ -593,106 +594,77 @@ namespace SchoolSchedule.ViewModel
 			
 			return ex.InnerException != null ? ex.InnerException.Message : ex.Message;
 		}
-		private string GetEnhancedExceptionMessage(Exception ex)
-		{
-			var sb = new StringBuilder();
-			while (ex != null)
-			{
-				if (ex is DbEntityValidationException validationEx)
-				{
-					foreach (var error in validationEx.EntityValidationErrors)
-					{
-						foreach (var validationError in error.ValidationErrors)
-						{
-							sb.AppendLine($"{validationError.PropertyName}: {validationError.ErrorMessage}");
-						}
-					}
-				}
-				else if (ex is DbUpdateException updateEx)
-				{
-					var sqlEx = updateEx.InnerException as SqlException;
-					if (sqlEx != null)
-					{
-						sb.AppendLine($"SQL Error {sqlEx.Number}: {sqlEx.Message}");
-						switch (sqlEx.Number)
-						{
-							case 547: // Foreign key violation
-								sb.AppendLine("Ошибка целостности данных: существуют связанные записи");
-								break;
-							case 2601: // Unique constraint
-								sb.AppendLine("Нарушение уникальности данных");
-								break;
-							case 2627: // Primary key violation
-								sb.AppendLine("Нарушение первичного ключа");
-								break;
-						}
-					}
-				}
-				ex = ex.InnerException;
-			}
-			return sb.Length > 0 ? sb.ToString() : "Неизвестная ошибка";
-		}
 		#region Исключения
-		private void HandleException(Exception ex)
+		private KeyValuePair<string, string> HandleException(Exception ex)
 		{
-			Application.Current.Dispatcher.Invoke(() =>
+			return Application.Current.Dispatcher.Invoke(() =>
 			{
 				if (ex is DbUpdateException dbUpdateEx)
 				{
-					// Обрабатываем вложенные исключения Entity Framework
 					Exception innerException = dbUpdateEx.InnerException;
 					SqlException sqlEx = innerException as SqlException ?? innerException?.InnerException as SqlException;
 
-					if (sqlEx != null)
-					{
-						HandleSqlException(sqlEx);
-					}
-					else
-					{
-						MessageBox.Show(dbUpdateEx.Message, "Ошибка обновления базы данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-					}
+					return sqlEx != null
+						? HandleSqlException(sqlEx)
+						: new KeyValuePair<string, string>("Ошибка обновления", dbUpdateEx.Message);
 				}
-				else if (ex is SqlException sqlException)
-					HandleSqlException(sqlException);
-				else
-					MessageBox.Show(ex.Message, "Общая ошибка", MessageBoxButton.OK, MessageBoxImage.Stop);
+
+				if (ex is SqlException sqlException)
+					return HandleSqlException(sqlException);
+
+				return new KeyValuePair<string, string>("Ошибка базы данных", ex.Message);
 			});
 		}
-		private void HandleSqlException(SqlException sqlEx)
+		private KeyValuePair<string, string> HandleSqlException(SqlException sqlEx)
 		{
 			switch (sqlEx.Number)
 			{
-				// Кастомные ошибки из триггеров (RAISERROR)
 				case 50000:
-					ShowCleanMessage(sqlEx.Message);
-					break;
-				// Ошибки уникальности (UNIQUE constraint)
+					return new KeyValuePair<string, string>
+					(
+						"Конфликт расписания",// в будущем придётся переделать обработку
+						GetCleanMessage(sqlEx.Message)
+					);
 				case 2627:
 				case 2601:
-					var uniqueMessage = ExtractConstraintMessage(sqlEx.Message, "уникальности");
-					MessageBox.Show($"Нарушение уникальности: {uniqueMessage}", "Ошибка данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-					break;
-				// Check constraint, Foreign Key, и другие ограничения
+					return new KeyValuePair<string, string>
+					(
+						"Уникальность",
+						$"Нарушение уникальности: {ExtractConstraintMessage(sqlEx.Message, "уникальности")}"
+					);
 				case 547:
-					var constraintMessage = ExtractConstraintMessage(sqlEx.Message, "ограничения");
-					MessageBox.Show($"Нарушение ограничения: {constraintMessage}", "Ошибка данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-					break;
-				// Ошибки связанные с NULL (например, обязательные поля)
+					return new KeyValuePair<string, string>
+					(
+						"Ограничение",
+						$"Нарушение ограничения: {ExtractConstraintMessage(sqlEx.Message, "ограничения")}"
+					);
 				case 515:
-					MessageBox.Show("Нельзя сохранить пустое значение в обязательном поле", "Ошибка данных", MessageBoxButton.OK, MessageBoxImage.Stop);
-					break;
-				// Ошибки подключения
+					return new KeyValuePair<string, string>
+					(
+						"Пустое значение",
+						"Нельзя сохранить пустое значение в обязательном поле"
+					);
 				case 2:
 				case 53:
 				case -1:
-					MessageBox.Show("Ошибка подключения к базе данных. Проверьте соединение", "Ошибка сети", MessageBoxButton.OK, MessageBoxImage.Stop);
 					ClearTables();
-					break;
-				// Общие SQL ошибки
+					return new KeyValuePair<string, string>
+					(
+						"Подключение",
+						"Ошибка подключения к базе данных. Проверьте соединение"
+					);
 				default:
-					MessageBox.Show($"SQL-ошибка ({sqlEx.Number}): {sqlEx.Message}", "Ошибка БД",MessageBoxButton.OK,MessageBoxImage.Stop);
-					break;
+					return new KeyValuePair<string, string>
+					(
+						"SQL Ошибка",
+						$"Код: {sqlEx.Number} | {sqlEx.Message}"
+					);
 			}
+		}
+		private string GetCleanMessage(string message)
+		{
+			int lastNewLineIndex = message.LastIndexOf('\n');
+			return lastNewLineIndex == -1 ? message : message.Substring(0, lastNewLineIndex);
 		}
 		private string ExtractConstraintMessage(string originalMessage, string constraintType)
 		{

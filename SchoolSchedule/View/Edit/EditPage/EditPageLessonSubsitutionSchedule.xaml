@@ -32,29 +32,29 @@
 				<TextBlock Text="Дата" ToolTip="Обязательное поле для заполнения"/>
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
 			</StackPanel>
-			<DatePicker SelectedDate="{Binding Date}" ToolTip="Дата проведения для замены"/>
+			<DatePicker SelectedDate="{Binding Date}" ToolTip="Дата замены"/>
 			<TextBlock Text="Предмет" Margin="0,10,0,0"/>
 			<ComboBox ItemsSource="{Binding Subjects}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding IdSubject}"
-				ToolTip="Шаблоное занятие"
+				ToolTip="Новый предмет"
 			/>
 			<TextBlock Text="Класс" Margin="0,10,0,0"/>
 			<ComboBox ItemsSource="{Binding Groups}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding IdGroup}"
-				ToolTip="Шаблоное занятие"
+				ToolTip="Новый класс"
 			/>
 			<TextBlock Text="Учитель" Margin="0,10,0,0"/>
 			<ComboBox Text="Класс" ItemsSource="{Binding Teachers}" 
 				SelectedValuePath="Id"
 				SelectedValue="{Binding IdTeacher}"
-				ToolTip="Преподаватель на занятии"
+				ToolTip="Новый преподаватель на уроке"
 			/>
 			<TextBlock Text="Кабинет" Margin="0,10,0,0"/>
 			<TextBox Text="{Binding ClassRoom}" 
 				LostFocus="ClassRoomTextBox_LostFocus"
-				ToolTip="Кабинет для занятий"
+				ToolTip="Новый кабинет для урока"
 				PreviewTextInput="NumberTextBox_PreviewTextInput"
 			/>
 		</StackPanel>

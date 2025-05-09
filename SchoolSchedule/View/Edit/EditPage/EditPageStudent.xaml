@@ -23,20 +23,21 @@
 				<TextBlock Text="Фамилия" ToolTip="Обязательное поле для заполнения"/>
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
 			</StackPanel>
-			<TextBox Text="{Binding Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding Surname}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Фамилия ученика(цы)"/>
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Имя" ToolTip="Обязательное поле для заполнения"/>
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
 			</StackPanel>
-			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding Name}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Имя ученика(цы)"/>
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Отчество" ToolTip="Обязательное поле для заполнения"/>
 				<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
 			</StackPanel>
-			<TextBox Text="{Binding Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput"/>
+			<TextBox Text="{Binding Patronymic}" PreviewTextInput="RussianTextBox_PreviewTextInput" ToolTip="Отчество ученика(цы)"/>
 		</StackPanel>
 		<StackPanel Grid.Column="1" Margin="10,0,10,0">
 			<TextBlock Text="Электронная почта"/>
+			<TextBlock Text="Пример заполнения: ivan@yandex.ru" FontSize="12" FontStyle="Italic" />
 			<TextBox Text="{Binding Email}" PreviewTextInput="Email_PreviewTextInput" LostFocus="EmailTextBox_LostFocus" ToolTip="Электронная почта, если есть"/>
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Класс" ToolTip="Обязательное поле для заполнения"/>
