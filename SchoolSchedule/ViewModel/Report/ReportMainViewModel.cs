@@ -257,17 +257,18 @@ namespace SchoolSchedule.ViewModel.Report
 		List<ShowStudentsByGroupByIdGroup_Result> _showStudentsByGroupByIdGroup_ProcResults = new List<ShowStudentsByGroupByIdGroup_Result>();
 		public List<ShowStudentsByGroupByIdGroup_Result> ShowStudentsByGroupByIdGroup_ProcResults { get => _showStudentsByGroupByIdGroup_ProcResults; set {  _showStudentsByGroupByIdGroup_ProcResults = value; OnPropertyChanged(nameof(ShowStudentsByGroupByIdGroup_ProcResults));} }
 		#endregion
-		public ReportMainViewModel(MainViewModel mainViewModel)
-		{
-			Groups=new ObservableCollection<Model.Group>(mainViewModel.GetGroups());
-			Teachers=new ObservableCollection<Model.Teacher>(mainViewModel.GetTeachers());
-			BellScheduleTypes=new ObservableCollection<Model.BellScheduleType>(mainViewModel.GetBellScheduleTypes());
-		}
 		public ReportMainViewModel(List<Model.Group> groups, List<Teacher> teachers, List<BellScheduleType> bellScheduleTypes)
 		{
 			Groups = new ObservableCollection<Model.Group>(groups);
 			Teachers = new ObservableCollection<Teacher>(teachers);
 			BellScheduleTypes = new ObservableCollection<BellScheduleType>(bellScheduleTypes);
+
+			if(groups != null || groups.Any())
+				IdGroup=groups.First().Id;
+			if(teachers != null || teachers.Any())
+				IdTeacher=teachers.First().Id;
+			if(bellScheduleTypes != null || bellScheduleTypes.Any())
+				IdBellScheduleType=bellScheduleTypes.First().Id;
 		}
 
 		private async Task ExecuteReportAsync(Func<Task> reportAction)

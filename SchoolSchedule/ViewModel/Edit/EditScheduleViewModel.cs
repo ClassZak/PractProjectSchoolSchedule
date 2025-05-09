@@ -73,7 +73,7 @@ namespace SchoolSchedule.ViewModel.Edit
 
 			if (ObjectIsNew)
 			{
-				CurrentModel.DayOfTheWeek = (int)Model.Additional.DayOfTheWeek.Monday;
+				CurrentModel.DayOfTheWeek = (int)Model.Additional.DayOfTheWeek.Понедельник;
 				CurrentModel.ClassRoom = 10;
 				IdSubject = Subjects.First().Id;
 				IdGroup = Groups.First().Id;

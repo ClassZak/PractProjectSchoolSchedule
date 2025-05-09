@@ -13,13 +13,13 @@ namespace SchoolSchedule.Additional
 	{
 		static readonly Dictionary<DayOfTheWeek, string> DAYS = new Dictionary<DayOfTheWeek, string>
 		{
-			{ DayOfTheWeek.Monday,"Понедельник" },
-			{ DayOfTheWeek.Tuesday,"Вторник" },
-			{ DayOfTheWeek.Wednesday,"Среда" },
-			{ DayOfTheWeek.Thursday,"Четверг" },
-			{ DayOfTheWeek.Friday,"Пятница" },
-			{ DayOfTheWeek.Saturday,"Суббота" },
-			{ DayOfTheWeek.Sunday,"Воскресенье" },
+			{ DayOfTheWeek.Понедельник,"Понедельник" },
+			{ DayOfTheWeek.Вторник,"Вторник" },
+			{ DayOfTheWeek.Среда,"Среда" },
+			{ DayOfTheWeek.Четверг,"Четверг" },
+			{ DayOfTheWeek.Пятница,"Пятница" },
+			{ DayOfTheWeek.Суббота,"Суббота" },
+			{ DayOfTheWeek.Воскресенье,"Воскресенье" },
 		};
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{

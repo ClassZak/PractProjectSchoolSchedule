@@ -47,7 +47,7 @@
 							<RowDefinition/>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding ShowLessonsAtDayForTeacherByIdTeacher_ProcResults}"  View:DataGridBehavior.SelectedItems="{Binding SelectedShowLessonsAtDayForTeacherByIdTeacher_ProcResults}" ToolTip="Данные отчёта">
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding ShowLessonsAtDayForTeacherByIdTeacher_ProcResults}"  View:DataGridBehavior.SelectedItems="{Binding SelectedShowLessonsAtDayForTeacherByIdTeacher_ProcResults}" ToolTip="Данные отчёта" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
@@ -59,6 +59,7 @@
 								<DataGridTextColumn Header="Время завершения" Binding="{Binding Время_завершения}"/>
 								<DataGridTextColumn Header="Кабинет" Binding="{Binding Кабинет}"/>
 								<DataGridTextColumn Header="Предмет" Binding="{Binding Предмет}"/>
+								<DataGridTextColumn Header="Класс" Binding="{Binding Класс}"/>
 							</DataGrid.Columns>
 						</DataGrid>
 						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Column="1">

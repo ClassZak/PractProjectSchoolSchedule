@@ -8,12 +8,12 @@ namespace SchoolSchedule.Model.Additional
 {
 	public enum DayOfTheWeek
 	{
-		Monday=1,
-		Tuesday,
-		Wednesday,
-		Thursday,
-		Friday,
-		Saturday,
-		Sunday,
+		Понедельник=1,
+		Вторник,
+		Среда,
+		Четверг,
+		Пятница,
+		Суббота,
+		Воскресенье,
 	}
 }

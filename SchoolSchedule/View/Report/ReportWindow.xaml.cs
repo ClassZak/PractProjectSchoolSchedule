@@ -25,10 +25,6 @@ namespace SchoolSchedule.View.Report
 		{
 			InitializeComponent();
 		}
-		public ReportWindow(MainViewModel mainViewModel) : this()
-		{
-			DataContext=new ViewModel.Report.ReportMainViewModel(mainViewModel);
-		}
 		public ReportWindow(List<Group> groups, List<Teacher> teachers, List<BellScheduleType> bellScheduleTypes) : this()
 		{
 			DataContext=new ViewModel.Report.ReportMainViewModel(groups, teachers, bellScheduleTypes);

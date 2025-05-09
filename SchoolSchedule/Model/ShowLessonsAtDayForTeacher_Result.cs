@@ -18,5 +18,6 @@ namespace SchoolSchedule.Model
         public string Время_начала { get; set; }
         public string Время_завершения { get; set; }
         public Nullable<int> Кабинет { get; set; }
+        public string Класс { get; set; }
     }
 }
