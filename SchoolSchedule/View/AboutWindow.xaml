@@ -43,7 +43,7 @@
 						<TextBlock Text="—"/>
 						<TextBlock 
 							Grid.Column="1"
-							Text="добавление, удаление и изменение информацию в БД;"
+							Text="добавление, удаление и изменение информации в БД;"
 							TextWrapping="Wrap" TextAlignment="Left"
 						/>
 					</Grid>
