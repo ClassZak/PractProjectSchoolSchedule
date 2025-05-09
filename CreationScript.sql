@@ -737,10 +737,10 @@ VALUES
 -- Расписание занятий
 INSERT INTO Schedule (IdSubject, IdGroup, IdTeacher, IdBellSchedule, DayOfTheWeek, ClassRoom)
 VALUES
-    (1, 1, 1, 1, 4, 123),
-    (1, 1, 1, 2, 4, 111),
-    (2, 2, 1, 1, 1, 110),
-    (1, 4, 2, 6, 1, 123);
+    (1, 1, 1, 1, 1, 123),
+    (1, 1, 1, 2, 1, 111),
+    (2, 2, 1, 1, 4, 110),
+    (1, 4, 2, 6, 4, 123);
 
 -- Учащиеся
 INSERT INTO Student (Surname, Name, Patronymic, IdGroup, Gender, BirthDay)
@@ -756,9 +756,9 @@ VALUES
 -- Замены занятий
 INSERT INTO LessonSubsitutionSchedule (Date, IdSubject, IdGroup, IdTeacher, ClassRoom, LessonNumber)
 VALUES
-    ('2025-05-01', 1, 1, 1, 345, 2),
-    ('2025-05-01', 1, 3, 2, 127, 1),
-    ('2025-05-08', NULL, NULL, 5, NULL, 1);
+    ('2025-04-01', 1, 1, 1, 345, 2),
+    ('2025-04-01', 1, 3, 2, 127, 1),
+    ('2025-04-08', NULL, NULL, 5, NULL, 1);
 
 -- Связи преподавателей
 INSERT INTO ClassTeacher (IdTeacher, IdGroup)
@@ -788,5 +788,5 @@ GO
 
 
 
-EXEC ShowLessonsAtDayForTeacherByIdTeacher 1, '01-05-2025', 1
+EXEC ShowLessonsAtDayForTeacherByIdTeacher 1, '01-04-2025', 1
 EXEC ShowStudentsByGroupByIdGroup 1

@@ -4,6 +4,8 @@ using SchoolSchedule.View;
 using SchoolSchedule.View.Edit;
 using SchoolSchedule.ViewModel.Attributes;
 using SchoolSchedule.ViewModel.Commands;
+using SchoolSchedule.ViewModel.Event;
+using SchoolSchedule.ViewModel.Report;
 using SchoolSchedule.ViewModel.Table;
 using SchoolSchedule.ViewModel.TaskModel;
 using System;
@@ -82,6 +84,9 @@ namespace SchoolSchedule.ViewModel
 						ReportWindow.Left = mainWindowCenterX - ReportWindow.Width / 2;
 						ReportWindow.Top = mainWindowCenterY - ReportWindow.Height / 2;
 
+
+						OnTableChanged += (ReportWindow.DataContext as ReportMainViewModel).TableChangedEventHandler;
+
 						ReportWindow.Show();
 					}
 				}));
@@ -89,17 +94,28 @@ namespace SchoolSchedule.ViewModel
 		}
 		#endregion
 		#region Обработчики событий закрытия окна
+		public event EventHandler<TableUpdatedEventArgs> OnTableChanged;
 		void WindowClosedEventHandeler(object sender, EventArgs eventArgs)
 		{
 			if (ReferenceEquals(sender, AboutWindow))
 				AboutWindow = null;
 			else if (ReferenceEquals(sender, ReportWindow))
+			{
+				OnTableChanged -= (ReportWindow.DataContext as ReportMainViewModel).TableChangedEventHandler;
 				ReportWindow = null;
+			}
 			
 			MainWindow.Focus();
 		}
+		private void RaiseUpdateEvents()
+		{
+			OnTableChanged?.Invoke(this, new TeachersUpdatedEventArgs(_teachers));
+			OnTableChanged?.Invoke(this, new GroupsUpdatedEventArgs(_groups));
+			OnTableChanged?.Invoke(this, new BellScheduleTypesUpdatedEventArgs(_bellScheduleTypes));
+		}
 		#endregion
 		#endregion
+		
 		#region Копирование в буфер обмена
 		private List<string> GetDisplayedProperties(DataGrid dataGrid)
 		{
@@ -851,6 +867,10 @@ namespace SchoolSchedule.ViewModel
 					OnPropertyChanged(nameof(DTOBellScheduleType));
 					OnPropertyChanged(nameof(DTOBellSchedule));
 					OnPropertyChanged(nameof(DTOLessonSubsitutionSchedule));
+
+
+
+					RaiseUpdateEvents();
 				}
 			}
 			// Для того, чтобы не было ошибки в xaml

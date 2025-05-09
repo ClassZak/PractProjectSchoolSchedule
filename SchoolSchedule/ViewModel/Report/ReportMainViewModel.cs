@@ -2,6 +2,7 @@
 using SchoolSchedule.Model;
 using SchoolSchedule.Model.DTO;
 using SchoolSchedule.ViewModel.Commands;
+using SchoolSchedule.ViewModel.Event;
 using SchoolSchedule.ViewModel.TaskModel;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +27,6 @@ namespace SchoolSchedule.ViewModel.Report
 	{
 		public ReportMainViewModel() { }
 		private int _selectedTabIndex;
-
 		public int SelectedTabIndex
 		{
 			get => _selectedTabIndex;
@@ -35,6 +36,54 @@ namespace SchoolSchedule.ViewModel.Report
 				OnPropertyChanged(nameof(SelectedTabIndex));
 			}
 		}
+		#region События для синхронизации списков
+		public void TableChangedEventHandler(object sender, EventArgs e)
+		{
+			switch (e)
+			{
+				case TeachersUpdatedEventArgs teacherArgs:
+					UpdateTeachersTable(teacherArgs.NewValues);
+					break;
+				case GroupsUpdatedEventArgs groupArgs:
+					UpdateGroupsTable(groupArgs.NewValues);
+					break;
+				case BellScheduleTypesUpdatedEventArgs bellArgs:
+					UpdateBellScheduleTypes(bellArgs.NewValues);
+					break;
+				default:
+					throw new NotSupportedException($"Тип {e.GetType().Name} не поддерживается");
+			}
+		}
+
+		private void UpdateTeachersTable(IEnumerable<Model.Teacher> list)
+		{
+			int oltSelectedIndex = IdTeacher;
+			Teachers = new ObservableCollection<Teacher>(list);
+			OnPropertyChanged(nameof(Teachers));
+			if (Teachers.Any(x => x.Id == oltSelectedIndex))
+				IdTeacher = oltSelectedIndex;
+			OnPropertyChanged(nameof(IdTeacher));
+		}
+		private void UpdateGroupsTable(IEnumerable<Model.Group> list)
+		{
+			int oltSelectedIndex = IdGroup;
+			Groups = new ObservableCollection<Model.Group>(list);
+			OnPropertyChanged(nameof(Groups));
+			if (Groups.Any(x => x.Id == oltSelectedIndex))
+				IdGroup = oltSelectedIndex;
+			OnPropertyChanged(nameof(IdGroup));
+		}
+		private void UpdateBellScheduleTypes(IEnumerable<Model.BellScheduleType> list)
+		{
+			int oltSelectedIndex = IdBellScheduleType;
+			BellScheduleTypes = new ObservableCollection<BellScheduleType>(list);
+			OnPropertyChanged(nameof(BellScheduleTypes));
+			if (BellScheduleTypes.Any(x => x.Id == oltSelectedIndex))
+				IdBellScheduleType = oltSelectedIndex;
+			OnPropertyChanged(nameof(IdBellScheduleType));
+
+		}
+		#endregion
 		#region Статус задачи
 		TaskViewModel _taskViewModel = new TaskViewModel();
 		public string TaskName
@@ -214,9 +263,9 @@ namespace SchoolSchedule.ViewModel.Report
 			Teachers=new ObservableCollection<Model.Teacher>(mainViewModel.GetTeachers());
 			BellScheduleTypes=new ObservableCollection<Model.BellScheduleType>(mainViewModel.GetBellScheduleTypes());
 		}
-		public ReportMainViewModel(List<Group> groups, List<Teacher> teachers, List<BellScheduleType> bellScheduleTypes)
+		public ReportMainViewModel(List<Model.Group> groups, List<Teacher> teachers, List<BellScheduleType> bellScheduleTypes)
 		{
-			Groups = new ObservableCollection<Group>(groups);
+			Groups = new ObservableCollection<Model.Group>(groups);
 			Teachers = new ObservableCollection<Teacher>(teachers);
 			BellScheduleTypes = new ObservableCollection<BellScheduleType>(bellScheduleTypes);
 		}
@@ -256,12 +305,12 @@ namespace SchoolSchedule.ViewModel.Report
 
 			using (var context = new SchoolScheduleEntities())
 			{
-				var result = await context.Database.SqlQuery<Model.ShowLessonsAtDayForTeacherByIdTeacher_Result>(
+				var result = (await context.Database.SqlQuery<Model.ShowLessonsAtDayForTeacherByIdTeacher_Result>(
 					"EXEC ShowLessonsAtDayForTeacherByIdTeacher @idTeacher, @date, @idBellScheduleType",
 					new SqlParameter("@idTeacher", IdTeacher),
 					new SqlParameter("@date", Date),
 					new SqlParameter("@idBellScheduleType", IdBellScheduleType)
-				).ToListAsync();
+				).ToListAsync()).OrderBy(x=>x.Номер_урока).ToList();
 
 				ShowLessonsAtDayForTeacherByIdTeacher_ProcResults=result;
 			}
@@ -274,10 +323,10 @@ namespace SchoolSchedule.ViewModel.Report
 
 			using (var context = new SchoolScheduleEntities())
 			{
-				var result = await context.Database.SqlQuery<Model.ShowStudentsByGroupByIdGroup_Result>(
+				var result = (await context.Database.SqlQuery<Model.ShowStudentsByGroupByIdGroup_Result>(
 					"EXEC ShowStudentsByGroupByIdGroup @idGroup",
 					new SqlParameter("@idGroup", IdGroup)
-				).ToListAsync();
+				).ToListAsync()).OrderBy(x => x.Gender).ThenBy(x => x.BirthDay).ThenBy(x => x.Surname).ThenBy(x => x.Name).ThenBy(x => x.Patronymic).ToList();
 
 				ShowStudentsByGroupByIdGroup_ProcResults=result;
 			}

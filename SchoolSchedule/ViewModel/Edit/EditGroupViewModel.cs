@@ -16,7 +16,7 @@ namespace SchoolSchedule.ViewModel.Edit
 		#region Свойства для ввода
 		public string Name { get => CurrentModel.Name; set 
 			{
-				string inputValue = value is null ? "А" : Regex.Replace(value.Trim(), @"^[\p{IsCyrillic}\s\-]", "");
+				string inputValue = value is null ? "А" : Regex.Replace(value.Trim(), @"[^\p{IsCyrillic}\s\-]", "");
 				if (string.IsNullOrEmpty(inputValue))
 					CurrentModel.Name = "А"; 
 				else

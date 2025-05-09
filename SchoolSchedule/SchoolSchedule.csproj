@@ -140,6 +140,7 @@
     <Compile Include="ViewModel\Edit\EditGroupViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditSubjectViewModel.cs" />
     <Compile Include="ViewModel\Edit\EditTeacherPhoneViewModel.cs" />
+    <Compile Include="ViewModel\Event\TableChangedEventArgs.cs" />
     <Compile Include="ViewModel\Report\ReportMainViewModel.cs" />
     <Compile Include="View\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>

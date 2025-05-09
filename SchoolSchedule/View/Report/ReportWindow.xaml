@@ -54,11 +54,11 @@
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Предмет" Binding="{Binding Предмет}"/>
 								<DataGridTextColumn Header="Номер урока" Binding="{Binding Номер_урока}"/>
 								<DataGridTextColumn Header="Время начала" Binding="{Binding Время_начала}"/>
 								<DataGridTextColumn Header="Время завершения" Binding="{Binding Время_завершения}"/>
 								<DataGridTextColumn Header="Кабинет" Binding="{Binding Кабинет}"/>
+								<DataGridTextColumn Header="Предмет" Binding="{Binding Предмет}"/>
 							</DataGrid.Columns>
 						</DataGrid>
 						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Column="1">
@@ -109,7 +109,7 @@
 							<RowDefinition/>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
-						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding ShowStudentsByGroupByIdGroup_ProcResults}"  View:DataGridBehavior.SelectedItems="{Binding SelectedShowStudentsByGroupByIdGroup_ProcResults}" ToolTip="Данные отчёта">
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding ShowStudentsByGroupByIdGroup_ProcResults}"  ToolTip="Данные отчёта">
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
