@@ -116,10 +116,15 @@
             <PropertyRef Name="Имя" />
             <PropertyRef Name="Фамилия" />
             <PropertyRef Name="Отчество" />
+            <PropertyRef Name="Gender" />
+            <PropertyRef Name="BirthDay" />
           </Key>
           <Property Name="Имя" Type="nvarchar" MaxLength="30" Nullable="false" />
           <Property Name="Фамилия" Type="nvarchar" MaxLength="30" Nullable="false" />
           <Property Name="Отчество" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Gender" Type="nchar" MaxLength="1" Nullable="false" />
+          <Property Name="BirthDay" Type="date" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="60" />
         </EntityType>
         <!--Ошибки, обнаруженные при создании:
 предупреждение 6013: Первичный ключ в таблице или представлении "SchoolSchedule.dbo.LessonsAtDayForTeacher" не определен, его не удалось вывести. Эта таблица или представление исключены. Чтобы использовать сущность, необходимо проверить схему, добавить правильные ключи и раскомментировать ее.
@@ -311,9 +316,17 @@
           <Parameter Name="date" Type="date" Mode="In" />
           <Parameter Name="idBellScheduleType" Type="int" Mode="In" />
         </Function>
+        <Function Name="ShowLessonsAtDayForTeacherByIdTeacher" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="idTeacher" Type="int" Mode="In" />
+          <Parameter Name="date" Type="date" Mode="In" />
+          <Parameter Name="idBellScheduleType" Type="int" Mode="In" />
+        </Function>
         <Function Name="ShowStudentsByGroup" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="year" Type="int" Mode="In" />
           <Parameter Name="name" Type="nchar" Mode="In" />
+        </Function>
+        <Function Name="ShowStudentsByGroupByIdGroup" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="idGroup" Type="int" Mode="In" />
         </Function>
         <EntityContainer Name="Хранилище SchoolScheduleModelContainer">
           <EntitySet Name="BellSchedule" EntityType="Self.BellSchedule" Schema="dbo" store:Type="Tables" />
@@ -331,7 +344,10 @@
             <DefiningQuery>SELECT 
     [GroupView].[Имя] AS [Имя], 
     [GroupView].[Фамилия] AS [Фамилия], 
-    [GroupView].[Отчество] AS [Отчество]
+    [GroupView].[Отчество] AS [Отчество], 
+    [GroupView].[Gender] AS [Gender], 
+    [GroupView].[BirthDay] AS [BirthDay], 
+    [GroupView].[Email] AS [Email]
     FROM [dbo].[GroupView] AS [GroupView]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK__BellSched__IdBel__3A81B327" Association="Self.FK__BellSched__IdBel__3A81B327">
@@ -513,10 +529,15 @@
             <PropertyRef Name="Имя" />
             <PropertyRef Name="Фамилия" />
             <PropertyRef Name="Отчество" />
+            <PropertyRef Name="Gender" />
+            <PropertyRef Name="BirthDay" />
           </Key>
           <Property Name="Имя" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Фамилия" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Отчество" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="BirthDay" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Email" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK__BellSched__IdBel__3A81B327">
           <End Role="BellScheduleType" Type="Self.BellScheduleType" Multiplicity="1" />
@@ -712,9 +733,17 @@
             <Parameter Name="date" Mode="In" Type="DateTime" />
             <Parameter Name="idBellScheduleType" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="ShowLessonsAtDayForTeacherByIdTeacher" ReturnType="Collection(SchoolScheduleModel.ShowLessonsAtDayForTeacherByIdTeacher_Result)">
+            <Parameter Name="idTeacher" Mode="In" Type="Int32" />
+            <Parameter Name="date" Mode="In" Type="DateTime" />
+            <Parameter Name="idBellScheduleType" Mode="In" Type="Int32" />
+          </FunctionImport>
           <FunctionImport Name="ShowStudentsByGroup" ReturnType="Collection(SchoolScheduleModel.ShowStudentsByGroup_Result)">
             <Parameter Name="year" Mode="In" Type="Int32" />
             <Parameter Name="name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ShowStudentsByGroupByIdGroup" ReturnType="Collection(SchoolScheduleModel.ShowStudentsByGroupByIdGroup_Result)">
+            <Parameter Name="idGroup" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="ShowLessonsAtDayForTeacher_Result">
@@ -724,10 +753,28 @@
           <Property Type="String" Name="Время_завершения" Nullable="true" MaxLength="4000" />
           <Property Type="Int32" Name="Кабинет" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="ShowLessonsAtDayForTeacherByIdTeacher_Result">
+          <Property Type="String" Name="Предмет" Nullable="true" MaxLength="70" />
+          <Property Type="Int32" Name="Номер_урока" Nullable="true" />
+          <Property Type="String" Name="Время_начала" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Время_завершения" Nullable="true" MaxLength="4000" />
+          <Property Type="Int32" Name="Кабинет" Nullable="true" />
+        </ComplexType>
         <ComplexType Name="ShowStudentsByGroup_Result">
-          <Property Type="String" Name="Имя" Nullable="false" MaxLength="30" />
-          <Property Type="String" Name="Фамилия" Nullable="false" MaxLength="30" />
-          <Property Type="String" Name="Отчество" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Surname" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Patronymic" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Gender" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="BirthDay" Nullable="false" />
+          <Property Type="String" Name="Email" Nullable="true" MaxLength="60" />
+        </ComplexType>
+        <ComplexType Name="ShowStudentsByGroupByIdGroup_Result">
+          <Property Type="String" Name="Surname" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Patronymic" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="Gender" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="BirthDay" Nullable="false" />
+          <Property Type="String" Name="Email" Nullable="true" MaxLength="60" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -838,6 +885,9 @@
                 <ScalarProperty Name="Имя" ColumnName="Имя" />
                 <ScalarProperty Name="Фамилия" ColumnName="Фамилия" />
                 <ScalarProperty Name="Отчество" ColumnName="Отчество" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="BirthDay" ColumnName="BirthDay" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -868,12 +918,38 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ShowLessonsAtDayForTeacherByIdTeacher" FunctionName="Хранилище SchoolScheduleModel.ShowLessonsAtDayForTeacherByIdTeacher">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SchoolScheduleModel.ShowLessonsAtDayForTeacherByIdTeacher_Result">
+                <ScalarProperty Name="Предмет" ColumnName="Предмет" />
+                <ScalarProperty Name="Номер_урока" ColumnName="Номер_урока" />
+                <ScalarProperty Name="Время_начала" ColumnName="Время_начала" />
+                <ScalarProperty Name="Время_завершения" ColumnName="Время_завершения" />
+                <ScalarProperty Name="Кабинет" ColumnName="Кабинет" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="ShowStudentsByGroup" FunctionName="Хранилище SchoolScheduleModel.ShowStudentsByGroup">
             <ResultMapping>
               <ComplexTypeMapping TypeName="SchoolScheduleModel.ShowStudentsByGroup_Result">
-                <ScalarProperty Name="Имя" ColumnName="Имя" />
-                <ScalarProperty Name="Фамилия" ColumnName="Фамилия" />
-                <ScalarProperty Name="Отчество" ColumnName="Отчество" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="BirthDay" ColumnName="BirthDay" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ShowStudentsByGroupByIdGroup" FunctionName="Хранилище SchoolScheduleModel.ShowStudentsByGroupByIdGroup">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SchoolScheduleModel.ShowStudentsByGroupByIdGroup_Result">
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="BirthDay" ColumnName="BirthDay" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

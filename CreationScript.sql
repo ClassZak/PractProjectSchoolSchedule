@@ -512,6 +512,81 @@ BEGIN
 	EXEC sp_executesql @sql;
 END;
 GO
+CREATE OR ALTER PROC ShowLessonsAtDayForTeacherByIdTeacher
+	@idTeacher			INT,
+	@date				DATE,
+	@idBellScheduleType	INT
+AS
+BEGIN
+	-- Определяем день недели для фильтрации
+	DECLARE @dayOfWeek INT = DATEPART(WEEKDAY, @date);
+
+	-- Основной запрос с учетом замен и типа расписания
+	SELECT 
+		COALESCE(sub.Name, s.Name) AS 'Предмет',
+		COALESCE(sub.LessonNumber, bs.LessonNumber) AS 'Номер_урока',
+		FORMAT(bs.StartTime, N'hh\:mm') AS 'Время_начала',
+		FORMAT(bs.EndTime, N'hh\:mm') AS 'Время_завершения',
+		COALESCE(sub.ClassRoom, sch.ClassRoom) AS 'Кабинет'
+	FROM Schedule sch
+	JOIN Teacher t ON sch.IdTeacher = t.Id
+	JOIN Subject s ON sch.IdSubject = s.Id
+	JOIN BellSchedule bs ON sch.IdBellSchedule = bs.Id
+	LEFT JOIN (
+		SELECT 
+			lss.[Date],
+			lss.IdTeacher,
+			lss.LessonNumber,
+			lss.IdSubject,
+			lss.ClassRoom,
+			subj.Name
+		FROM LessonSubsitutionSchedule lss
+		JOIN Subject subj ON lss.IdSubject = subj.Id
+		WHERE lss.[Date] = @date -- Фильтр замен по дате
+	) sub 
+		ON sch.IdTeacher = sub.IdTeacher 
+		AND bs.LessonNumber = sub.LessonNumber
+	WHERE 
+		t.Id = @IdTeacher
+		AND sch.DayOfTheWeek = @dayOfWeek OR DATEPART(WEEKDAY, sub.[Date])=@dayOfWeek-- День недели из расписания
+		AND bs.IdBellScheduleType = @idBellScheduleType -- Фильтр по типу расписания
+	ORDER BY bs.LessonNumber;
+
+	-- Динамическое создание VIEW
+	DECLARE @sql NVARCHAR(MAX) = N'
+	CREATE OR ALTER VIEW LessonsAtDayForTeacher AS
+	SELECT 
+		COALESCE(sub.Name, s.Name) AS Предмет,
+		COALESCE(sub.LessonNumber, bs.LessonNumber) AS [Номер урока],
+		FORMAT(bs.StartTime, N''hh\:mm'') AS [Начало],
+		FORMAT(bs.EndTime, N''hh\:mm'') AS [Конец],
+		COALESCE(sub.ClassRoom, sch.ClassRoom) AS Кабинет
+	FROM Schedule sch
+	JOIN Teacher t ON sch.IdTeacher = t.Id
+	JOIN Subject s ON sch.IdSubject = s.Id
+	JOIN BellSchedule bs ON sch.IdBellSchedule = bs.Id
+	LEFT JOIN (
+		SELECT 
+			lss.[Date],
+			lss.IdTeacher,
+			lss.LessonNumber,
+			lss.IdSubject,
+			lss.ClassRoom,
+			subj.Name
+		FROM LessonSubsitutionSchedule lss
+		JOIN Subject subj ON lss.IdSubject = subj.Id
+		WHERE lss.Date = ''' + CONVERT(NVARCHAR(10), @date, 23) + '''
+	) sub 
+		ON sch.IdTeacher = sub.IdTeacher 
+		AND bs.LessonNumber = sub.LessonNumber
+	WHERE 
+		t.Id = ''' + CAST(@idTeacher AS NVARCHAR(10)) + '''
+		AND sch.DayOfTheWeek = ' + CAST(@dayOfWeek AS NVARCHAR(2)) + 'OR DATEPART(WEEKDAY, sub.[Date])='+CAST(@dayOfWeek AS NVARCHAR(2)) +'
+		AND bs.IdBellScheduleType = ' + CAST(@idBellScheduleType AS NVARCHAR(10));
+	
+	EXEC sp_executesql @sql;
+END;
+GO
 
 -- Процедура: Студенты группы
 CREATE OR ALTER PROC ShowStudentsByGroup
@@ -534,9 +609,12 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT 
-			Name AS Имя,
-			Surname AS Фамилия,
-			Patronymic AS Отчество
+			Surname,
+			Name,
+			Patronymic,
+			Gender,
+			BirthDay,
+			Email
 		FROM Student
 		WHERE IdGroup = @groupId
 		SET @sql = N'
@@ -544,11 +622,43 @@ BEGIN
 		SELECT 
 			Name AS Имя,
 			Surname AS Фамилия,
-			Patronymic AS Отчество
+			Patronymic AS Отчество,
+			Gender,
+			BirthDay,
+			Email
 		FROM Student
 		WHERE IdGroup = ' + CAST(@groupId AS NVARCHAR(10));
 	END;
 
+	EXEC sp_executesql @sql;
+END;
+GO-- Процедура: Студенты группы
+CREATE OR ALTER PROC ShowStudentsByGroupByIdGroup
+	@idGroup	INT
+AS
+BEGIN
+	SELECT 
+		Surname,
+		Name,
+		Patronymic,
+		Gender,
+		BirthDay,
+		Email
+	FROM Student
+	WHERE IdGroup = @idGroup
+	
+	DECLARE @sql NVARCHAR(MAX);
+	SET @sql = N'
+	CREATE OR ALTER VIEW GroupView AS
+	SELECT 
+		Name AS Имя,
+		Surname AS Фамилия,
+		Patronymic AS Отчество,
+		Gender,
+		BirthDay,
+		Email
+	FROM Student
+	WHERE IdGroup = ' + CAST(@idGroup AS NVARCHAR(10));
 	EXEC sp_executesql @sql;
 END;
 GO
@@ -603,3 +713,14 @@ INSERT INTO LessonSubsitutionSchedule ([Date], IdSubject, IdGroup, IdTeacher, Cl
 
 INSERT INTO ClassTeacher ([IdTeacher], [IdGroup]) VALUES (1, 1)
 GO
+
+
+
+
+
+
+
+
+
+EXEC ShowLessonsAtDayForTeacherByIdTeacher 1, '01-05-2025', 1
+EXEC ShowStudentsByGroupByIdGroup 1

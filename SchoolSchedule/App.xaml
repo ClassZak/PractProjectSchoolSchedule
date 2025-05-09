@@ -3,6 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:local="clr-namespace:SchoolSchedule"
 			 xmlns:View="clr-namespace:SchoolSchedule.View"
+			 ShutdownMode="OnMainWindowClose"
 			 StartupUri="View/MainWindow.xaml">
 	<Application.Resources>
 		<!--Стиль для окон и страниц (не работает)-->

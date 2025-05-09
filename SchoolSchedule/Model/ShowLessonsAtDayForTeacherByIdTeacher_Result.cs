@@ -10,15 +10,13 @@
 namespace SchoolSchedule.Model
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class GroupView
+    public partial class ShowLessonsAtDayForTeacherByIdTeacher_Result
     {
-        public string Имя { get; set; }
-        public string Фамилия { get; set; }
-        public string Отчество { get; set; }
-        public string Gender { get; set; }
-        public System.DateTime BirthDay { get; set; }
-        public string Email { get; set; }
+        public string Предмет { get; set; }
+        public Nullable<int> Номер_урока { get; set; }
+        public string Время_начала { get; set; }
+        public string Время_завершения { get; set; }
+        public Nullable<int> Кабинет { get; set; }
     }
 }

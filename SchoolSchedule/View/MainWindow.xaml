@@ -15,9 +15,10 @@
 		Icon="/Resources/scheduleicon.ico"
 		Title="Школьное расписание" Height="650" Width="860"
 		MinWidth="500"
+		MinHeight="350" 
 		FontFamily="Arial"
 		FontSize="12"
-		MinHeight="350" WindowStartupLocation="CenterScreen"
+		WindowStartupLocation="CenterScreen"
 		>
 	<Window.Resources>
 		<Additional:DayOfTheWeekConverter x:Key="DayOfTheWeekConverter"/>
@@ -37,6 +38,9 @@
 					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand}"/>
 				</MenuItem>
 				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
+				<MenuItem Header="Отчёты">
+					<MenuItem Header="Открыть окно отчётов" Command="{Binding ShowReportWindow}"/>
+				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="Справка">
 				<MenuItem Header="О программе" Command="{Binding ShowAboutWindow}"/>

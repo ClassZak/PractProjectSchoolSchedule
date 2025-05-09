@@ -10,13 +10,12 @@
 namespace SchoolSchedule.Model
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class GroupView
+    public partial class ShowStudentsByGroupByIdGroup_Result
     {
-        public string Имя { get; set; }
-        public string Фамилия { get; set; }
-        public string Отчество { get; set; }
+        public string Surname { get; set; }
+        public string Name { get; set; }
+        public string Patronymic { get; set; }
         public string Gender { get; set; }
         public System.DateTime BirthDay { get; set; }
         public string Email { get; set; }

@@ -1,0 +1,207 @@
+﻿<Window x:Class="SchoolSchedule.View.Report.ReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SchoolSchedule.View.Report"
+        xmlns:ReportViewModel="clr-namespace:SchoolSchedule.ViewModel.Report"
+        xmlns:ViewModelTaskModel="clr-namespace:SchoolSchedule.ViewModel.TaskModel"
+        xmlns:View="clr-namespace:SchoolSchedule.View"
+        mc:Ignorable="d"
+        Title="ReportWindow" Height="450" Width="800"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="Arial"
+        FontSize="12"
+        MinWidth="500"
+        MinHeight="350"
+        >
+	<Window.DataContext>
+		<ReportViewModel:ReportMainViewModel/>
+	</Window.DataContext>
+	<Grid Background="AntiqueWhite">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Menu>
+			<MenuItem Header="Файл">
+				<MenuItem Header="Сохранить в">
+					<MenuItem Header="Сохранить в xslx файл"/>
+					<MenuItem Header="Сохранить в txt файл"/>
+				</MenuItem>
+			</MenuItem>
+		</Menu>
+		<Grid Grid.Row="1" Margin="6">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<TabControl>
+				<TabItem Header="Расписание уроков для учителя">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding ShowLessonsAtDayForTeacherByIdTeacher_ProcResults}"  View:DataGridBehavior.SelectedItems="{Binding SelectedShowLessonsAtDayForTeacherByIdTeacher_ProcResults}" ToolTip="Данные отчёта">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Предмет" Binding="{Binding Предмет}"/>
+								<DataGridTextColumn Header="Номер урока" Binding="{Binding Номер_урока}"/>
+								<DataGridTextColumn Header="Время начала" Binding="{Binding Время_начала}"/>
+								<DataGridTextColumn Header="Время завершения" Binding="{Binding Время_завершения}"/>
+								<DataGridTextColumn Header="Кабинет" Binding="{Binding Кабинет}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Column="1">
+							<StackPanel Margin="10">
+								<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+									<TextBlock Text="Учитель" ToolTip="Обязательное поле для заполнения"/>
+									<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+								</StackPanel>
+								<ComboBox ItemsSource="{Binding Teachers}" 
+									SelectedValuePath="Id"
+									SelectedValue="{Binding IdTeacher}"
+									ToolTip="Преподаватель для отчёта"
+								/>
+								<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+									<TextBlock Text="Расписание звонков" ToolTip="Обязательное поле для заполнения"/>
+									<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+								</StackPanel>
+								<ComboBox ItemsSource="{Binding BellScheduleTypes}" 
+									SelectedValuePath="Id"
+									SelectedValue="{Binding IdBellScheduleType}"
+									ToolTip="Звонки на начало и на конец урока"
+								/>
+								<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+									<TextBlock Text="Дата" ToolTip="Обязательное поле для заполнения"/>
+									<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+								</StackPanel>
+								<DatePicker SelectedDate="{Binding Date}" ToolTip="Дата замены"/>
+							</StackPanel>
+						</ScrollViewer>
+						<Button 
+							Grid.Row="2" 
+							Grid.ColumnSpan="2"
+							Margin="5"
+							Content="Сгенерировать отчёт"
+							Command="{Binding GenerateTeacherReportCommand}"
+							CommandParameter="{x:Null}"
+							ToolTip="Получить все данные" RenderTransformOrigin="0,0"
+						/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Список учеников для выбранного класса">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<DataGrid AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding ShowStudentsByGroupByIdGroup_ProcResults}"  View:DataGridBehavior.SelectedItems="{Binding SelectedShowStudentsByGroupByIdGroup_ProcResults}" ToolTip="Данные отчёта">
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Command="{Binding DataGridDataToClipboard}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Копировать"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
+								<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+								<DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}"/>
+								<DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
+								<DataGridTemplateColumn Header="Дата рождения">
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding BirthDay, StringFormat=dd.MM.yyyy}"/>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTextColumn Header="Электронная почта" Binding="{Binding Email}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Column="1">
+							<StackPanel Margin="10">
+								<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+									<TextBlock Text="Класс" ToolTip="Обязательное поле для заполнения"/>
+									<TextBlock Text="*" Margin="2,-1,0,0" FontSize="20" FontWeight="ExtraBold" Foreground="Crimson" ToolTip="Обязательное поле для заполнения" VerticalAlignment="Top" Height="14"/>
+								</StackPanel>
+								<ComboBox ItemsSource="{Binding Groups}" 
+									SelectedValuePath="Id"
+									SelectedValue="{Binding IdGroup}"
+									ToolTip="Класс для отчёта"
+								/>
+							</StackPanel>
+						</ScrollViewer>
+						<Button 
+							Grid.Row="2" 
+							Grid.ColumnSpan="2"
+							Margin="5"
+							Content="Сгенерировать отчёт"
+							Command="{Binding GenerateGroupReportCommand}"
+							CommandParameter="{x:Null}"
+							ToolTip="Получить все данные" RenderTransformOrigin="0,0"
+						/>
+					</Grid>
+				</TabItem>
+			</TabControl>
+			<Grid Name="TaskStatusGrid" Grid.Row="1"  Visibility="Visible">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<StackPanel MinWidth="100">
+					<TextBlock Text="Задача:" ToolTip="Текущая задача"/>
+					<TextBlock Text="{Binding TaskName}" ToolTip="Текущая задача"/>
+				</StackPanel>
+				<StackPanel MinWidth="100" Margin="20,0,0,0" Grid.Column="1">
+					<TextBlock Text="Статус:" ToolTip="Статус задачи"/>
+					<TextBlock Text="{Binding TaskStatus}" FontWeight="Bold" ToolTip="Статус задачи">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock">
+								<Setter Property="Foreground" Value="Black"/>
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.Completed}">
+										<Setter Property="Foreground" Value="OliveDrab"/>
+									</DataTrigger>
+									<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.Failed}">
+										<Setter Property="Foreground" Value="Crimson"/>
+									</DataTrigger>
+									<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.InProgress}">
+										<Setter Property="Foreground" Value="DarkCyan"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
+				</StackPanel>
+				<StackPanel MinWidth="100" Margin="20,0,0,0" Grid.Column="2">
+					<StackPanel.Style>
+						<Style TargetType="StackPanel">
+							<Setter Property="Visibility" Value="Collapsed"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ETaskStatus}" Value="{x:Static ViewModelTaskModel:ETaskStatus.Failed}">
+									<Setter Property="Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</StackPanel.Style>
+					<TextBlock Text="Ошибка:"/>
+					<TextBox IsReadOnly="True" AcceptsReturn="True" Text="{Binding ErrorMessage}" TextWrapping="Wrap" MaxHeight="100" VerticalScrollBarVisibility="Auto"/>
+				</StackPanel>
+			</Grid>
+		</Grid>
+    </Grid>
+</Window>

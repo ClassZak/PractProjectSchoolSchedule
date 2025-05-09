@@ -63,6 +63,23 @@ namespace SchoolSchedule.Model
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ShowLessonsAtDayForTeacher_Result>("ShowLessonsAtDayForTeacher", surnameParameter, nameParameter, patronymicParameter, dateParameter, idBellScheduleTypeParameter);
         }
     
+        public virtual ObjectResult<ShowLessonsAtDayForTeacherByIdTeacher_Result> ShowLessonsAtDayForTeacherByIdTeacher(Nullable<int> idTeacher, Nullable<System.DateTime> date, Nullable<int> idBellScheduleType)
+        {
+            var idTeacherParameter = idTeacher.HasValue ?
+                new ObjectParameter("idTeacher", idTeacher) :
+                new ObjectParameter("idTeacher", typeof(int));
+    
+            var dateParameter = date.HasValue ?
+                new ObjectParameter("date", date) :
+                new ObjectParameter("date", typeof(System.DateTime));
+    
+            var idBellScheduleTypeParameter = idBellScheduleType.HasValue ?
+                new ObjectParameter("idBellScheduleType", idBellScheduleType) :
+                new ObjectParameter("idBellScheduleType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ShowLessonsAtDayForTeacherByIdTeacher_Result>("ShowLessonsAtDayForTeacherByIdTeacher", idTeacherParameter, dateParameter, idBellScheduleTypeParameter);
+        }
+    
         public virtual ObjectResult<ShowStudentsByGroup_Result> ShowStudentsByGroup(Nullable<int> year, string name)
         {
             var yearParameter = year.HasValue ?
@@ -74,6 +91,15 @@ namespace SchoolSchedule.Model
                 new ObjectParameter("name", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ShowStudentsByGroup_Result>("ShowStudentsByGroup", yearParameter, nameParameter);
+        }
+    
+        public virtual ObjectResult<ShowStudentsByGroupByIdGroup_Result> ShowStudentsByGroupByIdGroup(Nullable<int> idGroup)
+        {
+            var idGroupParameter = idGroup.HasValue ?
+                new ObjectParameter("idGroup", idGroup) :
+                new ObjectParameter("idGroup", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ShowStudentsByGroupByIdGroup_Result>("ShowStudentsByGroupByIdGroup", idGroupParameter);
         }
     }
 }

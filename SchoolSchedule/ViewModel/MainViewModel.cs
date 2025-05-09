@@ -34,7 +34,10 @@ namespace SchoolSchedule.ViewModel
 	public partial class MainViewModel : ABaseViewModel
 	{
 		#region Окна
+		MainWindow _mainWindow;
+		public MainWindow MainWindow { get { return _mainWindow; } set => _mainWindow = value; }
 		AboutWindow AboutWindow { get; set; } = null;
+		View.Report.ReportWindow ReportWindow { get; set; } = null;
 		#region Команды запуска окон
 		RelayCommand _showAboutWindow;
 		public RelayCommand ShowAboutWindow
@@ -48,9 +51,38 @@ namespace SchoolSchedule.ViewModel
 					else
 					{
 						AboutWindow = new AboutWindow();
-						AboutWindow.Owner = MainWindow;
 						AboutWindow.Closed += WindowClosedEventHandeler;
+
+						double mainWindowCenterX = MainWindow.Left + MainWindow.Width / 2;
+						double mainWindowCenterY = MainWindow.Top + MainWindow.Height / 2;
+						AboutWindow.Left = mainWindowCenterX - AboutWindow.Width / 2;
+						AboutWindow.Top = mainWindowCenterY - AboutWindow.Height / 2;
+
 						AboutWindow.Show();
+					}
+				}));
+			}
+		}
+		RelayCommand _showReportWindow;
+		public RelayCommand ShowReportWindow
+		{
+			get
+			{
+				return _showReportWindow ?? (_showReportWindow = new RelayCommand(param=> 
+				{
+					if (ReportWindow != null)
+						ReportWindow.Focus();
+					else
+					{
+						ReportWindow = new View.Report.ReportWindow(_groups, _teachers, _bellScheduleTypes);
+						ReportWindow.Closed += WindowClosedEventHandeler;
+
+						double mainWindowCenterX = MainWindow.Left + MainWindow.Width / 2;
+						double mainWindowCenterY = MainWindow.Top + MainWindow.Height / 2;
+						ReportWindow.Left = mainWindowCenterX - ReportWindow.Width / 2;
+						ReportWindow.Top = mainWindowCenterY - ReportWindow.Height / 2;
+
+						ReportWindow.Show();
 					}
 				}));
 			}
@@ -61,6 +93,10 @@ namespace SchoolSchedule.ViewModel
 		{
 			if (ReferenceEquals(sender, AboutWindow))
 				AboutWindow = null;
+			else if (ReferenceEquals(sender, ReportWindow))
+				ReportWindow = null;
+			
+			MainWindow.Focus();
 		}
 		#endregion
 		#endregion
@@ -159,8 +195,20 @@ namespace SchoolSchedule.ViewModel
 			}
 		}
 		#endregion
-
-		public MainWindow MainWindow { get; set; }
+		#region Методы для получения списка таблиц
+		public List<Model.Group> GetGroups()
+		{
+			return _groups;
+		}
+		public List<Model.Teacher> GetTeachers()
+		{
+			return _teachers;
+		}
+		public List<Model.BellScheduleType> GetBellScheduleTypes()
+		{
+			return _bellScheduleTypes;
+		}
+		#endregion
 		[ViewModel.Attributes.CollectionOfSelectedItems]
 		public ObservableCollection<Model.DTO.DTOSubject> SelectedSubjects { get; set; } = new ObservableCollection<Model.DTO.DTOSubject>();
 		[ViewModel.Attributes.CollectionOfSelectedItems]
@@ -318,8 +366,9 @@ namespace SchoolSchedule.ViewModel
 						TaskName = "Добаваление объектов";
 						ETaskStatus = ETaskStatus.Failed;
 						OnPropertyChanged(nameof(TaskStatus));
-						ErrorMessage = GetMessageFromException(ex);
-						HandleException(ex);
+						var result = HandleException(ex);
+						ErrorMessage = result.Value;
+						MessageBox.Show(result.Value, result.Key, MessageBoxButton.OK, MessageBoxImage.Error);
 
 						CancelTableChanges();
 					}
@@ -381,8 +430,9 @@ namespace SchoolSchedule.ViewModel
 						TaskName = "Редактирование данных";
 						ETaskStatus = ETaskStatus.Failed;
 						OnPropertyChanged(nameof(TaskStatus));
-						ErrorMessage = GetMessageFromException(ex);
-						HandleException(ex);
+						var result = HandleException(ex);
+						ErrorMessage = result.Value;
+						MessageBox.Show(result.Value, result.Key, MessageBoxButton.OK, MessageBoxImage.Error);
 
 						CancelTableChanges();
 					}
@@ -921,41 +971,41 @@ namespace SchoolSchedule.ViewModel
 
 		private TemplateTable<DTOStudent> _studentTable=new TemplateTable<DTOStudent>();
 		public ObservableCollection<DTOStudent> DTOStudents
-		{get { return _studentTable.Entries; } set { OnPropertyChanged(nameof(DTOStudents)); _studentTable.Entries=value; }}
+		{get { return _studentTable.Entries; } set {  _studentTable.Entries=value; OnPropertyChanged(nameof(DTOStudents)); }}
 
 
 		private TemplateTable<DTOGroup> _groupTable =new TemplateTable<DTOGroup>();
 		public ObservableCollection<DTOGroup> DTOGroup
-		{get { return _groupTable.Entries; } set { OnPropertyChanged(nameof(DTOGroup)); _groupTable.Entries=value; }}
+		{get { return _groupTable.Entries; } set { _groupTable.Entries=value; OnPropertyChanged(nameof(DTOGroup)); }}
 
 
 		private TemplateTable<DTOSubject> _subjectTable =new TemplateTable<DTOSubject>();
 		public ObservableCollection<DTOSubject> DTOSubject
-		{get { return _subjectTable.Entries; } set { OnPropertyChanged(nameof(DTOSubject)); _subjectTable.Entries=value; }}
+		{get { return _subjectTable.Entries; } set { _subjectTable.Entries=value; OnPropertyChanged(nameof(DTOSubject)); }}
 
 
 		private TemplateTable<DTOTeacher> _teacherTable =new TemplateTable<DTOTeacher>();
 		public ObservableCollection<DTOTeacher> DTOTeacher
-		{get { return _teacherTable.Entries; } set { OnPropertyChanged(nameof(DTOTeacher)); _teacherTable.Entries=value; }}
+		{get { return _teacherTable.Entries; } set { _teacherTable.Entries=value; OnPropertyChanged(nameof(DTOTeacher)); }}
 
 
 		private TemplateTable<DTOSchedule> _scheduleTable =new TemplateTable<DTOSchedule>();
 		public ObservableCollection<DTOSchedule> DTOSchedule
-		{ get { return _scheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOSchedule)); _scheduleTable.Entries = value; } }
+		{ get { return _scheduleTable.Entries; } set { _scheduleTable.Entries = value; OnPropertyChanged(nameof(DTOSchedule)); } }
 
 
 		private TemplateTable<DTOBellSchedule> _bellScheduleTable=new TemplateTable<DTOBellSchedule> ();
 		public ObservableCollection<DTOBellSchedule> DTOBellSchedule
-		{ get { return _bellScheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOBellSchedule)); _bellScheduleTable.Entries = value; } }
+		{ get { return _bellScheduleTable.Entries; } set { _bellScheduleTable.Entries = value; OnPropertyChanged(nameof(DTOBellSchedule)); } }
 
 
 		private TemplateTable<DTOBellScheduleType> _bellScheduleTableType=new TemplateTable<DTOBellScheduleType> ();
 		public ObservableCollection<DTOBellScheduleType> DTOBellScheduleType
-		{ get { return _bellScheduleTableType.Entries; } set { OnPropertyChanged(nameof(DTOBellScheduleType)); _bellScheduleTableType.Entries = value; } }
+		{ get { return _bellScheduleTableType.Entries; } set { _bellScheduleTableType.Entries = value; OnPropertyChanged(nameof(DTOBellScheduleType)); } }
 
 
 		private TemplateTable<DTOLessonSubsitutionSchedule> _lessonSubsitutionScheduleTable = new TemplateTable<DTOLessonSubsitutionSchedule> ();
 		public ObservableCollection<DTOLessonSubsitutionSchedule> DTOLessonSubsitutionSchedule
-		{ get { return _lessonSubsitutionScheduleTable.Entries; } set { OnPropertyChanged(nameof(DTOLessonSubsitutionSchedule)); _lessonSubsitutionScheduleTable.Entries = value; } }
+		{ get { return _lessonSubsitutionScheduleTable.Entries; } set { _lessonSubsitutionScheduleTable.Entries = value; OnPropertyChanged(nameof(DTOLessonSubsitutionSchedule)); } }
 	}
 }
