@@ -37,10 +37,11 @@
 				<MenuItem Header="Загрузить">
 					<MenuItem Header="Загрузить все таблицы из сервера"	Command="{Binding UpdateCommand}"/>
 				</MenuItem>
-				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
 				<MenuItem Header="Отчёты">
 					<MenuItem Header="Открыть окно отчётов" Command="{Binding ShowReportWindow}"/>
 				</MenuItem>
+				<Separator/>
+				<MenuItem Header="Выйти" Click="CloseMenu_Click"/>
 			</MenuItem>
 			<MenuItem Header="Справка">
 				<MenuItem Header="О программе" Command="{Binding ShowAboutWindow}"/>
