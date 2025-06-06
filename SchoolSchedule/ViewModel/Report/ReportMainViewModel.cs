@@ -263,11 +263,11 @@ namespace SchoolSchedule.ViewModel.Report
 			Teachers = new ObservableCollection<Teacher>(teachers);
 			BellScheduleTypes = new ObservableCollection<BellScheduleType>(bellScheduleTypes);
 
-			if(groups != null || groups.Any())
+			if(groups != null && groups.Any())
 				IdGroup=groups.First().Id;
-			if(teachers != null || teachers.Any())
+			if(teachers != null && teachers.Any())
 				IdTeacher=teachers.First().Id;
-			if(bellScheduleTypes != null || bellScheduleTypes.Any())
+			if(bellScheduleTypes != null && bellScheduleTypes.Any())
 				IdBellScheduleType=bellScheduleTypes.First().Id;
 		}
 

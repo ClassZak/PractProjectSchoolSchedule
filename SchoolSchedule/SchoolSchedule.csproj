@@ -74,9 +74,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Additional\DayOfTheWeekConverter.cs" />
+    <Compile Include="Converter\DayOfTheWeekConverter.cs" />
     <Compile Include="Additional\InputEventHandler.cs" />
-    <Compile Include="Additional\NullInLessonSubsitutionScheduleConverter.cs" />
+    <Compile Include="Converter\NullInLessonSubsitutionScheduleConverter.cs" />
     <Compile Include="IO\Saver.cs" />
     <Compile Include="Model\Additional\Gender.cs" />
     <Compile Include="Model\BellSchedule.cs">
@@ -207,7 +207,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Additional\TimeSpanToStringConverter.cs" />
+    <Compile Include="Converter\TimeSpanToStringConverter.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
